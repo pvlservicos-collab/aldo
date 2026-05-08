@@ -1826,10 +1826,11 @@
         align-items: center;
         text-align: center;
         overflow: visible;
-        -webkit-transform: translateZ(0);
-        transform: translateZ(0);
-        -webkit-backface-visibility: hidden;
-        backface-visibility: hidden;
+        z-index: auto;
+      }
+
+      .hero-dir::before {
+        display: none;
       }
 
       .h-logo-hero {
@@ -1838,17 +1839,6 @@
 
       #stars-hero {
         display: none;
-      }
-
-      .h-logo-hero,
-      .h-nome1, .h-nome2,
-      .h-pre, .h-cargo,
-      .h-tagline, .h-versiculo,
-      .h-btns, .h-pl-badge,
-      .hero-arco-wrap {
-        animation: none;
-        opacity: 1;
-        transform: none;
       }
 
       .h-pre {
@@ -2471,7 +2461,7 @@
       width:${size}px; height:${size}px;
       background:${cor || '#fff'};
       opacity:${Math.random() * .6 + .3};
-      animation:${anims[i % 3]} ${(Math.random() * 1.2 + 0.8).toFixed(1)}s ${(Math.random() * 2).toFixed(1)}s infinite;
+      animation:${anims[i % 3]} ${(Math.random() * 1.2 + 0.8).toFixed(1)}s ${(Math.random() * 0.6).toFixed(1)}s infinite;
     `;
         c.appendChild(s);
       }
