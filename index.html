@@ -2019,14 +2019,20 @@
       }
     }
 
-    #particles-hero {
+    #particles-hero,
+    #particles-traj,
+    #particles-frases,
+    #particles-footer {
       position: absolute;
       inset: 0;
       z-index: 0;
       pointer-events: none;
     }
 
-    #particles-hero canvas {
+    #particles-hero canvas,
+    #particles-traj canvas,
+    #particles-frases canvas,
+    #particles-footer canvas {
       display: block;
       width: 100% !important;
       height: 100% !important;
@@ -2209,7 +2215,7 @@
 
   <!-- TRAJETÓRIA -->
   <section id="trajetoria">
-    <div class="star-anim" id="stars-traj"></div>
+    <div id="particles-traj"></div>
     <div class="container">
       <div class="traj-intro rv">
         <div class="eyebrow" style="color:#ffffff"><span class="dash" style="background:var(--ouro)"></span>Experiência
@@ -2342,7 +2348,7 @@
 
   <!-- FRASES -->
   <section id="frases">
-    <div class="star-anim" id="stars-frases"></div>
+    <div id="particles-frases"></div>
     <div class="container">
       <div class="rv" style="margin-bottom:48px">
         <div class="eyebrow" style="color:#ffffff"><span class="dash" style="background:var(--ouro)"></span>Valores
@@ -2446,6 +2452,7 @@
 
   <!-- FOOTER -->
   <footer>
+    <div id="particles-footer"></div>
     <div class="ft-inner">
       <div class="ft-brand">
         <img src="img/logo.webp" alt="Aldo Maurício" class="ft-brand-logo" />
@@ -2478,9 +2485,6 @@
         c.appendChild(s);
       }
     }
-    criarEstrelas('stars-traj', 55, '#ffffff');
-    criarEstrelas('stars-frases', 40, '#f5c518');
-
     /* Partículas no hero via particles.js */
     particlesJS('particles-hero', {
       particles: {
@@ -2496,15 +2500,62 @@
       retina_detect: true
     });
 
-    /* Estrelas no footer */
+    /* Partículas trajetória */
+    particlesJS('particles-traj', {
+      particles: {
+        number: { value: 55, density: { enable: true, value_area: 900 } },
+        color: { value: '#ffffff' },
+        shape: { type: 'circle' },
+        opacity: { value: 0.5, random: true, anim: { enable: true, speed: 1.5, opacity_min: 0.05, sync: false } },
+        size: { value: 2, random: true, anim: { enable: false } },
+        line_linked: { enable: false },
+        move: { enable: true, speed: 2.5, direction: 'none', random: true, straight: false, out_mode: 'out', bounce: false }
+      },
+      interactivity: { detect_on: 'canvas', events: { onhover: { enable: false }, onclick: { enable: false }, resize: true } },
+      retina_detect: true
+    });
+
+    /* Partículas frases (douradas) */
+    particlesJS('particles-frases', {
+      particles: {
+        number: { value: 40, density: { enable: true, value_area: 900 } },
+        color: { value: '#f5c518' },
+        shape: { type: 'circle' },
+        opacity: { value: 0.55, random: true, anim: { enable: true, speed: 1.6, opacity_min: 0.05, sync: false } },
+        size: { value: 2, random: true, anim: { enable: false } },
+        line_linked: { enable: false },
+        move: { enable: true, speed: 2.5, direction: 'none', random: true, straight: false, out_mode: 'out', bounce: false }
+      },
+      interactivity: { detect_on: 'canvas', events: { onhover: { enable: false }, onclick: { enable: false }, resize: true } },
+      retina_detect: true
+    });
+
+    /* Partículas footer */
+    particlesJS('particles-footer', {
+      particles: {
+        number: { value: 30, density: { enable: true, value_area: 900 } },
+        color: { value: '#ffffff' },
+        shape: { type: 'circle' },
+        opacity: { value: 0.4, random: true, anim: { enable: true, speed: 1.4, opacity_min: 0.05, sync: false } },
+        size: { value: 1.8, random: true, anim: { enable: false } },
+        line_linked: { enable: false },
+        move: { enable: true, speed: 2.2, direction: 'none', random: true, straight: false, out_mode: 'out', bounce: false }
+      },
+      interactivity: { detect_on: 'canvas', events: { onhover: { enable: false }, onclick: { enable: false }, resize: true } },
+      retina_detect: true
+    });
+
+    /* Fix vídeo Low Power Mode iOS — toque do usuário dispara play */
     (function () {
-      const ft = document.querySelector('footer');
-      if (!ft) return;
-      const layer = document.createElement('div');
-      layer.className = 'star-anim';
-      layer.id = 'stars-footer';
-      ft.prepend(layer);
-      criarEstrelas('stars-footer', 30, '#ffffff');
+      var v = document.querySelector('.quem-video video');
+      if (!v) return;
+      v.play().catch(function () {});
+      ['touchstart', 'click', 'scroll'].forEach(function (evt) {
+        document.addEventListener(evt, function tryPlay() {
+          v.play().catch(function () {});
+          document.removeEventListener(evt, tryPlay);
+        }, { once: true, passive: true });
+      });
     })();
 
     /* ── Nav mobile toggle ── */
