@@ -1809,7 +1809,7 @@
         gap: 0;
         overflow: hidden;
         z-index: 6;
-        margin-top: -8px;
+        margin-top: -4px;
       }
 
       .fb-azul {
@@ -1824,7 +1824,15 @@
       .hero-dir {
         padding: 20px 6% 28px;
         align-items: center;
-        text-align: center
+        text-align: center;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+      }
+
+      .h-logo-hero {
+        filter: none;
       }
 
       .h-pre {
