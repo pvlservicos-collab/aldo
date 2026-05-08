@@ -1837,9 +1837,6 @@
         filter: none;
       }
 
-      #stars-hero {
-        display: none;
-      }
 
       .h-pre {
         align-self: center;
@@ -2021,6 +2018,19 @@
         padding: 64px 5vw
       }
     }
+
+    #particles-hero {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    #particles-hero canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
   </style>
 </head>
 
@@ -2087,6 +2097,7 @@
 
     <!-- direita: azul -->
     <div class="hero-dir">
+      <div id="particles-hero"></div>
 
       <img src="img/logo.webp" alt="Aldo Maurício" class="h-logo-hero" />
       <div class="h-pre">Pré-Candidato a</div>
@@ -2446,6 +2457,7 @@
     <div class="ft-copy">© 2026 Aldo Maurício. Todos os direitos reservados.</div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <script>
     /* ── Estrelas animadas ── */
     function criarEstrelas(containerId, qtd, cor) {
@@ -2469,16 +2481,20 @@
     criarEstrelas('stars-traj', 55, '#ffffff');
     criarEstrelas('stars-frases', 40, '#f5c518');
 
-    /* Estrelas animadas no hero-dir via JS */
-    (function () {
-      const dir = document.querySelector('.hero-dir');
-      if (!dir) return;
-      const layer = document.createElement('div');
-      layer.className = 'star-anim';
-      layer.id = 'stars-hero';
-      dir.prepend(layer);
-      criarEstrelas('stars-hero', 45, '#ffffff');
-    })();
+    /* Partículas no hero via particles.js */
+    particlesJS('particles-hero', {
+      particles: {
+        number: { value: 65, density: { enable: true, value_area: 800 } },
+        color: { value: '#ffffff' },
+        shape: { type: 'circle' },
+        opacity: { value: 0.6, random: true, anim: { enable: true, speed: 1.8, opacity_min: 0.05, sync: false } },
+        size: { value: 2.2, random: true, anim: { enable: false } },
+        line_linked: { enable: false },
+        move: { enable: true, speed: 2.8, direction: 'none', random: true, straight: false, out_mode: 'out', bounce: false }
+      },
+      interactivity: { detect_on: 'canvas', events: { onhover: { enable: false }, onclick: { enable: false }, resize: true } },
+      retina_detect: true
+    });
 
     /* Estrelas no footer */
     (function () {
