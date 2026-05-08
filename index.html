@@ -130,7 +130,7 @@
       text-decoration: none;
       font-size: .76rem;
       font-weight: 600;
-      letter-spacing: .04em;
+      letter-spacing: .12em;
       text-transform: uppercase;
       transition: color .2s;
       padding: 8px 12px;
@@ -205,7 +205,7 @@
       text-decoration: none;
       font-size: .82rem;
       font-weight: 600;
-      letter-spacing: .06em;
+      letter-spacing: .12em;
       transition: background .15s, color .15s;
       white-space: nowrap;
     }
@@ -270,8 +270,8 @@
       height: 4px;
       bottom: 0;
       background: linear-gradient(to bottom,
-        var(--verde) 0%, var(--verde) 50%,
-        var(--ouro)  50%, var(--ouro)  100%);
+          var(--verde) 0%, var(--verde) 50%,
+          var(--ouro) 50%, var(--ouro) 100%);
       z-index: 15;
       pointer-events: none;
     }
@@ -526,10 +526,10 @@
     .btn-ouro {
       background: linear-gradient(135deg, #2dc840 0%, #1a8c2a 55%, #0e5018 100%);
       color: var(--branco);
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-size: 1rem;
-      font-weight: 900;
-      letter-spacing: .1em;
+      font-weight: 700;
+      letter-spacing: .06em;
       text-transform: uppercase;
       padding: 14px 28px;
       border-radius: 5px;
@@ -548,10 +548,10 @@
     .btn-borda {
       background: transparent;
       color: var(--branco);
-      font-family: 'Barlow Condensed', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-size: 1rem;
       font-weight: 700;
-      letter-spacing: .1em;
+      letter-spacing: .06em;
       text-transform: uppercase;
       padding: 13px 28px;
       border-radius: 5px;
@@ -618,8 +618,8 @@
       z-index: 199;
       height: 4px;
       background: linear-gradient(to bottom,
-        var(--verde) 0%,  var(--verde) 50%,
-        var(--ouro)  50%, var(--ouro)  100%);
+          var(--verde) 0%, var(--verde) 50%,
+          var(--ouro) 50%, var(--ouro) 100%);
     }
 
     .wave {
@@ -676,10 +676,7 @@
     }
 
     .eyebrow .dash {
-      width: 22px;
-      height: 2px;
-      background: var(--ouro);
-      border-radius: 1px
+      display: none
     }
 
     .sec-h {
@@ -798,8 +795,8 @@
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(to right,  transparent 80%, rgba(5,14,82,.18) 100%),
-        linear-gradient(to bottom, transparent 92%, rgba(0,0,0,.06) 100%);
+        linear-gradient(to right, transparent 80%, rgba(5, 14, 82, .18) 100%),
+        linear-gradient(to bottom, transparent 92%, rgba(0, 0, 0, .06) 100%);
       pointer-events: none;
     }
 
@@ -825,10 +822,21 @@
       background-clip: text;
     }
 
-    #defende .eyebrow { color: var(--ouro); }
-    #defende .eyebrow .dash { background: var(--ouro); }
-    #defende .sec-h { color: var(--branco); }
-    #defende .sec-p { color: rgba(255,255,255,.75); }
+    #defende .eyebrow {
+      color: var(--ouro);
+    }
+
+    #defende .eyebrow .dash {
+      background: var(--ouro);
+    }
+
+    #defende .sec-h {
+      color: var(--branco);
+    }
+
+    #defende .sec-p {
+      color: rgba(255, 255, 255, .75);
+    }
 
     #defende .def-card {
       background: rgba(255, 255, 255, .07);
@@ -1263,41 +1271,38 @@
       .tl-right {
         grid-column: 2;
         padding: 0 0 22px 16px;
-        position: relative;
       }
 
-      /* bolinha branca centralizada para cada card da coluna direita */
-      .tl-right::before {
-        content: '';
-        position: absolute;
-        left: -18px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: #ffffff;
-        border: 2.5px solid rgba(255, 255, 255, .9);
-        box-shadow: 0 0 0 3px rgba(255,255,255,.2), 0 0 10px rgba(255,255,255,.4);
-        z-index: 3;
-      }
+      /* remove todas as bolinhas por padrão */
+      .tl-dot { display: none }
+      .tl-right::before { display: none }
 
-      /* esconde bolinha no tl-right vazio (último par) */
-      .tl-right:not(:has(*))::before { display: none }
+      /* esconde último tl-right vazio para a linha terminar no card */
+      .tl-right:empty { display: none }
 
+      /* todos os tl-node: col 1, position:static para dots ficarem relativos à .timeline */
       .tl-node {
         grid-column: 1;
         padding-top: 0;
+        padding-bottom: 0;
         align-items: center;
+        position: static;
       }
 
-      /* oculta todas as bolinhas no mobile */
-      .tl-dot,
-      .tl-right::before {
-        display: none !important;
+      /* PONTA INFERIOR: dot colado no fundo absoluto da linha */
+      .timeline > :nth-last-child(2) .tl-dot {
+        display: block !important;
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 11px !important;
+        transform: translateX(-50%) !important;
+        background: #ffffff !important;
+        border: 2.5px solid rgba(255,255,255,.9) !important;
+        box-shadow: 0 0 0 3px rgba(255,255,255,.2), 0 0 10px rgba(255,255,255,.5) !important;
+        width: 14px !important;
+        height: 14px !important;
+        z-index: 3 !important;
       }
-
-      .timeline::before { display: none }
 
       .tl-card {
         max-width: 100%
@@ -1763,38 +1768,54 @@
 
     /* ── RESPONSIVO ── */
     @media(max-width:920px) {
+
       /* ── HERO ── */
       #hero {
         grid-template-columns: 1fr;
-        min-height: auto
+        min-height: auto;
+        background: var(--azul-esc);
       }
 
-      .top-stripe { display: none }
+      .top-stripe {
+        display: none
+      }
 
       .hero-esq {
         min-height: 72vw;
         max-height: 520px
       }
 
-      .hero-esq::after { display: none }
+      .hero-esq::after {
+        display: none
+      }
 
       /* bandeira: faixa amarela + verde inclinada entre foto e conteúdo */
       .hero-bandeira {
         display: flex;
         position: relative;
-        width: 100vw;
-        left: 50%;
-        transform: translateX(-50%) rotate(3deg);
-        height: 60px;
+        left: 0;
+        top: auto;
+        bottom: auto;
+        width: calc(100% + 60px);
+        margin-left: -30px;
+        transform: rotate(3deg);
+        transform-origin: center center;
+        height: 51px;
         flex-direction: column;
         gap: 0;
         overflow: hidden;
         z-index: 6;
-        margin-left: 0;
+        margin-top: -12px;
       }
 
-      .fb-azul { display: none }
-      .fb-verde, .fb-amarela { flex: 1 }
+      .fb-azul {
+        display: none
+      }
+
+      .fb-verde,
+      .fb-amarela {
+        flex: 1
+      }
 
       .hero-dir {
         padding: 36px 6% 48px;
@@ -1815,9 +1836,12 @@
         width: min(180px, 55%);
         margin-left: auto;
         margin-right: auto;
+        margin-top: 8px;
       }
 
-      .h-btns { justify-content: center }
+      .h-btns {
+        justify-content: center
+      }
 
       .h-versiculo,
       .h-tagline {
@@ -1826,10 +1850,14 @@
         text-align: center
       }
 
-      .h-pl-badge { display: none }
+      .h-pl-badge {
+        display: none
+      }
 
       /* ── DEFENDE ── */
-      .defende-layout { grid-template-columns: 1fr }
+      .defende-layout {
+        grid-template-columns: 1fr
+      }
 
       .defende-foto {
         min-height: unset;
@@ -1842,10 +1870,14 @@
         text-align: center
       }
 
-      #defende .def-grid { text-align: left }
+      #defende .def-grid {
+        text-align: left
+      }
 
       /* ── QUEM É ── */
-      .quem-layout { grid-template-columns: 1fr }
+      .quem-layout {
+        grid-template-columns: 1fr
+      }
 
       .quem-video {
         min-height: 95vw;
@@ -1853,23 +1885,37 @@
         order: -1;
       }
 
-      .quem-video::before { display: none }
+      .quem-video::before {
+        display: none
+      }
 
-      .quem-conteudo { padding: 32px 6% 32px }
+      .quem-conteudo {
+        padding: 32px 6% 32px
+      }
 
       /* ── OUTRAS SEÇÕES ── */
       .traj-g,
-      .cont-g { grid-template-columns: 1fr }
+      .cont-g {
+        grid-template-columns: 1fr
+      }
 
-      .traj-ul { columns: 1 }
+      .traj-ul {
+        columns: 1
+      }
 
-      .form-row { grid-template-columns: 1fr }
+      .form-row {
+        grid-template-columns: 1fr
+      }
 
-      .form-box { padding: 28px 20px }
+      .form-box {
+        padding: 28px 20px
+      }
     }
 
     @media(max-width:960px) {
-      .nav-links > li:not(#dd-li) { display: none }
+      .nav-links>li:not(#dd-li) {
+        display: none
+      }
     }
 
     @media(max-width:960px) {
@@ -1986,7 +2032,7 @@
 
       <p class="h-tagline">Trabalho que gera resultados. Educação para transformar.<br>Segurança para proteger. Saúde
         para cuidar.</p>
-      <blockquote class="h-versiculo">"Posso tudo naquele que me fortalece." — Filipenses 4:13</blockquote>
+      <blockquote class="h-versiculo">"Posso tudo naquele que me fortalece." Filipenses 4:13</blockquote>
 
       <div class="h-btns">
         <a href="#quem" class="btn-ouro">Conheça Minha História</a>
@@ -2009,50 +2055,52 @@
         <div class="rv">
           <div class="eyebrow"><span class="dash"></span>Princípios<span class="dash"></span></div>
           <h2 class="sec-h">Fé, verdade e coerência.</h2>
-          <p class="defende-intro"><span class="destaque-nome">Aldo Maurício</span> acredita que os valores cristãos precisam ser respeitados e defendidos também no debate público.</p>
+          <p class="defende-intro"><span class="destaque-nome">Aldo Maurício</span> acredita que os valores cristãos
+            precisam ser respeitados e defendidos também no debate público.</p>
         </div>
         <div class="def-grid">
-        <div class="def-card rv">
-          <div class="def-ico">✝️</div>
-          <h3>Família</h3>
-          <p>Defesa da estrutura familiar, dos valores e do fortalecimento das relações familiares.</p>
+          <div class="def-card rv">
+            <div class="def-ico">✝️</div>
+            <h3>Família</h3>
+            <p>Defesa da estrutura familiar, dos valores e do fortalecimento das relações familiares.</p>
+          </div>
+          <div class="def-card rv2">
+            <div class="def-ico">❤️</div>
+            <h3>Vida</h3>
+            <p>Compromisso com a valorização da vida e da dignidade humana.</p>
+          </div>
+          <div class="def-card rv3">
+            <div class="def-ico">🕊️</div>
+            <h3>Liberdade Religiosa</h3>
+            <p>Defesa do direito à fé, à liberdade de expressão religiosa e ao respeito às igrejas e líderes cristãos.
+            </p>
+          </div>
+          <div class="def-card rv">
+            <div class="def-ico">⚖️</div>
+            <h3>Verdade e Moral</h3>
+            <p>Compromisso com princípios, ética, transparência e responsabilidade pública.</p>
+          </div>
+          <div class="def-card rv2">
+            <div class="def-ico">📚</div>
+            <h3>Educação</h3>
+            <p>Investimento na educação como ferramenta de transformação social e oportunidade.</p>
+          </div>
+          <div class="def-card rv3">
+            <div class="def-ico">🩺</div>
+            <h3>Saúde</h3>
+            <p>Valorização dos profissionais da saúde e melhoria do atendimento público.</p>
+          </div>
+          <div class="def-card rv">
+            <div class="def-ico">🛡️</div>
+            <h3>Segurança</h3>
+            <p>Mais proteção para famílias, trabalhadores e comunidades.</p>
+          </div>
+          <div class="def-card rv2">
+            <div class="def-ico">💼</div>
+            <h3>Trabalho</h3>
+            <p>Geração de oportunidades, valorização do trabalhador e incentivo ao desenvolvimento.</p>
+          </div>
         </div>
-        <div class="def-card rv2">
-          <div class="def-ico">❤️</div>
-          <h3>Vida</h3>
-          <p>Compromisso com a valorização da vida e da dignidade humana.</p>
-        </div>
-        <div class="def-card rv3">
-          <div class="def-ico">🕊️</div>
-          <h3>Liberdade Religiosa</h3>
-          <p>Defesa do direito à fé, à liberdade de expressão religiosa e ao respeito às igrejas e líderes cristãos.</p>
-        </div>
-        <div class="def-card rv">
-          <div class="def-ico">⚖️</div>
-          <h3>Verdade e Moral</h3>
-          <p>Compromisso com princípios, ética, transparência e responsabilidade pública.</p>
-        </div>
-        <div class="def-card rv2">
-          <div class="def-ico">📚</div>
-          <h3>Educação</h3>
-          <p>Investimento na educação como ferramenta de transformação social e oportunidade.</p>
-        </div>
-        <div class="def-card rv3">
-          <div class="def-ico">🩺</div>
-          <h3>Saúde</h3>
-          <p>Valorização dos profissionais da saúde e melhoria do atendimento público.</p>
-        </div>
-        <div class="def-card rv">
-          <div class="def-ico">🛡️</div>
-          <h3>Segurança</h3>
-          <p>Mais proteção para famílias, trabalhadores e comunidades.</p>
-        </div>
-        <div class="def-card rv2">
-          <div class="def-ico">💼</div>
-          <h3>Trabalho</h3>
-          <p>Geração de oportunidades, valorização do trabalhador e incentivo ao desenvolvimento.</p>
-        </div>
-      </div>
       </div><!-- /defende-conteudo -->
     </div><!-- /defende-layout -->
   </section>
@@ -2096,7 +2144,7 @@
         </div>
         <h2 class="sec-h w">Experiência que<br>gera confiança</h2>
         <p style="font-size:1.05rem;line-height:1.72;color:#ffffff;max-width:560px;text-align:center">
-          Décadas servindo pessoas com dedicação, competência e coração — na saúde, na educação e na comunidade.
+          Décadas servindo pessoas com dedicação, competência e coração na saúde, na educação e na comunidade.
         </p>
       </div>
 
@@ -2258,7 +2306,8 @@
         <h2 class="sec-h">Acompanhe Aldo Maurício</h2>
       </div>
       <div class="redes-g">
-        <a href="https://www.instagram.com/aldo_mauricioo?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener" class="rede-card ig rv">
+        <a href="https://www.instagram.com/aldo_mauricioo?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+          target="_blank" rel="noopener" class="rede-card ig rv">
           <svg class="r-ico" viewBox="0 0 24 24">
             <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
             <circle cx="12" cy="12" r="4.5" />
@@ -2282,7 +2331,8 @@
         </a>
       </div>
       <div class="redes-cta rv">
-        <a href="https://www.instagram.com/aldo_mauricioo?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="btn-ouro">Seguir nas Redes</a>
+        <a href="https://www.instagram.com/aldo_mauricioo?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+          target="_blank" class="btn-ouro">Seguir nas Redes</a>
       </div>
     </div>
   </section>
