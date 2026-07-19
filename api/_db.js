@@ -43,6 +43,16 @@ function ensureSchema() {
         ip TEXT PRIMARY KEY,
         criado_em TIMESTAMPTZ NOT NULL DEFAULT now()
       );
+
+      CREATE TABLE IF NOT EXISTS liderancas (
+        id BIGSERIAL PRIMARY KEY,
+        nome TEXT NOT NULL,
+        numero TEXT,
+        bairro TEXT,
+        ip TEXT,
+        criado_em TIMESTAMPTZ NOT NULL DEFAULT now()
+      );
+      CREATE INDEX IF NOT EXISTS liderancas_criado_em_idx ON liderancas (criado_em);
     `);
   }
   return schemaReady;

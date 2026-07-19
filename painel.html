@@ -172,6 +172,7 @@ tbody tr:hover{background:var(--field)}
     <nav>
       <a data-tab="metricas" class="active" onclick="mudarTab('metricas')">📊 Métricas</a>
       <a data-tab="leads" onclick="mudarTab('leads')">🧑‍🤝‍🧑 Leads</a>
+      <a data-tab="liderancas" onclick="mudarTab('liderancas')">🤝 Lideranças</a>
     </nav>
     <div class="sidebar-bottom">
       <button class="btn-sair" onclick="logout()">Sair</button>
@@ -232,11 +233,39 @@ tbody tr:hover{background:var(--field)}
         <button id="pgNext" onclick="mudarPagina(1)">Próxima →</button>
       </div>
     </div>
+
+    <!-- LIDERANÇAS -->
+    <div class="tab-content" id="tab-liderancas">
+      <div class="page-header"><h2>Lideranças</h2><p>Pessoas que se cadastraram na página /liderancas</p></div>
+      <div class="toolbar">
+        <input id="lidSearch" type="text" placeholder="Buscar por nome, WhatsApp ou bairro…" oninput="buscarLiderancasDebounced()">
+        <input id="lidFrom" type="date" onchange="aplicarFiltroDataLid()">
+        <span class="datesep">até</span>
+        <input id="lidTo" type="date" onchange="aplicarFiltroDataLid()">
+        <button type="button" class="btn-clear" onclick="limparFiltroDataLid()">Limpar datas</button>
+        <button type="button" class="btn-export" onclick="exportarCsvLid()">⬇ Exportar CSV</button>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th>Nome</th><th>WhatsApp</th><th>Bairro</th><th>Data</th><th></th>
+          </tr></thead>
+          <tbody id="liderancasBody"></tbody>
+        </table>
+      </div>
+      <div id="liderancasEmpty" class="empty-msg hidden">Nenhuma liderança cadastrada ainda.</div>
+      <div class="pager">
+        <button id="pgPrevLid" onclick="mudarPaginaLid(-1)">← Anterior</button>
+        <span id="pgInfoLid">página 1</span>
+        <button id="pgNextLid" onclick="mudarPaginaLid(1)">Próxima →</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
 let periodoAtual='7d', paginaAtual=1, buscaAtual='', dataDe='', dataAte='', totalLeads=0, chart=null;
+let paginaAtualLid=1, buscaAtualLid='', dataDeLid='', dataAteLid='', totalLiderancas=0;
 
 async function api(path,opts){
   const res=await fetch(path,Object.assign({credentials:'same-origin'},opts||{}));
@@ -276,6 +305,7 @@ function mostrarPainel(){
   carregarMetricas();
   carregarIgnoredIps();
   carregarLeads();
+  carregarLiderancas();
 }
 
 function mudarTab(tab){
@@ -427,6 +457,80 @@ document.getElementById('leadsBody').addEventListener('click',async e=>{
   try{
     await api('/api/admin/leads?id='+b.dataset.id,{method:'DELETE'});
     carregarLeads();
+  }catch(e){
+    alert('Erro ao excluir: '+e.message);
+    b.disabled=false;
+  }
+});
+
+let searchTimerLid;
+function buscarLiderancasDebounced(){
+  clearTimeout(searchTimerLid);
+  searchTimerLid=setTimeout(()=>{buscaAtualLid=document.getElementById('lidSearch').value.trim();paginaAtualLid=1;carregarLiderancas();},350);
+}
+
+function aplicarFiltroDataLid(){
+  dataDeLid=document.getElementById('lidFrom').value;
+  dataAteLid=document.getElementById('lidTo').value;
+  paginaAtualLid=1;carregarLiderancas();
+}
+function limparFiltroDataLid(){
+  document.getElementById('lidFrom').value='';document.getElementById('lidTo').value='';
+  dataDeLid='';dataAteLid='';paginaAtualLid=1;carregarLiderancas();
+}
+function filtrosQSLid(){
+  const qs=new URLSearchParams();
+  if(buscaAtualLid)qs.set('q',buscaAtualLid);
+  if(dataDeLid)qs.set('from',dataDeLid);
+  if(dataAteLid)qs.set('to',dataAteLid);
+  return qs;
+}
+function exportarCsvLid(){
+  const qs=filtrosQSLid();
+  window.open('/api/admin/liderancas-export?'+qs.toString(),'_blank');
+}
+
+async function carregarLiderancas(){
+  try{
+    const qs=filtrosQSLid();
+    qs.set('page',paginaAtualLid);
+    const d=await api('/api/admin/liderancas?'+qs.toString());
+    totalLiderancas=d.total;
+    const body=document.getElementById('liderancasBody');
+    body.innerHTML='';
+    document.getElementById('liderancasEmpty').classList.toggle('hidden',d.itens.length>0);
+    d.itens.forEach(l=>{
+      const tr=document.createElement('tr');
+      const dt=new Date(l.criado_em).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+      const link=waLink(l.numero);
+      tr.innerHTML='<td>'+esc(l.nome)+'</td>'+
+        '<td>'+(link?('<a class="wa-link" target="_blank" href="'+link+'">'+esc(l.numero||'')+'</a>'):'—')+'</td>'+
+        '<td>'+esc(l.bairro||'—')+'</td>'+
+        '<td>'+dt+'</td>'+
+        '<td><button type="button" class="btn-del-lid" data-id="'+l.id+'" title="Excluir">🗑</button></td>';
+      body.appendChild(tr);
+    });
+    const totalPaginas=Math.max(1,Math.ceil(totalLiderancas/20));
+    document.getElementById('pgInfoLid').textContent='página '+paginaAtualLid+' de '+totalPaginas;
+    document.getElementById('pgPrevLid').disabled=paginaAtualLid<=1;
+    document.getElementById('pgNextLid').disabled=paginaAtualLid>=totalPaginas;
+  }catch(e){
+    if(String(e.message).includes('autenticado')) return logout();
+  }
+}
+
+function mudarPaginaLid(delta){
+  paginaAtualLid=Math.max(1,paginaAtualLid+delta);
+  carregarLiderancas();
+}
+
+document.getElementById('liderancasBody').addEventListener('click',async e=>{
+  const b=e.target.closest('.btn-del-lid');if(!b)return;
+  if(!confirm('Excluir essa liderança? Não dá pra desfazer.'))return;
+  b.disabled=true;
+  try{
+    await api('/api/admin/liderancas?id='+b.dataset.id,{method:'DELETE'});
+    carregarLiderancas();
   }catch(e){
     alert('Erro ao excluir: '+e.message);
     b.disabled=false;
