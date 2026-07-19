@@ -2599,17 +2599,30 @@
     }, { threshold: .1 });
     document.querySelectorAll('.rv,.rv2,.rv3').forEach(el => obs.observe(el));
 
-    /* ── Enviar WhatsApp ── */q
+    /* ── Enviar WhatsApp ── */
     function enviar() {
       const n = document.getElementById('c-nome').value.trim();
       const w = document.getElementById('c-wpp').value.trim();
       const c = document.getElementById('c-cid').value.trim();
       const m = document.getElementById('c-msg').value.trim();
       if (!n || !m) { alert('Por favor, informe seu nome e mensagem.'); return; }
+
+      fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome: n, whatsapp: w, cidade: c, mensagem: m })
+      }).catch(() => {});
+
       const txt = encodeURIComponent(`Olá, Aldo Maurício!\n\nNome: ${n}\nWhatsApp: ${w || '—'}\nCidade: ${c || '—'}\n\n${m}`);
-      // ⚠️ Substitua pelo número real: DDI + DDD + número
-      window.open(`https://wa.me/5596999999999?text=${txt}`, '_blank');
+      window.open(`https://wa.me/559681419718?text=${txt}`, '_blank');
     }
+
+    /* ── Rastreamento de visitas (métricas do painel) ── */
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path: location.pathname, referrer: document.referrer || null })
+    }).catch(() => {});
   </script>
 </body>
 

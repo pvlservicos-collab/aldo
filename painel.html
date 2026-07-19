@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Painel · Aldo Maurício</title>
+<link rel="icon" type="image/webp" href="img/logo.webp">
+<meta name="robots" content="noindex" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;700&family=Inter:wght@400;500;600&display=swap"
+  rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#060f3d; --bg2:#050c30; --ink:#ffffff; --muted:#a7b0d9; --line:rgba(255,255,255,.12);
+  --card:#0e1c6b; --card2:#0a1656; --field:#08123f; --gold:#f5c518; --gold-esc:#c8a000;
+  --green:#22aa34; --red:#e0554f;
+  --card-grad:linear-gradient(180deg,var(--card),var(--card2));
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;background:var(--bg);color:var(--ink);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px}
+h1,h2,h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.01em}
+
+/* login */
+#screen-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:radial-gradient(circle at 50% 0%,#0e2eaa 0%,var(--bg) 65%)}
+.login-card{background:var(--card-grad);border:1px solid var(--line);border-radius:16px;padding:36px 30px;
+  width:100%;max-width:360px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.login-card img{height:40px;margin-bottom:14px}
+.login-card h1{font-size:26px;color:var(--gold);margin-bottom:4px}
+.login-card p{font-size:13px;color:var(--muted);margin-bottom:24px}
+.login-field{text-align:left;margin-bottom:14px}
+.login-field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+.login-field input{width:100%;padding:11px 13px;background:var(--field);border:1px solid var(--line);
+  border-radius:9px;font:inherit;font-size:15px;color:var(--ink)}
+.login-field input:focus{outline:none;border-color:var(--gold)}
+.login-err{font-size:12px;color:var(--red);margin-bottom:12px;display:none}
+.btn-login{width:100%;padding:12px;background:var(--gold);border:none;border-radius:9px;
+  font:inherit;font-size:15px;font-weight:700;color:#1a1207;cursor:pointer}
+.btn-login:hover{background:var(--gold-esc)}
+.btn-login:disabled{opacity:.5;cursor:not-allowed}
+
+/* shell */
+#screen-painel{display:none;min-height:100vh}
+.sidebar{position:fixed;top:0;left:0;width:220px;height:100vh;background:var(--card-grad);
+  border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:10}
+.sidebar-logo{padding:20px 18px 14px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
+.sidebar-logo img{height:28px;width:auto;margin-bottom:6px}
+.sidebar-logo .title{font-family:'Barlow Condensed',serif;font-size:19px;color:var(--ink);font-weight:700}
+.sidebar-logo .sub{font-size:11px;color:var(--gold);letter-spacing:.08em;margin-top:2px}
+nav{flex:1;padding:12px 10px}
+nav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;
+  font-size:14px;color:var(--muted);text-decoration:none;cursor:pointer;margin-bottom:2px}
+nav a:hover{background:var(--field);color:var(--ink)}
+nav a.active{background:var(--field);color:var(--gold);font-weight:600}
+.sidebar-bottom{padding:12px 10px;border-top:1px solid var(--line)}
+.btn-sair{width:100%;padding:9px;background:transparent;border:1px solid var(--line);border-radius:9px;
+  font:inherit;font-size:13px;color:var(--muted);cursor:pointer}
+.btn-sair:hover{border-color:var(--red);color:var(--red)}
+.main{margin-left:220px;padding:26px 26px 60px;min-height:100vh}
+.page-header{margin-bottom:20px}
+.page-header h2{font-size:23px}
+.page-header p{font-size:13px;color:var(--muted);margin-top:2px}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+.period-filter{display:flex;gap:8px;margin-bottom:18px}
+.period-filter button{padding:6px 14px;border-radius:8px;border:1px solid var(--line);
+  background:transparent;font:inherit;font-size:13px;color:var(--muted);cursor:pointer}
+.period-filter button.active{background:var(--gold);border-color:var(--gold);color:#1a1207;font-weight:700}
+
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:22px}
+.stat-card{background:var(--card-grad);border:1px solid var(--line);border-radius:12px;padding:16px}
+.stat-card .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.stat-card .val{font-size:28px;font-weight:700;font-family:'Barlow Condensed',sans-serif}
+.stat-card.green .val{color:var(--green)}
+.stat-card.gold .val{color:var(--gold)}
+
+.chart-box{background:var(--card-grad);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:22px}
+.chart-box h3{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:14px;font-family:'Inter'}
+.chart-box canvas{max-height:230px}
+
+.ip-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}
+.ip-row:last-child{border-bottom:none}
+.ip-row .ip-val{flex:1;font-family:monospace}
+.ip-row button{background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px}
+.ip-row button:hover{color:var(--red)}
+.btn-ignore-mine{padding:8px 14px;background:var(--gold);border:none;border-radius:9px;font:inherit;
+  font-size:13px;font-weight:700;color:#1a1207;cursor:pointer}
+.btn-ignore-mine:hover{background:var(--gold-esc)}
+.btn-ignore-mine:disabled{opacity:.5;cursor:not-allowed}
+
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.toolbar input{flex:1;min-width:200px;padding:9px 12px;background:var(--field);border:1px solid var(--line);
+  border-radius:9px;font:inherit;font-size:14px;color:var(--ink)}
+.toolbar input:focus{outline:none;border-color:var(--gold)}
+.toolbar input[type=date]{flex:none;min-width:0;color-scheme:dark}
+.toolbar .datesep{color:var(--muted);font-size:13px}
+.toolbar .btn-clear{flex:none;padding:9px 12px;background:transparent;border:1px solid var(--line);border-radius:9px;
+  font:inherit;font-size:13px;color:var(--muted);cursor:pointer}
+.toolbar .btn-clear:hover{color:var(--ink);border-color:var(--ink)}
+.btn-export{flex:none;margin-left:auto;padding:9px 16px;background:var(--green);border:none;border-radius:9px;
+  font:inherit;font-size:14px;font-weight:700;color:#06210b;cursor:pointer;white-space:nowrap}
+.btn-export:hover{filter:brightness(1.08)}
+
+.table-scroll{overflow-x:auto;background:var(--card-grad);border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;
+  padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:9px 10px;font-size:13px;border-bottom:1px solid var(--line);max-width:280px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+tbody td.msg{white-space:normal;max-width:340px}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--field)}
+.wa-link{color:var(--green);text-decoration:none;font-weight:600}
+.wa-link:hover{text-decoration:underline}
+.btn-del-lead{background:none;border:none;cursor:pointer;font-size:14px;padding:2px 4px;border-radius:6px;opacity:.7}
+.btn-del-lead:hover{opacity:1;background:var(--field)}
+.btn-del-lead:disabled{opacity:.3;cursor:not-allowed}
+.empty-msg{padding:30px;text-align:center;color:var(--muted);font-size:13px}
+.pager{display:flex;justify-content:center;gap:10px;margin-top:14px;align-items:center;font-size:13px;color:var(--muted)}
+.pager button{padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);
+  font:inherit;font-size:13px;cursor:pointer}
+.pager button:disabled{opacity:.4;cursor:not-allowed}
+
+.hidden{display:none!important}
+
+@media (max-width:768px){
+  .sidebar{position:static;width:100%;height:auto;flex-direction:row;flex-wrap:wrap;
+    align-items:center;border-right:none;border-bottom:1px solid var(--line)}
+  .sidebar-logo{padding:10px 12px;border-bottom:none;border-right:1px solid var(--line);
+    display:flex;flex-direction:row;align-items:center;gap:6px;white-space:nowrap;flex:none}
+  .sidebar-logo img{margin-bottom:0!important;height:20px}
+  .sidebar-logo .title{font-size:14px}
+  .sidebar-logo .sub{display:none}
+  nav{display:flex;flex:1;padding:6px 6px;gap:2px;overflow-x:auto}
+  nav a{margin-bottom:0;white-space:nowrap;padding:8px 8px;font-size:13px}
+  .sidebar-bottom{padding:6px 8px;border-top:none;border-left:1px solid var(--line);flex:none}
+  .btn-sair{width:auto;padding:7px 10px;font-size:12px;white-space:nowrap}
+  .main{margin-left:0;padding:18px 14px 40px}
+  .page-header h2{font-size:20px}
+  .cards-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+  .chart-box canvas{max-height:200px}
+  .toolbar #leadSearch{flex-basis:100%}
+  .toolbar .btn-export{flex-basis:100%;margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<div id="screen-login">
+  <div class="login-card">
+    <img src="img/logo.webp" alt="Aldo Maurício">
+    <h1>Painel</h1>
+    <p>Aldo Maurício · Pré-Candidato a Deputado Estadual</p>
+    <div class="login-field"><label>Usuário</label><input id="l-user" type="text" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')document.getElementById('l-senha').focus()"></div>
+    <div class="login-field"><label>Senha</label><input id="l-senha" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
+    <div class="login-err" id="login-err"></div>
+    <button class="btn-login" id="btn-login" onclick="fazerLogin()">Entrar</button>
+  </div>
+</div>
+
+<div id="screen-painel">
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <img src="img/logo.webp" alt="">
+      <div class="title">Aldo Maurício</div>
+      <div class="sub">PAINEL</div>
+    </div>
+    <nav>
+      <a data-tab="metricas" class="active" onclick="mudarTab('metricas')">📊 Métricas</a>
+      <a data-tab="leads" onclick="mudarTab('leads')">🧑‍🤝‍🧑 Leads</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="btn-sair" onclick="logout()">Sair</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- MÉTRICAS -->
+    <div class="tab-content active" id="tab-metricas">
+      <div class="page-header"><h2>Métricas do site</h2><p>Visitas e mensagens recebidas pelo formulário de contato</p></div>
+      <div class="period-filter" id="periodFilter">
+        <button data-period="hoje">Hoje</button>
+        <button data-period="7d" class="active">7 dias</button>
+        <button data-period="30d">30 dias</button>
+      </div>
+      <div class="cards-grid">
+        <div class="stat-card"><div class="lbl">Visitas</div><div class="val" id="st-site">—</div></div>
+        <div class="stat-card gold"><div class="lbl">Mensagens recebidas</div><div class="val" id="st-leads">—</div></div>
+      </div>
+      <div class="chart-box">
+        <h3>Evolução diária</h3>
+        <canvas id="chartMetricas"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>Ignorar meus acessos nas métricas</h3>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px">IPs na lista abaixo não contam em visitas ou mensagens no gráfico acima — leads que você criar testando ainda aparecem na aba Leads, é só excluir manualmente.</p>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+          <span style="font-size:13px;color:var(--muted)">Seu IP agora: <b id="meuIp" style="color:var(--ink);font-family:monospace">—</b></span>
+          <button type="button" class="btn-ignore-mine" id="btnIgnoreMine" onclick="ignorarMeuIp()">Ignorar meu IP</button>
+        </div>
+        <div id="ignoredIpsList"></div>
+      </div>
+    </div>
+
+    <!-- LEADS -->
+    <div class="tab-content" id="tab-leads">
+      <div class="page-header"><h2>Leads</h2><p>Pessoas que preencheram o formulário de contato no site</p></div>
+      <div class="toolbar">
+        <input id="leadSearch" type="text" placeholder="Buscar por nome ou WhatsApp…" oninput="buscarLeadsDebounced()">
+        <input id="leadFrom" type="date" onchange="aplicarFiltroData()">
+        <span class="datesep">até</span>
+        <input id="leadTo" type="date" onchange="aplicarFiltroData()">
+        <button type="button" class="btn-clear" onclick="limparFiltroData()">Limpar datas</button>
+        <button type="button" class="btn-export" onclick="exportarCsv()">⬇ Exportar CSV</button>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th>Nome</th><th>WhatsApp</th><th>Cidade</th><th>Mensagem</th><th>Data</th><th></th>
+          </tr></thead>
+          <tbody id="leadsBody"></tbody>
+        </table>
+      </div>
+      <div id="leadsEmpty" class="empty-msg hidden">Nenhum lead encontrado.</div>
+      <div class="pager">
+        <button id="pgPrev" onclick="mudarPagina(-1)">← Anterior</button>
+        <span id="pgInfo">página 1</span>
+        <button id="pgNext" onclick="mudarPagina(1)">Próxima →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let periodoAtual='7d', paginaAtual=1, buscaAtual='', dataDe='', dataAte='', totalLeads=0, chart=null;
+
+async function api(path,opts){
+  const res=await fetch(path,Object.assign({credentials:'same-origin'},opts||{}));
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(data.error||('Erro '+res.status));
+  return data;
+}
+
+async function fazerLogin(){
+  const user=document.getElementById('l-user').value.trim();
+  const senha=document.getElementById('l-senha').value;
+  const err=document.getElementById('login-err');
+  const btn=document.getElementById('btn-login');
+  err.style.display='none';
+  if(!user||!senha){err.textContent='Preencha usuário e senha.';err.style.display='block';return;}
+  btn.disabled=true;btn.textContent='Entrando…';
+  try{
+    await api('/api/admin/auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user,senha})});
+    mostrarPainel();
+  }catch(e){
+    err.textContent=e.message;err.style.display='block';
+  }finally{
+    btn.disabled=false;btn.textContent='Entrar';
+  }
+}
+
+function logout(){
+  api('/api/admin/auth',{method:'DELETE'}).catch(()=>{}).finally(()=>{
+    document.getElementById('screen-painel').style.display='none';
+    document.getElementById('screen-login').style.display='flex';
+  });
+}
+
+function mostrarPainel(){
+  document.getElementById('screen-login').style.display='none';
+  document.getElementById('screen-painel').style.display='block';
+  carregarMetricas();
+  carregarIgnoredIps();
+  carregarLeads();
+}
+
+function mudarTab(tab){
+  document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('active',a.dataset.tab===tab));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active',c.id==='tab-'+tab));
+}
+
+document.getElementById('periodFilter').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-period]');if(!b)return;
+  periodoAtual=b.dataset.period;
+  document.querySelectorAll('#periodFilter button').forEach(x=>x.classList.toggle('active',x===b));
+  carregarMetricas();
+});
+
+async function carregarMetricas(){
+  try{
+    const d=await api('/api/admin/metrics?period='+periodoAtual);
+    document.getElementById('st-site').textContent=d.site_view;
+    document.getElementById('st-leads').textContent=d.leads;
+    desenharGrafico(d.serie);
+  }catch(e){
+    if(String(e.message).includes('autenticado')) return logout();
+  }
+}
+
+function desenharGrafico(serie){
+  const labels=serie.map(s=>s.data.slice(5).split('-').reverse().join('/'));
+  const ctx=document.getElementById('chartMetricas').getContext('2d');
+  const cfg={
+    type:'line',
+    data:{labels,datasets:[
+      {label:'Visitas',data:serie.map(s=>s.site_view),borderColor:'#a7b0d9',backgroundColor:'transparent',tension:.3},
+      {label:'Mensagens',data:serie.map(s=>s.leads),borderColor:'#f5c518',backgroundColor:'transparent',tension:.3},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      scales:{x:{ticks:{color:'#a7b0d9'},grid:{color:'rgba(255,255,255,.12)'}},y:{beginAtZero:true,ticks:{color:'#a7b0d9'},grid:{color:'rgba(255,255,255,.12)'}}},
+      plugins:{legend:{labels:{color:'#ffffff'}}}}
+  };
+  if(chart){chart.data=cfg.data;chart.update();}
+  else chart=new Chart(ctx,cfg);
+}
+
+async function carregarIgnoredIps(){
+  try{
+    const d=await api('/api/admin/ignored-ips');
+    document.getElementById('meuIp').textContent=d.mine;
+    const btn=document.getElementById('btnIgnoreMine');
+    const jaIgnorado=d.ignored.includes(d.mine);
+    btn.disabled=jaIgnorado;
+    btn.textContent=jaIgnorado?'Seu IP já está ignorado':'Ignorar meu IP';
+    const list=document.getElementById('ignoredIpsList');
+    if(!d.ignored.length){list.innerHTML='<p style="font-size:12.5px;color:var(--muted)">Nenhum IP ignorado ainda.</p>';return;}
+    list.innerHTML=d.ignored.map(ip=>
+      '<div class="ip-row"><span class="ip-val">'+esc(ip)+'</span>'+
+      '<button type="button" onclick="removerIpIgnorado(\''+esc(ip)+'\')" title="Remover">✕</button></div>'
+    ).join('');
+  }catch(e){
+    if(String(e.message).includes('autenticado')) return logout();
+  }
+}
+
+async function ignorarMeuIp(){
+  try{
+    await api('/api/admin/ignored-ips',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});
+    carregarIgnoredIps();
+  }catch(e){alert('Erro: '+e.message);}
+}
+
+async function removerIpIgnorado(ip){
+  try{
+    await api('/api/admin/ignored-ips?ip='+encodeURIComponent(ip),{method:'DELETE'});
+    carregarIgnoredIps();
+  }catch(e){alert('Erro: '+e.message);}
+}
+
+let searchTimer;
+function buscarLeadsDebounced(){
+  clearTimeout(searchTimer);
+  searchTimer=setTimeout(()=>{buscaAtual=document.getElementById('leadSearch').value.trim();paginaAtual=1;carregarLeads();},350);
+}
+
+function aplicarFiltroData(){
+  dataDe=document.getElementById('leadFrom').value;
+  dataAte=document.getElementById('leadTo').value;
+  paginaAtual=1;carregarLeads();
+}
+function limparFiltroData(){
+  document.getElementById('leadFrom').value='';document.getElementById('leadTo').value='';
+  dataDe='';dataAte='';paginaAtual=1;carregarLeads();
+}
+function filtrosQS(){
+  const qs=new URLSearchParams();
+  if(buscaAtual)qs.set('q',buscaAtual);
+  if(dataDe)qs.set('from',dataDe);
+  if(dataAte)qs.set('to',dataAte);
+  return qs;
+}
+function exportarCsv(){
+  const qs=filtrosQS();
+  window.open('/api/admin/leads-export?'+qs.toString(),'_blank');
+}
+
+function waLink(raw){
+  let digits=String(raw||'').replace(/\D/g,'');
+  if(!digits) return null;
+  if(!digits.startsWith('55')) digits='55'+digits;
+  return 'https://wa.me/'+digits;
+}
+
+async function carregarLeads(){
+  try{
+    const qs=filtrosQS();
+    qs.set('page',paginaAtual);
+    const d=await api('/api/admin/leads?'+qs.toString());
+    totalLeads=d.total;
+    const body=document.getElementById('leadsBody');
+    body.innerHTML='';
+    document.getElementById('leadsEmpty').classList.toggle('hidden',d.itens.length>0);
+    d.itens.forEach(l=>{
+      const tr=document.createElement('tr');
+      const dt=new Date(l.criado_em).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+      const link=waLink(l.whatsapp);
+      tr.innerHTML='<td>'+esc(l.nome)+'</td>'+
+        '<td>'+(link?('<a class="wa-link" target="_blank" href="'+link+'">'+esc(l.whatsapp||'')+'</a>'):'—')+'</td>'+
+        '<td>'+esc(l.cidade||'—')+'</td>'+
+        '<td class="msg">'+esc(l.mensagem||'—')+'</td>'+
+        '<td>'+dt+'</td>'+
+        '<td><button type="button" class="btn-del-lead" data-id="'+l.id+'" title="Excluir lead">🗑</button></td>';
+      body.appendChild(tr);
+    });
+    const totalPaginas=Math.max(1,Math.ceil(totalLeads/20));
+    document.getElementById('pgInfo').textContent='página '+paginaAtual+' de '+totalPaginas;
+    document.getElementById('pgPrev').disabled=paginaAtual<=1;
+    document.getElementById('pgNext').disabled=paginaAtual>=totalPaginas;
+  }catch(e){
+    if(String(e.message).includes('autenticado')) return logout();
+  }
+}
+
+function mudarPagina(delta){
+  paginaAtual=Math.max(1,paginaAtual+delta);
+  carregarLeads();
+}
+
+document.getElementById('leadsBody').addEventListener('click',async e=>{
+  const b=e.target.closest('.btn-del-lead');if(!b)return;
+  if(!confirm('Excluir esse lead? Não dá pra desfazer.'))return;
+  b.disabled=true;
+  try{
+    await api('/api/admin/leads?id='+b.dataset.id,{method:'DELETE'});
+    carregarLeads();
+  }catch(e){
+    alert('Erro ao excluir: '+e.message);
+    b.disabled=false;
+  }
+});
+
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* tenta reaproveitar sessão já aberta */
+(async function(){
+  try{await api('/api/admin/metrics?period=hoje');mostrarPainel();}catch(e){}
+})();
+</script>
+</body>
+</html>
