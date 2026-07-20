@@ -238,7 +238,7 @@ tbody tr:hover{background:var(--field)}
     <div class="tab-content" id="tab-liderancas">
       <div class="page-header"><h2>Lideranças</h2><p>Pessoas que se cadastraram na página /liderancas</p></div>
       <div class="toolbar">
-        <input id="lidSearch" type="text" placeholder="Buscar por nome, WhatsApp ou bairro…" oninput="buscarLiderancasDebounced()">
+        <input id="lidSearch" type="text" placeholder="Buscar por nome, WhatsApp, bairro, mãe ou endereço…" oninput="buscarLiderancasDebounced()">
         <input id="lidFrom" type="date" onchange="aplicarFiltroDataLid()">
         <span class="datesep">até</span>
         <input id="lidTo" type="date" onchange="aplicarFiltroDataLid()">
@@ -248,7 +248,7 @@ tbody tr:hover{background:var(--field)}
       <div class="table-scroll">
         <table>
           <thead><tr>
-            <th>Nome</th><th>WhatsApp</th><th>Bairro</th><th>Data</th><th></th>
+            <th>Nome</th><th>WhatsApp</th><th>Bairro</th><th>Nome da mãe</th><th>Nascimento</th><th>Endereço</th><th>Data</th><th></th>
           </tr></thead>
           <tbody id="liderancasBody"></tbody>
         </table>
@@ -502,10 +502,14 @@ async function carregarLiderancas(){
     d.itens.forEach(l=>{
       const tr=document.createElement('tr');
       const dt=new Date(l.criado_em).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+      const nasc=l.data_nascimento?new Date(l.data_nascimento).toLocaleDateString('pt-BR'):'—';
       const link=waLink(l.numero);
       tr.innerHTML='<td>'+esc(l.nome)+'</td>'+
         '<td>'+(link?('<a class="wa-link" target="_blank" href="'+link+'">'+esc(l.numero||'')+'</a>'):'—')+'</td>'+
         '<td>'+esc(l.bairro||'—')+'</td>'+
+        '<td>'+esc(l.nome_mae||'—')+'</td>'+
+        '<td>'+nasc+'</td>'+
+        '<td>'+esc(l.endereco||'—')+'</td>'+
         '<td>'+dt+'</td>'+
         '<td><button type="button" class="btn-del-lid" data-id="'+l.id+'" title="Excluir">🗑</button></td>';
       body.appendChild(tr);

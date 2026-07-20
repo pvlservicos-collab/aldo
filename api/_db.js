@@ -49,10 +49,16 @@ function ensureSchema() {
         nome TEXT NOT NULL,
         numero TEXT,
         bairro TEXT,
+        nome_mae TEXT,
+        data_nascimento DATE,
+        endereco TEXT,
         ip TEXT,
         criado_em TIMESTAMPTZ NOT NULL DEFAULT now()
       );
       CREATE INDEX IF NOT EXISTS liderancas_criado_em_idx ON liderancas (criado_em);
+      ALTER TABLE liderancas ADD COLUMN IF NOT EXISTS nome_mae TEXT;
+      ALTER TABLE liderancas ADD COLUMN IF NOT EXISTS data_nascimento DATE;
+      ALTER TABLE liderancas ADD COLUMN IF NOT EXISTS endereco TEXT;
     `);
   }
   return schemaReady;

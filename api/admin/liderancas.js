@@ -9,7 +9,7 @@ function buildFiltro(query) {
   const q = String(query.q || '').trim();
   if (q) {
     params.push('%' + q + '%');
-    where.push(`(nome ILIKE $${params.length} OR numero ILIKE $${params.length} OR bairro ILIKE $${params.length})`);
+    where.push(`(nome ILIKE $${params.length} OR numero ILIKE $${params.length} OR bairro ILIKE $${params.length} OR nome_mae ILIKE $${params.length} OR endereco ILIKE $${params.length})`);
   }
   const from = String(query.from || '').trim();
   if (from) {
@@ -46,7 +46,7 @@ module.exports = async (req, res) => {
     const total = totalRes.rows[0].n;
 
     const itensRes = await getPool().query(
-      `SELECT id, nome, numero, bairro, criado_em
+      `SELECT id, nome, numero, bairro, nome_mae, data_nascimento, endereco, criado_em
        FROM liderancas ${whereSql}
        ORDER BY criado_em DESC
        LIMIT ${PAGE_SIZE} OFFSET ${offset}`,

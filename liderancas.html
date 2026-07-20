@@ -234,6 +234,18 @@
           <label for="l-bairro">Bairro</label>
           <input type="text" id="l-bairro" placeholder="Seu bairro" required>
         </div>
+        <div class="fg">
+          <label for="l-mae">Nome da mãe</label>
+          <input type="text" id="l-mae" placeholder="Nome completo da sua mãe" required>
+        </div>
+        <div class="fg">
+          <label for="l-nascimento">Data de nascimento</label>
+          <input type="date" id="l-nascimento" required>
+        </div>
+        <div class="fg">
+          <label for="l-endereco">Endereço</label>
+          <input type="text" id="l-endereco" placeholder="Rua e número" required>
+        </div>
         <button type="submit" class="btn-cadastrar" id="btn-cadastrar">Cadastrar</button>
         <div class="msg erro" id="msg-erro"></div>
       </form>
@@ -267,9 +279,12 @@
       const nome = document.getElementById('l-nome').value.trim();
       const numero = document.getElementById('l-numero').value.trim();
       const bairro = document.getElementById('l-bairro').value.trim();
+      const mae = document.getElementById('l-mae').value.trim();
+      const nascimento = document.getElementById('l-nascimento').value.trim();
+      const endereco = document.getElementById('l-endereco').value.trim();
       msgErro.style.display = 'none';
-      if (!nome || !numero || !bairro) {
-        msgErro.textContent = 'Preencha nome, WhatsApp e bairro.';
+      if (!nome || !numero || !bairro || !mae || !nascimento || !endereco) {
+        msgErro.textContent = 'Preencha todos os campos obrigatórios.';
         msgErro.style.display = 'block';
         return;
       }
@@ -279,7 +294,7 @@
         const res = await fetch('/api/lideranca', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nome, numero, bairro })
+          body: JSON.stringify({ nome, numero, bairro, mae, nascimento, endereco })
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || 'Não foi possível enviar. Tente novamente.');

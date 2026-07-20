@@ -8,11 +8,16 @@ module.exports = async (req, res) => {
     const nome = String(body.nome || '').trim().slice(0, 200);
     const numero = String(body.numero || '').trim().slice(0, 40);
     const bairro = String(body.bairro || '').trim().slice(0, 200);
-    if (!nome || !numero || !bairro) return res.status(400).json({ error: 'Nome, WhatsApp e bairro são obrigatórios.' });
+    const mae = String(body.mae || '').trim().slice(0, 200);
+    const nascimento = String(body.nascimento || '').trim().slice(0, 10);
+    const endereco = String(body.endereco || '').trim().slice(0, 300);
+    if (!nome || !numero || !bairro || !mae || !nascimento || !endereco) {
+      return res.status(400).json({ error: 'Nome, WhatsApp, bairro, nome da mãe, data de nascimento e endereço são obrigatórios.' });
+    }
     const ip = getClientIp(req);
     await getPool().query(
-      'INSERT INTO liderancas (nome, numero, bairro, ip) VALUES ($1,$2,$3,$4)',
-      [nome, numero, bairro, ip]
+      'INSERT INTO liderancas (nome, numero, bairro, nome_mae, data_nascimento, endereco, ip) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+      [nome, numero, bairro, mae, nascimento, endereco, ip]
     );
     res.status(201).json({ ok: true });
   } catch (e) {
