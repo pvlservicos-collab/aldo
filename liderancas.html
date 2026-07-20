@@ -234,7 +234,7 @@
           <label for="l-bairro">Bairro</label>
           <input type="text" id="l-bairro" placeholder="Seu bairro" required>
         </div>
-        <button type="submit" class="btn-cadastrar" id="btn-cadastrar">Quero ser liderança</button>
+        <button type="submit" class="btn-cadastrar" id="btn-cadastrar">Cadastrar</button>
         <div class="msg erro" id="msg-erro"></div>
       </form>
 
@@ -289,7 +289,7 @@
         msgErro.textContent = err.message;
         msgErro.style.display = 'block';
         btn.disabled = false;
-        btn.textContent = 'Quero ser liderança';
+        btn.textContent = 'Cadastrar';
       }
     });
   </script>
