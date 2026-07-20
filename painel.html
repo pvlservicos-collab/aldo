@@ -171,7 +171,7 @@ tbody tr:hover{background:var(--field)}
     </div>
     <nav>
       <a data-tab="metricas" class="active" onclick="mudarTab('metricas')">📊 Métricas</a>
-      <a data-tab="leads" onclick="mudarTab('leads')">🧑‍🤝‍🧑 Leads</a>
+      <a data-tab="leads" onclick="mudarTab('leads')">🧑‍🤝‍🧑 Formulário</a>
       <a data-tab="liderancas" onclick="mudarTab('liderancas')">🤝 Lideranças</a>
     </nav>
     <div class="sidebar-bottom">
@@ -198,7 +198,7 @@ tbody tr:hover{background:var(--field)}
       </div>
       <div class="chart-box">
         <h3>Ignorar meus acessos nas métricas</h3>
-        <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px">IPs na lista abaixo não contam em visitas ou mensagens no gráfico acima — leads que você criar testando ainda aparecem na aba Leads, é só excluir manualmente.</p>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px">IPs na lista abaixo não contam em visitas ou mensagens no gráfico acima — leads que você criar testando ainda aparecem na aba Formulário, é só excluir manualmente.</p>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
           <span style="font-size:13px;color:var(--muted)">Seu IP agora: <b id="meuIp" style="color:var(--ink);font-family:monospace">—</b></span>
           <button type="button" class="btn-ignore-mine" id="btnIgnoreMine" onclick="ignorarMeuIp()">Ignorar meu IP</button>
@@ -209,7 +209,7 @@ tbody tr:hover{background:var(--field)}
 
     <!-- LEADS -->
     <div class="tab-content" id="tab-leads">
-      <div class="page-header"><h2>Leads</h2><p>Pessoas que preencheram o formulário de contato no site</p></div>
+      <div class="page-header"><h2>Formulário</h2><p>Pessoas que preencheram o formulário de contato no site</p></div>
       <div class="toolbar">
         <input id="leadSearch" type="text" placeholder="Buscar por nome ou WhatsApp…" oninput="buscarLeadsDebounced()">
         <input id="leadFrom" type="date" onchange="aplicarFiltroData()">
