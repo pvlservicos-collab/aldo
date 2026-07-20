@@ -786,7 +786,8 @@
       min-height: 320px;
     }
 
-    .defende-foto img {
+    .defende-foto img,
+    .defende-foto video {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -1018,6 +1019,66 @@
       font-size: .78rem;
       color: var(--ouro);
       letter-spacing: .1em
+    }
+
+    .sound-toggle {
+      position: absolute;
+      z-index: 4;
+      width: 132px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 20px 14px;
+      background: rgba(9, 31, 128, .28);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, .3);
+      border-radius: 18px;
+      color: var(--branco);
+      font-family: 'Inter', sans-serif;
+      font-size: .76rem;
+      font-weight: 600;
+      line-height: 1.35;
+      text-align: center;
+      letter-spacing: .01em;
+      cursor: pointer;
+      transition: opacity .35s, transform .35s, background .2s;
+    }
+
+    .sound-toggle:hover {
+      background: rgba(9, 31, 128, .42);
+    }
+
+    .sound-toggle svg {
+      flex-shrink: 0;
+    }
+
+    .sound-enable {
+      top: 62%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .sound-enable.is-hidden {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(.92);
+      pointer-events: none;
+    }
+
+    .sound-disable {
+      left: 18px;
+      bottom: 18px;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+    }
+
+    .sound-disable.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
     }
 
     .chips-wrap {
@@ -1905,7 +1966,18 @@
       .defende-foto {
         min-height: unset;
         max-height: unset;
-        aspect-ratio: 1 / 1;
+        aspect-ratio: 3 / 4;
+      }
+
+      .sound-toggle {
+        width: 116px;
+        padding: 16px 12px;
+        font-size: .7rem;
+      }
+
+      .sound-disable {
+        left: 12px;
+        bottom: 12px;
       }
 
       .defende-conteudo {
@@ -1923,8 +1995,8 @@
       }
 
       .quem-video {
-        min-height: 95vw;
-        max-height: 640px;
+        min-height: 120vw;
+        max-height: 760px;
         order: -1;
       }
 
@@ -2089,7 +2161,7 @@
 
     <!-- esquerda: foto -->
     <div class="hero-esq">
-      <img class="hero-foto" src="img/ft1.png" alt="Aldo Maurício"
+      <img class="hero-foto" src="img/ft1.webp" alt="Aldo Maurício"
         onerror="this.outerHTML='<div class=\'hero-foto-placeholder\'><svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'1.2\' width=\'80\' height=\'80\'><path stroke-linecap=\'round\' d=\'M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.1a7.5 7.5 0 0 1 15 0\'/></svg><p>Adicione a foto aqui</p></div>'" />
       <div class="h-pl-badge">
         <div class="pl-l">PL</div>
@@ -2130,7 +2202,15 @@
     <div class="defende-layout">
 
       <div class="defende-foto">
-        <img src="img/ft2.png" alt="Aldo Maurício" />
+        <video class="lazy-video" data-src="img/v1.mp4" poster="img/ft2.jpg" muted loop playsinline preload="none" aria-label="Aldo Maurício"></video>
+        <button type="button" class="sound-toggle sound-enable" aria-label="Ativar som do vídeo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="m17 9 4 6M21 9l-4 6"/></svg>
+          <span>Clique para ativar o som</span>
+        </button>
+        <button type="button" class="sound-toggle sound-disable" aria-label="Desativar som do vídeo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 6a9 9 0 0 1 0 12"/></svg>
+          <span>Desativar o som</span>
+        </button>
       </div>
 
       <div class="defende-conteudo">
@@ -2207,7 +2287,15 @@
         </div>
       </div>
       <div class="quem-video rv2">
-        <video src="img/v1.mp4" autoplay muted loop playsinline></video>
+        <video class="lazy-video" data-src="img/v2.mp4" muted loop playsinline preload="none"></video>
+        <button type="button" class="sound-toggle sound-enable" aria-label="Ativar som do vídeo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="m17 9 4 6M21 9l-4 6"/></svg>
+          <span>Clique para ativar o som</span>
+        </button>
+        <button type="button" class="sound-toggle sound-disable" aria-label="Desativar som do vídeo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 6a9 9 0 0 1 0 12"/></svg>
+          <span>Desativar o som</span>
+        </button>
         <div class="img-overlay">
           <p>Aldo Maurício</p>
           <small>★ Pré-Candidato a Deputado Estadual</small>
@@ -2548,18 +2636,65 @@
       retina_detect: true
     });
 
-    /* Fix vídeo Low Power Mode iOS — toque do usuário dispara play */
+    /* Lazy-load dos vídeos (só carrega ao chegar perto da viewport) + fix Low Power Mode iOS */
     (function () {
-      var v = document.querySelector('.quem-video video');
-      if (!v) return;
-      v.play().catch(function () {});
+      var videos = Array.prototype.slice.call(document.querySelectorAll('video.lazy-video[data-src]'));
+      if (!videos.length) return;
+
+      function playVideo(v) { v.play().catch(function () {}); }
+
+      function loadVideo(v) {
+        if (!v.dataset.src) return;
+        v.src = v.dataset.src;
+        delete v.dataset.src;
+        v.addEventListener('loadeddata', function () { playVideo(v); }, { once: true });
+        v.load();
+      }
+
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              loadVideo(entry.target);
+              io.unobserve(entry.target);
+            }
+          });
+        }, { rootMargin: '200px 0px' });
+        videos.forEach(function (v) { io.observe(v); });
+      } else {
+        videos.forEach(loadVideo);
+      }
+
+      /* toque do usuário dispara play (Low Power Mode iOS bloqueia autoplay) */
       ['touchstart', 'click', 'scroll'].forEach(function (evt) {
         document.addEventListener(evt, function tryPlay() {
-          v.play().catch(function () {});
+          videos.forEach(playVideo);
           document.removeEventListener(evt, tryPlay);
         }, { once: true, passive: true });
       });
     })();
+
+    /* Botões de som dos vídeos (ativar no centro / desativar no canto) */
+    document.querySelectorAll('.defende-foto, .quem-video').forEach(function (wrap) {
+      var video = wrap.querySelector('video');
+      var enableBtn = wrap.querySelector('.sound-enable');
+      var disableBtn = wrap.querySelector('.sound-disable');
+      if (!video || !enableBtn || !disableBtn) return;
+
+      enableBtn.addEventListener('click', function () {
+        video.muted = false;
+        video.currentTime = 0;
+        video.play().catch(function () {});
+        enableBtn.classList.add('is-hidden');
+        disableBtn.classList.add('is-visible');
+      });
+
+      disableBtn.addEventListener('click', function () {
+        video.muted = true;
+        enableBtn.classList.remove('is-hidden');
+        disableBtn.classList.remove('is-visible');
+      });
+    });
 
     /* ── Nav mobile toggle ── */
     const nt = document.getElementById('nt');
