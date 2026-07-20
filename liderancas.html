@@ -84,7 +84,7 @@
     }
 
     .topo img {
-      height: 66px;
+      height: 84px;
       margin-bottom: 14px;
     }
 
@@ -92,12 +92,12 @@
       font-family: 'Barlow Condensed', sans-serif;
       font-weight: 800;
       font-size: clamp(1.9rem, 5vw, 2.4rem);
-      color: #fff;
+      color: var(--azul-esc);
       line-height: 1.1;
     }
 
     .topo p {
-      color: #cdd4ef;
+      color: var(--text-med);
       font-size: .95rem;
       margin-top: 8px;
     }
@@ -175,8 +175,11 @@
 
     .sucesso {
       text-align: center;
-      padding: 10px 0 4px;
+      padding: 26px 22px;
       display: none;
+      background: #eaf8ee;
+      border: 1.5px solid #bfe8c9;
+      border-radius: 14px;
     }
 
     .sucesso .check {
@@ -195,7 +198,7 @@
     .sucesso h2 {
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 1.5rem;
-      color: var(--azul-esc);
+      color: var(--verde);
       margin-bottom: 8px;
     }
 
@@ -211,13 +214,13 @@
   <div class="estrelas" id="estrelas"></div>
 
   <div class="wrap">
-    <div class="topo">
-      <img src="img/logo.webp" alt="Aldo Maurício">
-      <h1>Cadastro de Liderança</h1>
-      <p>Faça parte do movimento com Aldo Maurício. Preencha seus dados abaixo.</p>
-    </div>
-
     <div class="card">
+      <div class="topo">
+        <img src="img/logo.webp" alt="Aldo Maurício">
+        <h1>Cadastro de Liderança</h1>
+        <p>Faça parte do movimento com Aldo Maurício. Preencha seus dados abaixo.</p>
+      </div>
+
       <form id="form-lideranca">
         <div class="fg">
           <label for="l-nome">Nome completo</label>
