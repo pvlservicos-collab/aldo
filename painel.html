@@ -13,8 +13,8 @@
 <style>
 :root{
   color-scheme:dark;
-  --bg:#12161f; --bg2:#0e1119; --ink:#ffffff; --muted:#98a2b3; --line:rgba(255,255,255,.12);
-  --card:#1e2534; --card2:#171d29; --field:#141924; --gold:#f5c518; --gold-esc:#c8a000;
+  --bg:#0a1428; --bg2:#08101f; --ink:#ffffff; --muted:#93a8c9; --line:rgba(255,255,255,.12);
+  --card:#14213f; --card2:#0f1930; --field:#0c1730; --gold:#f5c518; --gold-esc:#c8a000;
   --green:#22aa34; --red:#e0554f;
   --card-grad:linear-gradient(180deg,var(--card),var(--card2));
 }
@@ -25,10 +25,10 @@ h1,h2,h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacin
 
 /* login */
 #screen-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
-  background:radial-gradient(circle at 50% 0%,#2f3b52 0%,var(--bg) 60%)}
+  background:radial-gradient(circle at 50% 0%,#24457c 0%,var(--bg) 60%)}
 .login-card{background:var(--card-grad);border:1px solid var(--line);border-radius:16px;padding:36px 30px;
   width:100%;max-width:360px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)}
-.login-card img{height:46px;width:auto;margin-bottom:14px}
+.login-card img{height:40px;width:auto;margin-bottom:14px}
 .login-card h1{font-size:26px;color:var(--gold);margin-bottom:4px}
 .login-card p{font-size:13px;color:var(--muted);margin-bottom:24px}
 .login-field{text-align:left;margin-bottom:14px}
@@ -47,7 +47,7 @@ h1,h2,h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacin
 .sidebar{position:fixed;top:0;left:0;width:220px;height:100vh;background:var(--card-grad);
   border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:10}
 .sidebar-logo{padding:20px 18px 14px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
-.sidebar-logo img{height:32px;width:auto;align-self:flex-start;margin-bottom:6px}
+.sidebar-logo img{height:28px;width:auto;align-self:flex-start;margin-bottom:6px}
 .sidebar-logo .title{font-family:'Barlow Condensed',serif;font-size:19px;color:var(--ink);font-weight:700}
 .sidebar-logo .sub{font-size:11px;color:var(--gold);letter-spacing:.08em;margin-top:2px}
 nav{flex:1;padding:12px 10px}
@@ -132,7 +132,7 @@ tbody tr:hover{background:var(--field)}
     align-items:center;border-right:none;border-bottom:1px solid var(--line)}
   .sidebar-logo{padding:10px 12px;border-bottom:none;border-right:1px solid var(--line);
     display:flex;flex-direction:row;align-items:center;gap:6px;white-space:nowrap;flex:none}
-  .sidebar-logo img{margin-bottom:0!important;height:23px}
+  .sidebar-logo img{margin-bottom:0!important;height:20px}
   .sidebar-logo .title{font-size:14px}
   .sidebar-logo .sub{display:none}
   nav{display:flex;flex:1;padding:6px 6px;gap:2px;overflow-x:auto}
