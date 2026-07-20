@@ -784,8 +784,6 @@
       position: relative;
       overflow: hidden;
       min-height: 320px;
-      height: 875px;
-      align-self: center;
     }
 
     .defende-foto img,
@@ -954,8 +952,6 @@
       position: relative;
       overflow: hidden;
       min-height: 520px;
-      height: 547px;
-      align-self: center;
     }
 
     .quem-video video {
@@ -1167,6 +1163,7 @@
 
     /* ── TRAJETÓRIA — linha do tempo 3D ── */
     #trajetoria {
+      padding: 0;
       background: linear-gradient(148deg, var(--azul-esc) 0%, var(--azul) 55%, var(--azul-med) 100%);
       position: relative;
       overflow: hidden;
@@ -1175,14 +1172,11 @@
     .traj-layout {
       display: grid;
       grid-template-columns: 33% 67%;
-      gap: 6%;
-      margin-bottom: 56px;
     }
 
     .traj-foto {
       position: relative;
       overflow: hidden;
-      border-radius: 16px;
       min-height: 320px;
     }
 
@@ -1194,14 +1188,15 @@
       display: block;
     }
 
+    .traj-conteudo {
+      padding: 48px 4% 48px 5%;
+    }
+
     .traj-intro {
       position: relative;
       z-index: 1;
       text-align: left;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: center;
+      margin-bottom: 56px;
     }
 
     .timeline {
@@ -1211,6 +1206,8 @@
       grid-template-columns: 1fr 40px 1fr;
       align-items: start;
       perspective: 900px;
+      max-width: 640px;
+      margin-right: auto;
     }
 
     /* LINHA BRANCA ÚNICA no centro */
@@ -1252,6 +1249,21 @@
       padding-top: 20px;
       position: relative;
       z-index: 2;
+    }
+
+    /* PONTA INFERIOR no pc: a barra termina exatamente na última bolinha (amarela) */
+    @media(min-width:681px) {
+      .timeline > :nth-last-child(2) {
+        position: static;
+        transform: none !important;
+      }
+
+      .timeline > :nth-last-child(2) .tl-dot {
+        position: absolute;
+        bottom: 0;
+        left: calc(50% - 1px);
+        transform: translateX(-50%);
+      }
     }
 
     .tl-dot {
@@ -1992,8 +2004,6 @@
       .defende-foto {
         min-height: unset;
         max-height: unset;
-        height: auto;
-        align-self: unset;
         aspect-ratio: 3 / 4;
       }
 
@@ -2025,8 +2035,6 @@
       .quem-video {
         min-height: 120vw;
         max-height: 760px;
-        height: auto;
-        align-self: unset;
         order: -1;
       }
 
@@ -2042,17 +2050,19 @@
       .traj-layout {
         grid-template-columns: 1fr;
         gap: 24px;
-        margin-bottom: 36px;
       }
 
       .traj-foto {
-        min-height: unset;
-        aspect-ratio: 3 / 4;
+        min-height: 120vw;
+        max-height: 760px;
+      }
+
+      .traj-conteudo {
+        padding: 0 6% 28px;
       }
 
       .traj-intro {
         text-align: center;
-        align-items: center;
       }
 
       /* ── OUTRAS SEÇÕES ── */
@@ -2354,8 +2364,7 @@
   <!-- TRAJETÓRIA -->
   <section id="trajetoria">
     <div id="particles-traj"></div>
-    <div class="container">
-      <div class="traj-layout">
+    <div class="traj-layout">
         <div class="traj-foto">
           <video class="lazy-video" data-src="img/v3.mp4" muted loop playsinline preload="none" aria-label="Aldo Maurício"></video>
           <button type="button" class="sound-toggle sound-enable" aria-label="Ativar som do vídeo">
@@ -2368,19 +2377,19 @@
           </button>
         </div>
 
-        <div class="traj-intro rv">
-          <div class="eyebrow" style="color:#ffffff"><span class="dash" style="background:var(--ouro)"></span>Experiência
+        <div class="traj-conteudo">
+          <div class="traj-intro rv">
+            <div class="eyebrow" style="color:#ffffff"><span class="dash" style="background:var(--ouro)"></span>Experiência
+            </div>
+            <h2 class="sec-h w">Experiência que<br>gera confiança</h2>
+            <p style="font-size:1.05rem;line-height:1.72;color:#ffffff;max-width:560px">
+              Décadas servindo pessoas com dedicação, competência e coração na saúde, na educação e na comunidade.
+            </p>
           </div>
-          <h2 class="sec-h w">Experiência que<br>gera confiança</h2>
-          <p style="font-size:1.05rem;line-height:1.72;color:#ffffff;max-width:560px">
-            Décadas servindo pessoas com dedicação, competência e coração na saúde, na educação e na comunidade.
-          </p>
-        </div>
-      </div>
 
-      <div class="timeline">
+          <div class="timeline">
 
-        <!-- 1 -->
+            <!-- 1 -->
         <div class="tl-left rv">
           <div class="tl-card tl-card-left"><span class="tl-ico">🩺</span>
             <p>Atua na enfermagem há 26 anos</p>
@@ -2481,8 +2490,9 @@
         </div>
         <div class="tl-right rv2"></div>
 
+          </div>
+        </div>
       </div>
-    </div>
   </section>
 
   <!-- MENSAGEM PRINCIPAL -->
