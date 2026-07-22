@@ -1,4 +1,4 @@
-const { getPool, ensureSchema } = require('../_db');
+const { getPool } = require('../_db');
 const { isAuthenticated } = require('../_auth');
 
 const DAYS_BY_PERIOD = { hoje: 1, '7d': 7, '30d': 30 };
@@ -7,7 +7,6 @@ module.exports = async (req, res) => {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Método não permitido' });
   if (!isAuthenticated(req)) return res.status(401).json({ error: 'não autenticado' });
   try {
-    await ensureSchema();
     const period = String(req.query.period || '7d');
     const days = DAYS_BY_PERIOD[period] || 7;
 

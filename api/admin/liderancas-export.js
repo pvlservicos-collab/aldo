@@ -1,4 +1,4 @@
-const { getPool, ensureSchema } = require('../_db');
+const { getPool } = require('../_db');
 const { isAuthenticated } = require('../_auth');
 
 function buildFiltro(query) {
@@ -31,7 +31,6 @@ module.exports = async (req, res) => {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Método não permitido' });
   if (!isAuthenticated(req)) return res.status(401).json({ error: 'não autenticado' });
   try {
-    await ensureSchema();
     const { whereSql, params } = buildFiltro(req.query);
     const { rows } = await getPool().query(
       `SELECT nome, numero, bairro, nome_mae, data_nascimento, endereco, criado_em FROM liderancas ${whereSql} ORDER BY criado_em DESC`,

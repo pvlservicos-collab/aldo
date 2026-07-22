@@ -1,10 +1,9 @@
-const { getPool, ensureSchema, getClientIp } = require('../_db');
+const { getPool, getClientIp } = require('../_db');
 const { isAuthenticated } = require('../_auth');
 
 module.exports = async (req, res) => {
   if (!isAuthenticated(req)) return res.status(401).json({ error: 'não autenticado' });
   try {
-    await ensureSchema();
     const mine = getClientIp(req);
 
     if (req.method === 'GET') {
