@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
     if (req.method === 'DELETE') {
       const id = Number(req.query.id);
       if (!id) return res.status(400).json({ error: 'id inválido' });
-      await getPool().query('DELETE FROM liderancas WHERE id = $1', [id]);
+      await getPool().query('DELETE FROM eleitores WHERE id = $1', [id]);
       return res.status(200).json({ ok: true });
     }
 
@@ -40,24 +40,18 @@ module.exports = async (req, res) => {
     const page = Math.max(1, Number(req.query.page) || 1);
     const offset = (page - 1) * PAGE_SIZE;
 
-    const totalRes = await getPool().query(`SELECT count(*)::int AS n FROM liderancas ${whereSql}`, params);
+    const totalRes = await getPool().query(`SELECT count(*)::int AS n FROM eleitores ${whereSql}`, params);
     const total = totalRes.rows[0].n;
-
-    const bairrosRes = await getPool().query(
-      `SELECT count(DISTINCT bairro)::int AS n FROM liderancas ${whereSql} ${whereSql ? 'AND' : 'WHERE'} bairro IS NOT NULL AND bairro <> ''`,
-      params
-    );
-    const bairros = bairrosRes.rows[0].n;
 
     const itensRes = await getPool().query(
       `SELECT id, nome, numero, bairro, nome_mae, data_nascimento, endereco, criado_em
-       FROM liderancas ${whereSql}
+       FROM eleitores ${whereSql}
        ORDER BY criado_em DESC
        LIMIT ${PAGE_SIZE} OFFSET ${offset}`,
       params
     );
 
-    res.status(200).json({ total, bairros, itens: itensRes.rows });
+    res.status(200).json({ total, itens: itensRes.rows });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

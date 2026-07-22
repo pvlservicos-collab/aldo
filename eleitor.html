@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Cadastro de Liderança — Aldo Maurício</title>
+  <title>Cadastro de Eleitor — Aldo Maurício</title>
   <link rel="icon" type="image/webp" href="img/logo.webp">
   <link
     href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=DM+Sans:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap"
@@ -258,11 +258,11 @@
     <div class="card">
       <div class="topo">
         <img src="img/logo.webp" alt="Aldo Maurício">
-        <h1>Cadastro de Liderança</h1>
+        <h1>Cadastro de Eleitor</h1>
         <p>Faça parte do movimento com Aldo Maurício. Preencha seus dados abaixo.</p>
       </div>
 
-      <form id="form-lideranca">
+      <form id="form-eleitor">
         <div class="fg">
           <label for="l-nome">Nome completo</label>
           <input type="text" id="l-nome" placeholder="Seu nome completo" required>
@@ -360,7 +360,7 @@
       if (!e.target.closest('.ac-wrap')) bairroList.classList.remove('show');
     });
 
-    const form = document.getElementById('form-lideranca');
+    const form = document.getElementById('form-eleitor');
     const btn = document.getElementById('btn-cadastrar');
     const msgErro = document.getElementById('msg-erro');
 
@@ -381,7 +381,7 @@
       btn.disabled = true;
       btn.textContent = 'Enviando…';
       try {
-        const res = await fetch('/api/lideranca', {
+        const res = await fetch('/api/eleitor', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ nome, numero, bairro, mae, nascimento, endereco })

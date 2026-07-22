@@ -59,6 +59,21 @@ function ensureSchema() {
       ALTER TABLE liderancas ADD COLUMN IF NOT EXISTS nome_mae TEXT;
       ALTER TABLE liderancas ADD COLUMN IF NOT EXISTS data_nascimento DATE;
       ALTER TABLE liderancas ADD COLUMN IF NOT EXISTS endereco TEXT;
+      ALTER TABLE liderancas ADD COLUMN IF NOT EXISTS lat DOUBLE PRECISION;
+      ALTER TABLE liderancas ADD COLUMN IF NOT EXISTS lng DOUBLE PRECISION;
+
+      CREATE TABLE IF NOT EXISTS eleitores (
+        id BIGSERIAL PRIMARY KEY,
+        nome TEXT NOT NULL,
+        numero TEXT,
+        bairro TEXT,
+        nome_mae TEXT,
+        data_nascimento DATE,
+        endereco TEXT,
+        ip TEXT,
+        criado_em TIMESTAMPTZ NOT NULL DEFAULT now()
+      );
+      CREATE INDEX IF NOT EXISTS eleitores_criado_em_idx ON eleitores (criado_em);
     `);
   }
   return schemaReady;

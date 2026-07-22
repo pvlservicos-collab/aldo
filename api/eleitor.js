@@ -1,5 +1,4 @@
 const { getPool, ensureSchema, getClientIp } = require('./_db');
-const { geocodeEnderecoBairro } = require('./_geocode');
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido' });
@@ -16,17 +15,9 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Nome, WhatsApp, bairro, nome da mãe, data de nascimento e endereço são obrigatórios.' });
     }
     const ip = getClientIp(req);
-    // geocodifica na hora do cadastro pra já nascer com lat/lng no banco —
-    // se falhar (endereço não encontrado, Nominatim fora do ar), segue sem
-    // coordenada: a liderança fica cadastrada normalmente, só sem quadrado no mapa
-    let lat = null, lng = null;
-    try {
-      const geo = await geocodeEnderecoBairro(endereco, bairro);
-      if (geo) { lat = geo.lat; lng = geo.lng; }
-    } catch {}
     await getPool().query(
-      'INSERT INTO liderancas (nome, numero, bairro, nome_mae, data_nascimento, endereco, ip, lat, lng) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
-      [nome, numero, bairro, mae, nascimento, endereco, ip, lat, lng]
+      'INSERT INTO eleitores (nome, numero, bairro, nome_mae, data_nascimento, endereco, ip) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+      [nome, numero, bairro, mae, nascimento, endereco, ip]
     );
     res.status(201).json({ ok: true });
   } catch (e) {
