@@ -2804,7 +2804,8 @@
     }
     function exportarCsv() {
       const qs = filtrosQS();
-      window.open('/api/admin/leads-export?' + qs.toString(), '_blank');
+      qs.set('export', 'csv');
+      window.open('/api/admin/leads?' + qs.toString(), '_blank');
     }
 
     function waLink(raw) {
@@ -2886,7 +2887,8 @@
     }
     function exportarCsvLid() {
       const qs = filtrosQSLid();
-      window.open('/api/admin/liderancas-export?' + qs.toString(), '_blank');
+      qs.set('export', 'csv');
+      window.open('/api/admin/liderancas?' + qs.toString(), '_blank');
     }
 
     async function carregarLiderancas() {
@@ -2965,7 +2967,8 @@
     }
     function exportarCsvEle() {
       const qs = filtrosQSEle();
-      window.open('/api/admin/eleitores-export?' + qs.toString(), '_blank');
+      qs.set('export', 'csv');
+      window.open('/api/admin/eleitores?' + qs.toString(), '_blank');
     }
 
     async function carregarEleitores() {

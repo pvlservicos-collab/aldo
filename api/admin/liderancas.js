@@ -24,6 +24,31 @@ function buildFiltro(query) {
   return { whereSql: where.length ? 'WHERE ' + where.join(' AND ') : '', params };
 }
 
+function csvField(v) {
+  const s = v === null || v === undefined ? '' : String(v);
+  return '"' + s.replace(/"/g, '""') + '"';
+}
+
+async function exportarCsv(req, res, whereSql, params) {
+  const { rows } = await getPool().query(
+    `SELECT nome, numero, bairro, nome_mae, data_nascimento, endereco, criado_em FROM liderancas ${whereSql} ORDER BY criado_em DESC`,
+    params
+  );
+
+  const header = ['Nome', 'WhatsApp', 'Bairro', 'Nome da mãe', 'Data de nascimento', 'Endereço', 'Data'].map(csvField).join(';');
+  const linhas = rows.map(l => [
+    l.nome, l.numero, l.bairro, l.nome_mae,
+    l.data_nascimento ? new Date(l.data_nascimento).toLocaleDateString('pt-BR') : '',
+    l.endereco,
+    new Date(l.criado_em).toLocaleString('pt-BR'),
+  ].map(csvField).join(';'));
+
+  const csv = '﻿' + [header, ...linhas].join('\r\n');
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="liderancas.csv"');
+  res.status(200).send(csv);
+}
+
 module.exports = async (req, res) => {
   if (!isAuthenticated(req)) return res.status(401).json({ error: 'não autenticado' });
   try {
@@ -37,6 +62,11 @@ module.exports = async (req, res) => {
     if (req.method !== 'GET') return res.status(405).json({ error: 'Método não permitido' });
 
     const { whereSql, params } = buildFiltro(req.query);
+
+    if (req.query.export === 'csv') {
+      return exportarCsv(req, res, whereSql, params);
+    }
+
     const page = Math.max(1, Number(req.query.page) || 1);
     const offset = (page - 1) * PAGE_SIZE;
 
