@@ -2749,7 +2749,7 @@
 
     async function carregarIgnoredIps() {
       try {
-        const d = await api('/api/admin/ignored-ips');
+        const d = await api('/api/admin/metrics?resource=ignored-ips');
         document.getElementById('meuIp').textContent = d.mine;
         const btn = document.getElementById('btnIgnoreMine');
         const jaIgnorado = d.ignored.includes(d.mine);
@@ -2768,14 +2768,14 @@
 
     async function ignorarMeuIp() {
       try {
-        await api('/api/admin/ignored-ips', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
+        await api('/api/admin/metrics?resource=ignored-ips', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
         carregarIgnoredIps();
       } catch (e) { alert('Erro: ' + e.message); }
     }
 
     async function removerIpIgnorado(ip) {
       try {
-        await api('/api/admin/ignored-ips?ip=' + encodeURIComponent(ip), { method: 'DELETE' });
+        await api('/api/admin/metrics?resource=ignored-ips&ip=' + encodeURIComponent(ip), { method: 'DELETE' });
         carregarIgnoredIps();
       } catch (e) { alert('Erro: ' + e.message); }
     }

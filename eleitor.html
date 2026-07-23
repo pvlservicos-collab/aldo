@@ -203,6 +203,19 @@
       cursor: not-allowed;
     }
 
+    .consentimento {
+      margin-top: 10px;
+      font-size: .72rem;
+      color: #949494;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .consentimento a {
+      color: #949494;
+      text-decoration: underline;
+    }
+
     .msg {
       margin-top: 14px;
       font-size: .88rem;
@@ -289,6 +302,7 @@
           <input type="text" id="l-endereco" placeholder="Rua e número" required>
         </div>
         <button type="submit" class="btn-cadastrar" id="btn-cadastrar">Cadastrar</button>
+        <p class="consentimento">Ao enviar, concordo com a <a href="/politicadeprivacidade">política de privacidade e dados</a>.</p>
         <div class="msg erro" id="msg-erro"></div>
       </form>
 
