@@ -22,7 +22,7 @@
       --grad-accent: linear-gradient(135deg, #2563eb 0%, #22d3ee 100%);
       --onda: rgba(148, 163, 184, .55);
       --verde: #4ade80;
-      --topo-h: 214px;
+      --topo-h: 248px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0 }
@@ -52,30 +52,30 @@
       pointer-events: none;
     }
 
-    .foto-wrap { position: relative; width: 124px; height: 124px; }
+    .foto-wrap { position: relative; width: 152px; height: 152px; }
 
     .foto-wrap img {
       position: relative; z-index: 2;
-      width: 124px; height: 124px; border-radius: 50%; object-fit: cover;
+      width: 152px; height: 152px; border-radius: 50%; object-fit: cover;
       border: 2.5px solid rgba(150, 190, 255, .35);
-      box-shadow: 0 12px 40px rgba(1, 4, 14, .7), 0 0 0 6px rgba(120, 165, 255, .07);
+      box-shadow: 0 14px 44px rgba(1, 4, 14, .7), 0 0 0 6px rgba(120, 165, 255, .07);
       background: var(--bg2);
     }
 
-    /* ondas cinzas circulares quando ele "fala" */
+    /* ondas cinzas circulares quando ele "fala" — finas e suaves */
     .onda {
       position: absolute; inset: 0; z-index: 1;
       border-radius: 50%;
-      border: 1.5px solid var(--onda);
+      border: 1px solid var(--onda);
       opacity: 0;
       pointer-events: none;
     }
-    .falando .onda { animation: sonar 1.9s ease-out infinite; }
-    .falando .onda:nth-child(2) { animation-delay: .62s }
-    .falando .onda:nth-child(3) { animation-delay: 1.24s }
+    .falando .onda { animation: sonar 2.4s ease-out infinite; }
+    .falando .onda:nth-child(2) { animation-delay: .8s }
+    .falando .onda:nth-child(3) { animation-delay: 1.6s }
     @keyframes sonar {
-      0% { transform: scale(1); opacity: .75 }
-      100% { transform: scale(2.05); opacity: 0 }
+      0% { transform: scale(1); opacity: .45 }
+      100% { transform: scale(2.15); opacity: 0 }
     }
 
     .topo .nome {
@@ -105,7 +105,7 @@
     main {
       position: relative; z-index: 10;
       max-width: 560px; margin: 0 auto;
-      padding: calc(var(--topo-h) + 26px) 18px 220px;
+      padding: calc(var(--topo-h) + 58px) 18px 220px;
       display: flex; flex-direction: column; gap: 8px;
     }
 
@@ -196,16 +196,9 @@
       html { scroll-behavior: auto }
     }
 
-    /* botão fixo de ajuda, sempre por último, em toda tela */
+    /* botão fixo de ajuda, sempre por último, em toda tela — mesma cara dos outros */
     .opcoes button.btn-ajuda {
       flex-basis: 100%;
-      font-size: 12.5px;
-      opacity: .68;
-      background: transparent;
-      border-style: dashed;
-    }
-    .opcoes button.btn-ajuda:hover, .opcoes button.btn-ajuda:focus-visible {
-      opacity: 1;
     }
 
     /* caixa de mensagem (só aparece no fluxo de ajuda) */
@@ -323,6 +316,9 @@
     }
 
     const AJUDA_LABEL = 'Quero pedir uma ajuda / Relatar um problema!';
+    const WHATSAPP_LABEL = 'Fala com equipe Aldo Maurício';
+    const WHATSAPP_LINK = 'https://wa.me/559681419718?text=' +
+      encodeURIComponent('Olá, Aldo Maurício! Vim pelo chat da IA e quero falar com a equipe.');
 
     function mostrarOpcoes(passo) {
       let ops = (passo.opcoes || []).slice();
@@ -335,13 +331,20 @@
         b.onclick = () => escolher(o);
         opcoesEl.appendChild(b);
       });
-      // fixo, sempre por último, em todo passo — não vem do conteúdo editável
+      // fixos, sempre por último, em todo passo — não vêm do conteúdo editável
       const ajuda = document.createElement('button');
       ajuda.type = 'button';
       ajuda.className = 'btn-ajuda';
       ajuda.textContent = AJUDA_LABEL;
       ajuda.onclick = () => abrirAjuda();
       opcoesEl.appendChild(ajuda);
+
+      const wpp = document.createElement('button');
+      wpp.type = 'button';
+      wpp.className = 'btn-ajuda';
+      wpp.textContent = WHATSAPP_LABEL;
+      wpp.onclick = () => window.open(WHATSAPP_LINK, '_blank');
+      opcoesEl.appendChild(wpp);
       ajustarEspaco();
       rolar();
     }
@@ -423,7 +426,7 @@
         const dig = bolhaDigitando();
         await espera(650);
         dig.remove();
-        bolha('dele', 'Recebi sua mensagem! Nossa equipe vai te responder em breve. Obrigado por falar com a gente 🙏');
+        bolha('dele', 'Recebi sua mensagem! Nossa equipe vai dar uma olhada e verificar. Obrigado por falar com a gente 🙏');
         fotoWrap.classList.remove('falando');
         tocando = false;
         mostrarOpcoes({ opcoes: [] });
