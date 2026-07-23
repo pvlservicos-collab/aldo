@@ -10,7 +10,9 @@ let pool;
 function getPool() {
   if (!pool) {
     if (!connectionString) throw new Error('Banco não configurado (defina DATABASE_URL nas env vars da Vercel).');
-    pool = new Pool({ connectionString, ssl: { rejectUnauthorized: false } });
+    // banco local (teste) não tem SSL; em produção continua igual
+    const local = /localhost|127\.0\.0\.1/.test(connectionString);
+    pool = new Pool({ connectionString, ssl: local ? false : { rejectUnauthorized: false } });
   }
   return pool;
 }
@@ -79,6 +81,13 @@ function ensureSchema() {
       CREATE INDEX IF NOT EXISTS apoiadores_criado_em_idx ON apoiadores (criado_em);
       ALTER TABLE apoiadores ADD COLUMN IF NOT EXISTS indicado_por TEXT;
       ALTER TABLE apoiadores ADD COLUMN IF NOT EXISTS indicado_por_id BIGINT;
+
+      CREATE TABLE IF NOT EXISTS iadoaldo_config (
+        id INT PRIMARY KEY,
+        data JSONB NOT NULL,
+        version INT NOT NULL DEFAULT 1,
+        atualizado_em TIMESTAMPTZ NOT NULL DEFAULT now()
+      );
     `);
   }
   return schemaReady;

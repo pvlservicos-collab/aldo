@@ -1908,6 +1908,86 @@
         display: inline-block
       }
     }
+    /* ===== aba IA do Aldo ===== */
+    .ia-top { display: grid; grid-template-columns: 120px 1fr; gap: 18px; align-items: start }
+    .ia-foto-prev {
+      width: 110px; height: 110px; border-radius: 50%; object-fit: cover;
+      border: 2px solid var(--line-strong); background: var(--field);
+      box-shadow: 0 8px 26px rgba(1, 4, 14, .55);
+    }
+    .ia-campos { display: grid; gap: 10px }
+    .ia-campos label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 4px }
+    .ia-campos input[type=text] {
+      width: 100%; background: var(--field); border: 1px solid var(--line);
+      border-radius: 10px; color: var(--ink); padding: 9px 12px; font-size: 14px;
+    }
+    .ia-campos input[type=text]:focus { outline: none; border-color: var(--line-strong) }
+    .ia-file { font-size: 12.5px; color: var(--muted) }
+
+    .ia-passo {
+      background: var(--grad-card); border: 1px solid var(--line);
+      border-radius: var(--r-lg); padding: 16px; margin-bottom: 14px;
+    }
+    .ia-passo.inicio { border-color: rgba(34, 211, 238, .45) }
+    .ia-passo-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px }
+    .ia-badge {
+      font-family: var(--font-num); font-weight: 500; font-size: 12px; letter-spacing: .04em;
+      background: rgba(120, 165, 255, .12); border: 1px solid var(--line);
+      border-radius: 999px; padding: 4px 11px; white-space: nowrap;
+    }
+    .ia-badge.ini { background: rgba(34, 211, 238, .16); border-color: rgba(34, 211, 238, .4); color: var(--cyan) }
+    .ia-passo-head input {
+      flex: 1; min-width: 150px; background: var(--field); border: 1px solid var(--line);
+      border-radius: 10px; color: var(--ink); padding: 8px 11px; font-size: 14px;
+    }
+    .ia-mini {
+      background: rgba(120, 165, 255, .08); border: 1px solid var(--line); color: var(--muted);
+      border-radius: 8px; padding: 5px 9px; font-size: 12.5px; cursor: pointer;
+      transition: var(--t-fast);
+    }
+    .ia-mini:hover { color: var(--ink); border-color: var(--line-strong) }
+    .ia-mini.perigo:hover { color: var(--red); border-color: rgba(248, 113, 113, .5) }
+
+    .ia-sec { font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); margin: 12px 0 7px }
+    .ia-msg-row { display: flex; gap: 7px; align-items: flex-start; margin-bottom: 7px }
+    .ia-msg-row textarea {
+      flex: 1; background: var(--field); border: 1px solid var(--line); border-radius: 10px;
+      color: var(--ink); padding: 8px 11px; font-size: 13.5px; resize: vertical; min-height: 40px;
+      font-family: inherit; line-height: 1.4;
+    }
+    .ia-msg-row textarea:focus, .ia-passo-head input:focus { outline: none; border-color: var(--line-strong) }
+    .ia-opt-row { display: grid; grid-template-columns: 1fr 220px auto; gap: 7px; margin-bottom: 7px }
+    .ia-opt-row input, .ia-opt-row select {
+      background: var(--field); border: 1px solid var(--line); border-radius: 10px;
+      color: var(--ink); padding: 8px 11px; font-size: 13.5px; width: 100%;
+    }
+    .ia-add {
+      background: none; border: 1px dashed var(--line-strong); color: var(--muted);
+      border-radius: 10px; padding: 7px 13px; font-size: 12.5px; cursor: pointer; transition: var(--t-fast);
+    }
+    .ia-add:hover { color: var(--ink); border-color: var(--blue) }
+
+    .ia-rodape {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      position: sticky; bottom: 0; padding: 14px 0;
+      background: linear-gradient(to top, var(--bg) 65%, transparent);
+    }
+    .ia-salvar {
+      background: var(--grad-accent); border: none; color: #fff; font-weight: 600;
+      border-radius: 12px; padding: 11px 22px; font-size: 14px; cursor: pointer;
+      box-shadow: 0 8px 22px rgba(37, 99, 235, .35); transition: var(--t-fast);
+    }
+    .ia-salvar:hover { transform: translateY(-1px) }
+    .ia-salvar:disabled { opacity: .55; cursor: default; transform: none }
+    .ia-status-txt { font-size: 13px; color: var(--muted) }
+    .ia-status-txt.ok { color: var(--green) }
+    .ia-status-txt.pendente { color: var(--amber) }
+    .ia-abrir { color: var(--cyan); font-size: 13px; text-decoration: none; margin-left: auto }
+    .ia-abrir:hover { text-decoration: underline }
+    @media (max-width: 640px) {
+      .ia-top { grid-template-columns: 1fr; justify-items: center }
+      .ia-opt-row { grid-template-columns: 1fr }
+    }
   </style>
 </head>
 
@@ -1973,6 +2053,12 @@
             <path d="M8 3v4M16 3v4M3 10h18" />
           </svg>
           <span>Agenda</span></a>
+        <a data-tab="iadoaldo" onclick="mudarTab('iadoaldo')">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a8 8 0 0 1-8 8H4l1.6-3.2A8 8 0 1 1 21 12z" />
+            <path d="M8.5 12h.01M12 12h.01M15.5 12h.01" />
+          </svg>
+          <span>IA do Aldo</span></a>
       </nav>
       <div class="sidebar-bottom">
         <div class="estagio-block">
@@ -2288,6 +2374,56 @@
           <button id="pgNextApo" onclick="mudarPaginaApo(1)">Próxima →</button>
         </div>
       </div>
+
+      <!-- IA DO ALDO -->
+      <div class="tab-content" id="tab-iadoaldo">
+        <div class="page-header">
+          <h2>IA do Aldo</h2>
+          <p>Monte a conversa da página <b>/iadoaldo</b> — foto, mensagens e a rede de respostas. Salvar já atualiza a página no ar.</p>
+        </div>
+
+        <div class="chart-box">
+          <h3>Aparência</h3>
+          <div class="ia-top" style="margin-top:12px">
+            <img class="ia-foto-prev" id="iaFotoPrev" src="img/fotocandidato.webp" alt="Foto do Aldo">
+            <div class="ia-campos">
+              <div>
+                <label>Trocar a foto (bolinha do topo)</label>
+                <input type="file" accept="image/*" class="ia-file" onchange="iaFotoArquivo(this)">
+              </div>
+              <div>
+                <label>…ou colar o link de uma imagem</label>
+                <input type="text" id="iaFotoUrl" placeholder="img/fotocandidato.webp ou https://…" oninput="iaMudarFotoUrl(this.value)">
+              </div>
+              <div>
+                <label>Nome exibido</label>
+                <input type="text" id="iaNome" oninput="iaCfg.nome=this.value;iaSujo()">
+              </div>
+              <div>
+                <label>Frase abaixo do nome</label>
+                <input type="text" id="iaStatus" placeholder="Pode perguntar 👇" oninput="iaCfg.status=this.value;iaSujo()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <h3>Conversa</h3>
+          <p style="font-size:13px;color:var(--muted);margin-top:6px">
+            Cada <b>passo</b> é uma resposta do Aldo em vários balõezinhos, seguida dos botões que a pessoa pode clicar.
+            Cada botão leva pra outro passo — pode inclusive voltar pra um passo anterior e formar uma rede.
+          </p>
+          <div id="iaPassos" style="margin-top:14px"><div class="empty-msg">Carregando…</div></div>
+          <button type="button" class="ia-add" onclick="iaAddPasso()">+ Adicionar passo</button>
+        </div>
+
+        <div class="ia-rodape">
+          <button type="button" class="ia-salvar" id="iaSalvarBtn" onclick="salvarIA()">Salvar e publicar</button>
+          <span class="ia-status-txt" id="iaStatusTxt"></span>
+          <button type="button" class="ia-mini perigo" onclick="restaurarIA()">Restaurar padrão</button>
+          <a class="ia-abrir" href="/iadoaldo" target="_blank">Abrir a página /iadoaldo ↗</a>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2392,6 +2528,7 @@
       const mostraTopo = (tab === 'metricas' || tab === 'mapa');
       document.getElementById('topoFixo').style.display = mostraTopo ? 'grid' : 'none';
       if (mostraTopo) carregarResumoVotos();
+      if (tab === 'iadoaldo') carregarIA();
       if (tab === 'mapa') {
         const f = document.getElementById('mapaFrame');
         f.src = 'mapa.html?_=' + Date.now();
@@ -3055,6 +3192,203 @@
       const expandido = el.classList.toggle('expanded');
       btn.textContent = expandido ? '▴ ver menos' : '▾ ver mais';
     }
+
+    /* ══════════ aba IA do Aldo ══════════ */
+    let iaCfg = null, iaVersion = 0, iaDirty = false, iaCarregou = false;
+
+    async function carregarIA(forcar) {
+      if (iaCarregou && !forcar) return;
+      const cont = document.getElementById('iaPassos');
+      cont.innerHTML = '<div class="empty-msg">Carregando…</div>';
+      try {
+        const d = await api('/api/iadoaldo');
+        iaCfg = d.config; iaVersion = d.version; iaDirty = false; iaCarregou = true;
+        pintarIA();
+        iaMsgStatus(iaVersion === 0 ? 'Mostrando o conteúdo padrão — edite e salve para publicar a sua versão.' : '', '');
+      } catch (e) {
+        cont.innerHTML = '<div class="empty-msg">Não deu pra carregar: ' + esc(e.message) + '</div>';
+      }
+    }
+
+    function iaSujo() {
+      iaDirty = true;
+      iaMsgStatus('Alterações não salvas', 'pendente');
+    }
+
+    function iaMsgStatus(txt, classe) {
+      const el = document.getElementById('iaStatusTxt');
+      el.textContent = txt;
+      el.className = 'ia-status-txt' + (classe ? ' ' + classe : '');
+    }
+
+    function pintarIA() {
+      document.getElementById('iaNome').value = iaCfg.nome || '';
+      document.getElementById('iaStatus').value = iaCfg.status || '';
+      document.getElementById('iaFotoUrl').value = iaCfg.foto && !iaCfg.foto.startsWith('data:') ? iaCfg.foto : '';
+      document.getElementById('iaFotoPrev').src = iaCfg.foto || 'img/fotocandidato.webp';
+      pintarPassosIA();
+    }
+
+    function iaDestinos(atualGoto) {
+      let html = '<option value=""' + (atualGoto ? '' : ' selected') + '>→ Voltar ao início</option>';
+      iaCfg.passos.forEach((p, i) => {
+        html += '<option value="' + esc(p.id) + '"' + (atualGoto === p.id ? ' selected' : '') + '>→ Passo ' + (i + 1) + ' — ' + esc(p.titulo || '') + '</option>';
+      });
+      return html;
+    }
+
+    function pintarPassosIA() {
+      const cont = document.getElementById('iaPassos');
+      if (!iaCfg.passos.length) { cont.innerHTML = '<div class="empty-msg">Nenhum passo ainda. Adicione o primeiro abaixo.</div>'; return; }
+      cont.innerHTML = iaCfg.passos.map((p, pi) => {
+        const ehInicio = iaCfg.inicio === p.id;
+        const msgs = p.msgs.map((m, mi) =>
+          '<div class="ia-msg-row">' +
+          '<textarea rows="2" placeholder="Um balãozinho da resposta" oninput="iaCfg.passos[' + pi + '].msgs[' + mi + ']=this.value;iaSujo()">' + esc(m) + '</textarea>' +
+          '<button type="button" class="ia-mini" title="Subir" onclick="iaMoveMsg(' + pi + ',' + mi + ',-1)">↑</button>' +
+          '<button type="button" class="ia-mini" title="Descer" onclick="iaMoveMsg(' + pi + ',' + mi + ',1)">↓</button>' +
+          '<button type="button" class="ia-mini perigo" title="Remover balãozinho" onclick="iaDelMsg(' + pi + ',' + mi + ')">×</button>' +
+          '</div>').join('');
+        const opts = p.opcoes.map((o, oi) =>
+          '<div class="ia-opt-row">' +
+          '<input type="text" placeholder="Texto do botão" value="' + esc(o.label) + '" oninput="iaCfg.passos[' + pi + '].opcoes[' + oi + '].label=this.value;iaSujo()">' +
+          '<select onchange="iaCfg.passos[' + pi + '].opcoes[' + oi + '].goto=this.value;iaSujo()">' + iaDestinos(o.goto) + '</select>' +
+          '<button type="button" class="ia-mini perigo" title="Remover botão" onclick="iaDelOpt(' + pi + ',' + oi + ')">×</button>' +
+          '</div>').join('');
+        return '<div class="ia-passo' + (ehInicio ? ' inicio' : '') + '">' +
+          '<div class="ia-passo-head">' +
+          '<span class="ia-badge' + (ehInicio ? ' ini' : '') + '">' + (ehInicio ? '★ INÍCIO · ' : '') + 'PASSO ' + (pi + 1) + '</span>' +
+          '<input type="text" placeholder="Nome do passo (só pra você se achar)" value="' + esc(p.titulo || '') + '" oninput="iaCfg.passos[' + pi + '].titulo=this.value;iaSujo()">' +
+          (ehInicio ? '' : '<button type="button" class="ia-mini" onclick="iaInicio(' + pi + ')">Tornar início</button>') +
+          '<button type="button" class="ia-mini" title="Subir passo" onclick="iaMovePasso(' + pi + ',-1)">↑</button>' +
+          '<button type="button" class="ia-mini" title="Descer passo" onclick="iaMovePasso(' + pi + ',1)">↓</button>' +
+          '<button type="button" class="ia-mini perigo" onclick="iaDelPasso(' + pi + ')">Excluir</button>' +
+          '</div>' +
+          '<div class="ia-sec">Balõezinhos da resposta</div>' + msgs +
+          '<button type="button" class="ia-add" onclick="iaAddMsg(' + pi + ')">+ balãozinho</button>' +
+          '<div class="ia-sec">Botões que a pessoa pode clicar</div>' +
+          (opts || '<div style="font-size:12.5px;color:var(--dim);margin-bottom:7px">Sem botões: a página mostra sozinha um "Voltar ao início".</div>') +
+          '<button type="button" class="ia-add" onclick="iaAddOpt(' + pi + ')">+ botão de resposta</button>' +
+          '</div>';
+      }).join('');
+    }
+
+    function iaAddMsg(pi) { iaCfg.passos[pi].msgs.push(''); iaSujo(); pintarPassosIA(); }
+    function iaDelMsg(pi, mi) {
+      if (iaCfg.passos[pi].msgs.length <= 1) return alert('O passo precisa de pelo menos um balãozinho. Pra sumir com ele, exclua o passo.');
+      iaCfg.passos[pi].msgs.splice(mi, 1); iaSujo(); pintarPassosIA();
+    }
+    function iaMoveMsg(pi, mi, dir) {
+      const arr = iaCfg.passos[pi].msgs, j = mi + dir;
+      if (j < 0 || j >= arr.length) return;
+      [arr[mi], arr[j]] = [arr[j], arr[mi]]; iaSujo(); pintarPassosIA();
+    }
+    function iaAddOpt(pi) { iaCfg.passos[pi].opcoes.push({ label: '', goto: '' }); iaSujo(); pintarPassosIA(); }
+    function iaDelOpt(pi, oi) { iaCfg.passos[pi].opcoes.splice(oi, 1); iaSujo(); pintarPassosIA(); }
+
+    function iaNovoId() {
+      let id;
+      do { id = 'p' + Math.random().toString(36).slice(2, 7); } while (iaCfg.passos.some(p => p.id === id));
+      return id;
+    }
+    function iaAddPasso() {
+      iaCfg.passos.push({ id: iaNovoId(), titulo: 'Novo passo', msgs: [''], opcoes: [] });
+      iaSujo(); pintarPassosIA();
+      const cards = document.querySelectorAll('#iaPassos .ia-passo');
+      cards[cards.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    function iaDelPasso(pi) {
+      const p = iaCfg.passos[pi];
+      const apontam = [];
+      iaCfg.passos.forEach((q, qi) => { if (qi !== pi) q.opcoes.forEach(o => { if (o.goto === p.id) apontam.push(qi + 1); }); });
+      let aviso = 'Excluir o passo ' + (pi + 1) + ' — "' + (p.titulo || '') + '"?';
+      if (apontam.length) aviso += '\n\nBotões do(s) passo(s) ' + apontam.join(', ') + ' apontavam pra ele e vão passar a voltar pro início.';
+      if (!confirm(aviso)) return;
+      iaCfg.passos.splice(pi, 1);
+      iaCfg.passos.forEach(q => q.opcoes.forEach(o => { if (o.goto === p.id) o.goto = ''; }));
+      if (iaCfg.inicio === p.id && iaCfg.passos.length) iaCfg.inicio = iaCfg.passos[0].id;
+      iaSujo(); pintarPassosIA();
+    }
+    function iaMovePasso(pi, dir) {
+      const j = pi + dir;
+      if (j < 0 || j >= iaCfg.passos.length) return;
+      [iaCfg.passos[pi], iaCfg.passos[j]] = [iaCfg.passos[j], iaCfg.passos[pi]];
+      iaSujo(); pintarPassosIA();
+    }
+    function iaInicio(pi) { iaCfg.inicio = iaCfg.passos[pi].id; iaSujo(); pintarPassosIA(); }
+
+    function iaMudarFotoUrl(v) {
+      iaCfg.foto = v.trim();
+      document.getElementById('iaFotoPrev').src = iaCfg.foto || 'img/fotocandidato.webp';
+      iaSujo();
+    }
+    function iaFotoArquivo(input) {
+      const arq = input.files && input.files[0];
+      if (!arq) return;
+      const img = new Image();
+      img.onload = () => {
+        // encolhe pra 512px e comprime: cabe no banco e carrega rápido na página
+        const lado = Math.min(img.width, img.height);
+        const c = document.createElement('canvas');
+        c.width = c.height = Math.min(512, lado);
+        const ctx = c.getContext('2d');
+        ctx.drawImage(img, (img.width - lado) / 2, (img.height - lado) / 2, lado, lado, 0, 0, c.width, c.height);
+        let dataUrl = c.toDataURL('image/webp', 0.85);
+        if (!dataUrl.startsWith('data:image/webp')) dataUrl = c.toDataURL('image/jpeg', 0.85);
+        iaCfg.foto = dataUrl;
+        document.getElementById('iaFotoPrev').src = dataUrl;
+        document.getElementById('iaFotoUrl').value = '';
+        iaSujo();
+        URL.revokeObjectURL(img.src);
+      };
+      img.onerror = () => alert('Não deu pra ler essa imagem. Tente um JPG, PNG ou WEBP.');
+      img.src = URL.createObjectURL(arq);
+      input.value = '';
+    }
+
+    async function salvarIA() {
+      // validações amigáveis antes de mandar pro servidor
+      for (let i = 0; i < iaCfg.passos.length; i++) {
+        const p = iaCfg.passos[i];
+        if (!p.msgs.some(m => m.trim())) return alert('O passo ' + (i + 1) + ' está sem texto em todos os balõezinhos. Escreva algo ou exclua o passo.');
+        for (const o of p.opcoes) if (!o.label.trim()) return alert('Tem um botão sem texto no passo ' + (i + 1) + '. Escreva o texto ou remova o botão.');
+      }
+      const btn = document.getElementById('iaSalvarBtn');
+      btn.disabled = true; iaMsgStatus('Salvando…', '');
+      try {
+        const d = await api('/api/iadoaldo', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ config: iaCfg, version: iaVersion }),
+        });
+        iaCfg = d.config; iaVersion = d.version; iaDirty = false;
+        pintarIA();
+        iaMsgStatus('Salvo! Já está no ar em /iadoaldo ✓', 'ok');
+      } catch (e) {
+        if (String(e.message).includes('outra aba')) {
+          if (confirm(e.message + '\n\nRecarregar agora? (o que você editou aqui será perdido)')) { iaCarregou = false; carregarIA(true); }
+          else iaMsgStatus('Conflito de versão — não salvo.', 'pendente');
+        } else {
+          iaMsgStatus('Erro ao salvar: ' + e.message, 'pendente');
+        }
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function restaurarIA() {
+      if (!confirm('Voltar a conversa pro conteúdo padrão? A versão que está no ar será substituída.')) return;
+      try {
+        const d = await api('/api/iadoaldo', { method: 'DELETE' });
+        iaCfg = d.config; iaVersion = d.version; iaDirty = false;
+        pintarIA();
+        iaMsgStatus('Padrão restaurado — a página /iadoaldo já está com o conteúdo original.', 'ok');
+      } catch (e) { alert('Não deu pra restaurar: ' + e.message); }
+    }
+
+    window.addEventListener('beforeunload', e => {
+      if (iaDirty) { e.preventDefault(); e.returnValue = ''; }
+    });
 
     /* tenta reaproveitar sessão já aberta */
     (async function () {

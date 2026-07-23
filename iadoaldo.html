@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>IA do Aldo · Aldo Maurício</title>
+  <link rel="icon" type="image/webp" href="img/logo.webp">
+  <meta name="description" content="Converse com a IA do Aldo Maurício e conheça as propostas do pré-candidato a deputado estadual." />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Outfit:wght@500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #03070f;
+      --bg2: #060d1c;
+      --ink: #f2f7ff;
+      --muted: #8ca3c7;
+      --dim: #5f7396;
+      --line: rgba(150, 190, 255, .14);
+      --glass: rgba(120, 165, 255, .09);
+      --glass2: rgba(120, 165, 255, .04);
+      --grad-accent: linear-gradient(135deg, #2563eb 0%, #22d3ee 100%);
+      --onda: rgba(148, 163, 184, .55);
+      --verde: #4ade80;
+      --topo-h: 178px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0 }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px;
+    }
+
+    /* brilho azul bem discreto atrás da foto */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(520px 340px at 50% -60px, rgba(37, 99, 235, .18), transparent 70%),
+        radial-gradient(900px 600px at 50% 115%, rgba(34, 211, 238, .06), transparent 70%);
+    }
+
+    /* ───── topo fixo: foto redonda + nome ───── */
+    .topo {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 30;
+      display: flex; flex-direction: column; align-items: center;
+      padding: calc(14px + env(safe-area-inset-top)) 16px 0;
+      pointer-events: none;
+    }
+
+    .foto-wrap { position: relative; width: 92px; height: 92px; }
+
+    .foto-wrap img {
+      position: relative; z-index: 2;
+      width: 92px; height: 92px; border-radius: 50%; object-fit: cover;
+      border: 2px solid rgba(150, 190, 255, .35);
+      box-shadow: 0 10px 34px rgba(1, 4, 14, .7), 0 0 0 5px rgba(120, 165, 255, .07);
+      background: var(--bg2);
+    }
+
+    /* ondas cinzas circulares quando ele "fala" */
+    .onda {
+      position: absolute; inset: 0; z-index: 1;
+      border-radius: 50%;
+      border: 1.5px solid var(--onda);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .falando .onda { animation: sonar 1.9s ease-out infinite; }
+    .falando .onda:nth-child(2) { animation-delay: .62s }
+    .falando .onda:nth-child(3) { animation-delay: 1.24s }
+    @keyframes sonar {
+      0% { transform: scale(1); opacity: .75 }
+      100% { transform: scale(2.05); opacity: 0 }
+    }
+
+    .topo .nome {
+      margin-top: 10px;
+      font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 17px;
+      letter-spacing: -.01em;
+    }
+    .topo .st {
+      margin-top: 3px;
+      font-family: 'Montserrat', sans-serif; font-weight: 400; font-size: 11.5px;
+      color: var(--muted); display: flex; align-items: center; gap: 6px;
+    }
+    .topo .st .dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--verde);
+      box-shadow: 0 0 8px rgba(74, 222, 128, .8); flex: none;
+    }
+
+    /* degradê fixo: as mensagens vão sumindo por trás da foto */
+    .veu {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+      height: calc(var(--topo-h) + 84px);
+      pointer-events: none;
+      background: linear-gradient(to bottom, var(--bg) 0%, var(--bg) 58%, rgba(3, 7, 15, 0) 100%);
+    }
+
+    /* ───── conversa ───── */
+    main {
+      position: relative; z-index: 10;
+      max-width: 560px; margin: 0 auto;
+      padding: calc(var(--topo-h) + 26px) 18px 190px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+
+    .msg {
+      max-width: 82%;
+      padding: 9px 13px;
+      border-radius: 16px;
+      line-height: 1.45;
+      font-size: 14.5px;
+      word-wrap: break-word;
+      animation: pop .28s cubic-bezier(.34, 1.4, .5, 1);
+      transform-origin: bottom left;
+    }
+    .msg.dele {
+      align-self: flex-start;
+      background: linear-gradient(160deg, var(--glass) 0%, var(--glass2) 100%);
+      border: 1px solid var(--line);
+      border-bottom-left-radius: 5px;
+      color: var(--ink);
+    }
+    .msg.meu {
+      align-self: flex-end;
+      background: var(--grad-accent);
+      border-bottom-right-radius: 5px;
+      color: #fff;
+      font-weight: 500;
+      transform-origin: bottom right;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, .35);
+    }
+    @keyframes pop {
+      0% { transform: scale(.6); opacity: 0 }
+      100% { transform: scale(1); opacity: 1 }
+    }
+
+    /* digitando… */
+    .msg.digitando { display: flex; gap: 5px; align-items: center; padding: 13px 15px; }
+    .msg.digitando i {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--muted);
+      animation: pisca 1.1s ease-in-out infinite;
+    }
+    .msg.digitando i:nth-child(2) { animation-delay: .18s }
+    .msg.digitando i:nth-child(3) { animation-delay: .36s }
+    @keyframes pisca {
+      0%, 60%, 100% { transform: translateY(0); opacity: .45 }
+      30% { transform: translateY(-4px); opacity: 1 }
+    }
+
+    /* ───── botões de resposta (fixos embaixo, no lugar do campo de digitar) ───── */
+    .opcoes-area {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+      padding: 34px 14px calc(16px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, var(--bg) 0%, var(--bg) 55%, rgba(3, 7, 15, 0) 100%);
+    }
+    .opcoes {
+      max-width: 560px; margin: 0 auto;
+      display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    }
+    .opcoes button {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 400; font-size: 12.5px; letter-spacing: .01em;
+      color: var(--ink);
+      background: rgba(120, 165, 255, .07);
+      border: 1px solid rgba(150, 190, 255, .28);
+      border-radius: 999px;
+      padding: 7px 14px;
+      cursor: pointer;
+      transition: background .18s, border-color .18s, transform .18s;
+      animation: sobe .3s cubic-bezier(.34, 1.3, .5, 1) backwards;
+    }
+    .opcoes button:nth-child(2) { animation-delay: .06s }
+    .opcoes button:nth-child(3) { animation-delay: .12s }
+    .opcoes button:nth-child(4) { animation-delay: .18s }
+    .opcoes button:nth-child(5) { animation-delay: .24s }
+    .opcoes button:hover, .opcoes button:focus-visible {
+      background: rgba(120, 165, 255, .16);
+      border-color: rgba(150, 190, 255, .55);
+      transform: translateY(-1px);
+      outline: none;
+    }
+    @keyframes sobe {
+      0% { transform: translateY(12px); opacity: 0 }
+      100% { transform: translateY(0); opacity: 1 }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .msg, .opcoes button { animation: none }
+      .falando .onda { animation-duration: 3.5s }
+      html { scroll-behavior: auto }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="veu"></div>
+
+  <header class="topo">
+    <div class="foto-wrap" id="fotoWrap">
+      <span class="onda"></span><span class="onda"></span><span class="onda"></span>
+      <img id="foto" src="img/fotocandidato.webp" alt="Aldo Maurício">
+    </div>
+    <div class="nome" id="nome">Aldo Maurício</div>
+    <div class="st"><span class="dot"></span><span id="statusTxt">Pode perguntar 👇</span></div>
+  </header>
+
+  <main id="chat" aria-live="polite"></main>
+
+  <div class="opcoes-area">
+    <div class="opcoes" id="opcoes"></div>
+  </div>
+
+  <script>
+    // conteúdo reserva: se a API falhar por qualquer motivo, a página nunca fica muda
+    // (é o mesmo conteúdo padrão de api/_iadoaldo.js)
+    let CFG = {
+      nome: 'Aldo Maurício', status: 'Pode perguntar 👇', foto: 'img/fotocandidato.webp', inicio: 'p1',
+      passos: [
+        { id: 'p1', titulo: 'Boas-vindas', msgs: ['Eae! Tudo beleza? 👋', 'Aqui é o Aldo Maurício, pré-candidato a deputado estadual pelo Amapá.', 'Pode perguntar sem cerimônia — escolhe aí embaixo o que você quer saber. Tamo junto! 🙏'], opcoes: [{ label: 'Quem é você, Aldo?', goto: 'p2' }, { label: 'O que você defende?', goto: 'p3' }, { label: 'Fé e valores', goto: 'p6' }, { label: 'Como falar com você?', goto: 'p7' }] },
+        { id: 'p2', titulo: 'Quem é o Aldo', msgs: ['Boa! Deixa eu me apresentar direitinho 😄', 'Sou enfermeiro há 26 anos e professor há 15. Também sou bacharel em Direito pela UNIFAP.', 'Sou funcionário público, escritor, teólogo e participo de vários projetos sociais aqui na nossa terra.', 'Minha vida inteira foi servindo pessoas — na saúde, na sala de aula e na comunidade. Agora quero servir o nosso estado inteiro.'], opcoes: [{ label: 'E o que você defende?', goto: 'p3' }, { label: 'Sua história na saúde', goto: 'p4' }, { label: '⟲ Voltar ao início', goto: 'p1' }] },
+        { id: 'p3', titulo: 'Bandeiras', msgs: ['Minhas bandeiras são bem claras, meu irmão:', '🩺 Saúde — valorizar quem cuida da gente e melhorar o atendimento público.', '📚 Educação — pra mim é a maior ferramenta de transformação que existe.', '🛡️ Segurança — mais proteção pras nossas famílias, trabalhadores e comunidades.', '💼 Trabalho — gerar oportunidade e valorizar quem batalha todo dia.'], opcoes: [{ label: 'Me fala mais de saúde', goto: 'p4' }, { label: 'Me fala mais de educação', goto: 'p5' }, { label: 'Fé e valores', goto: 'p6' }, { label: '⟲ Voltar ao início', goto: 'p1' }] },
+        { id: 'p4', titulo: 'Saúde', msgs: ['Saúde pra mim não é discurso, é a minha vida 🩺', 'São 26 anos de enfermagem. Sou diretor da UBS Cláudio Leão e fui voluntário da Cruz Vermelha.', 'Como sindicalista, lutei junto com a categoria pelo piso da enfermagem.', 'Quem tá no chão do posto e do hospital sabe o que o povo passa. É por isso que brigo por atendimento digno e pela valorização dos profissionais de saúde.'], opcoes: [{ label: 'E a educação?', goto: 'p5' }, { label: 'Ver todas as bandeiras', goto: 'p3' }, { label: '⟲ Voltar ao início', goto: 'p1' }] },
+        { id: 'p5', titulo: 'Educação', msgs: ['A educação mudou a minha vida — e eu tento devolver isso todo dia 📚', 'Sou professor há 15 anos e idealizei o Aulão Solidário pra ajudar quem tá se preparando.', 'Me chamam de amigo dos concurseiros, e é isso mesmo: quero mais oportunidade pra quem estuda e corre atrás.'], opcoes: [{ label: 'E a saúde?', goto: 'p4' }, { label: 'Fé e valores', goto: 'p6' }, { label: '⟲ Voltar ao início', goto: 'p1' }] },
+        { id: 'p6', titulo: 'Fé e valores', msgs: ['Aqui é simples: fé, verdade, coragem e coerência 🙏', 'Defendo a família, a vida e a liberdade religiosa. Valores não se negociam.', 'Sou líder evangélico na comunidade e vice-líder da UJAMA, a nossa juventude gospel.', '"Posso tudo naquele que me fortalece" — Filipenses 4:13. É esse o combustível.'], opcoes: [{ label: 'Suas bandeiras', goto: 'p3' }, { label: 'Falar com você', goto: 'p7' }, { label: '⟲ Voltar ao início', goto: 'p1' }] },
+        { id: 'p7', titulo: 'Contato', msgs: ['Vou adorar trocar essa ideia contigo! 🤝', 'Me segue no Instagram: @aldo_mauricio — é por lá que eu posto tudo.', 'E aqui no site tem o formulário de contato: preenche que a mensagem chega direto pra equipe.'], opcoes: [{ label: '⟲ Voltar ao início', goto: 'p1' }, { label: 'Quem é o Aldo?', goto: 'p2' }] },
+      ],
+    };
+
+    const chat = document.getElementById('chat');
+    const opcoesEl = document.getElementById('opcoes');
+    const fotoWrap = document.getElementById('fotoWrap');
+    const opcoesArea = document.querySelector('.opcoes-area');
+    let porId = {};
+    let tocando = false;
+
+    const espera = ms => new Promise(r => setTimeout(r, ms));
+    const rolar = () => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+    function bolha(classe, texto) {
+      const d = document.createElement('div');
+      d.className = 'msg ' + classe;
+      d.textContent = texto;
+      chat.appendChild(d);
+      rolar();
+      return d;
+    }
+
+    function bolhaDigitando() {
+      const d = document.createElement('div');
+      d.className = 'msg dele digitando';
+      d.innerHTML = '<i></i><i></i><i></i>';
+      chat.appendChild(d);
+      rolar();
+      return d;
+    }
+
+    function limparOpcoes() {
+      opcoesEl.replaceChildren();
+      ajustarEspaco();
+    }
+
+    function ajustarEspaco() {
+      // garante que a última mensagem nunca fique escondida atrás dos botões
+      chat.style.paddingBottom = (opcoesArea.offsetHeight + 26) + 'px';
+    }
+
+    function mostrarOpcoes(passo) {
+      let ops = (passo.opcoes || []).slice();
+      if (!ops.length) ops = [{ label: '⟲ Voltar ao início', goto: CFG.inicio }];
+      opcoesEl.replaceChildren();
+      ops.forEach(o => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = o.label;
+        b.onclick = () => escolher(o);
+        opcoesEl.appendChild(b);
+      });
+      ajustarEspaco();
+      rolar();
+    }
+
+    function escolher(o) {
+      if (tocando) return;
+      limparOpcoes();
+      bolha('meu', o.label);
+      tocar(o.goto || CFG.inicio);
+    }
+
+    async function tocar(id) {
+      const passo = porId[id] || porId[CFG.inicio];
+      if (!passo) return;
+      tocando = true;
+      fotoWrap.classList.add('falando');
+      for (const m of passo.msgs) {
+        const dig = bolhaDigitando();
+        await espera(Math.min(520 + m.length * 16, 1700));
+        dig.remove();
+        bolha('dele', m);
+        await espera(300);
+      }
+      fotoWrap.classList.remove('falando');
+      tocando = false;
+      mostrarOpcoes(passo);
+    }
+
+    function aplicarConfig(cfg) {
+      CFG = cfg;
+      porId = {};
+      cfg.passos.forEach(p => { porId[p.id] = p; });
+      document.getElementById('nome').textContent = cfg.nome || 'Aldo Maurício';
+      document.getElementById('statusTxt').textContent = cfg.status || 'Pode perguntar 👇';
+      if (cfg.foto) document.getElementById('foto').src = cfg.foto;
+    }
+
+    (async function iniciar() {
+      try {
+        const res = await fetch('/api/iadoaldo');
+        const data = await res.json();
+        if (data && data.config && Array.isArray(data.config.passos) && data.config.passos.length) {
+          aplicarConfig(data.config);
+        } else {
+          aplicarConfig(CFG);
+        }
+      } catch (e) {
+        aplicarConfig(CFG); // sem internet com a API? segue com o conteúdo reserva
+      }
+      ajustarEspaco();
+      tocar(CFG.inicio);
+    })();
+
+    /* rastreamento de visitas — aparece nas métricas do painel como /iadoaldo */
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path: '/iadoaldo', referrer: document.referrer || null })
+    }).catch(() => {});
+  </script>
+</body>
+
+</html>
