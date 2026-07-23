@@ -22,7 +22,7 @@
       --grad-accent: linear-gradient(135deg, #2563eb 0%, #22d3ee 100%);
       --onda: rgba(148, 163, 184, .55);
       --verde: #4ade80;
-      --topo-h: 276px;
+      --topo-h: 255px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0 }
@@ -48,7 +48,7 @@
     .topo {
       position: fixed; top: 0; left: 0; right: 0; z-index: 30;
       display: flex; flex-direction: column; align-items: center;
-      padding: calc(42px + env(safe-area-inset-top)) 16px 0;
+      padding: calc(21px + env(safe-area-inset-top)) 16px 0;
       pointer-events: none;
     }
 
@@ -121,8 +121,8 @@
     }
     .msg.dele {
       align-self: flex-start;
-      background: linear-gradient(160deg, var(--glass) 0%, var(--glass2) 100%);
-      border: 1px solid var(--line);
+      background: linear-gradient(160deg, rgba(96, 165, 250, .24) 0%, rgba(59, 130, 246, .14) 100%);
+      border: 1px solid rgba(96, 165, 250, .4);
       border-bottom-left-radius: 5px;
       color: var(--ink);
     }
@@ -156,7 +156,7 @@
     /* ───── botões de resposta (fixos embaixo, no lugar do campo de digitar) ───── */
     .opcoes-area {
       position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
-      padding: 48px 14px calc(22px + env(safe-area-inset-bottom));
+      padding: 16px 14px calc(22px + env(safe-area-inset-bottom));
       background: linear-gradient(to top, var(--bg) 0%, var(--bg) 55%, rgba(3, 7, 15, 0) 100%);
     }
     .opcoes {
@@ -329,7 +329,7 @@
 
     function ajustarEspaco() {
       // garante que a última mensagem nunca fique escondida atrás dos botões
-      chat.style.paddingBottom = (opcoesArea.offsetHeight + 26) + 'px';
+      chat.style.paddingBottom = (opcoesArea.offsetHeight + 10) + 'px';
     }
 
     const AJUDA_LABEL = 'Quero pedir uma ajuda / Relatar um problema!';
