@@ -1,4 +1,4 @@
-const { getPool } = require('../_db');
+const { getPool, ensureSchema } = require('../_db');
 const { isAuthenticated } = require('../_auth');
 
 // mesma normalização usada no mapa.html — sem isso, "Novo Horizonte",
@@ -19,6 +19,7 @@ module.exports = async (req, res) => {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Método não permitido' });
   if (!isAuthenticated(req)) return res.status(401).json({ error: 'não autenticado' });
   try {
+    await ensureSchema();
     const [liderancasContagemRes, apoiadoresIndividuaisRes, bairrosRes] = await Promise.all([
       getPool().query(`
         SELECT l.id, (SELECT count(*)::int FROM apoiadores a WHERE a.indicado_por_id = l.id) AS n

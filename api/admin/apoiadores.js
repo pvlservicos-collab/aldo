@@ -1,4 +1,4 @@
-const { getPool } = require('../_db');
+const { getPool, ensureSchema } = require('../_db');
 const { isAuthenticated } = require('../_auth');
 
 const PAGE_SIZE = 20;
@@ -53,6 +53,7 @@ async function exportarCsv(req, res, whereSql, params) {
 module.exports = async (req, res) => {
   if (!isAuthenticated(req)) return res.status(401).json({ error: 'não autenticado' });
   try {
+    await ensureSchema();
     if (req.method === 'DELETE') {
       const id = Number(req.query.id);
       if (!id) return res.status(400).json({ error: 'id inválido' });
