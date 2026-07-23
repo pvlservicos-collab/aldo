@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Cadastro de Eleitor — Aldo Maurício</title>
+  <title>Cadastro de Apoiador — Aldo Maurício</title>
   <link rel="icon" type="image/webp" href="img/logo.webp">
   <link
     href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=DM+Sans:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap"
@@ -271,11 +271,11 @@
     <div class="card">
       <div class="topo">
         <img src="img/logo.webp" alt="Aldo Maurício">
-        <h1>Cadastro de Eleitor</h1>
+        <h1>Cadastro de Apoiador</h1>
         <p>Faça parte do movimento com Aldo Maurício. Preencha seus dados abaixo.</p>
       </div>
 
-      <form id="form-eleitor">
+      <form id="form-apoiador">
         <div class="fg">
           <label for="l-nome">Nome completo</label>
           <input type="text" id="l-nome" placeholder="Seu nome completo" required>
@@ -284,7 +284,7 @@
           <label for="l-numero">WhatsApp</label>
           <input type="tel" id="l-numero" placeholder="(00) 00000-0000" required>
         </div>
-        <div class="fg ac-wrap">
+        <div class="fg ac-wrap" id="bairro-wrap">
           <label for="l-bairro">Bairro</label>
           <input type="text" id="l-bairro" placeholder="Digite seu bairro" autocomplete="off" required>
           <div class="ac-list" id="bairro-list"></div>
@@ -300,6 +300,12 @@
         <div class="fg">
           <label for="l-endereco">Endereço</label>
           <input type="text" id="l-endereco" placeholder="Rua e número" required>
+        </div>
+        <div class="fg ac-wrap" id="indicado-wrap">
+          <label for="l-indicado">Quem pediu para você apoiar Aldo Maurício? <span style="font-weight:400;opacity:.7">(opcional)</span></label>
+          <input type="text" id="l-indicado" placeholder="Nome da liderança" autocomplete="off">
+          <input type="hidden" id="l-indicado-id">
+          <div class="ac-list" id="indicado-list"></div>
         </div>
         <button type="submit" class="btn-cadastrar" id="btn-cadastrar">Cadastrar</button>
         <p class="consentimento">Ao enviar, concordo com a <a href="/politicadeprivacidade">política de privacidade e dados</a>.</p>
@@ -370,11 +376,46 @@
 
     bairroInput.addEventListener('input', () => renderBairros(bairroInput.value));
     bairroInput.addEventListener('focus', () => renderBairros(bairroInput.value));
+
+    let LIDERANCAS = [];
+    fetch('/api/lideranca').then(r => r.json()).then(d => { LIDERANCAS = d.liderancas || []; }).catch(() => {});
+
+    const indicadoInput = document.getElementById('l-indicado');
+    const indicadoIdInput = document.getElementById('l-indicado-id');
+    const indicadoList = document.getElementById('indicado-list');
+
+    function renderIndicados(filtro) {
+      const termo = normaliza(filtro.trim());
+      const itens = termo ? LIDERANCAS.filter(l => normaliza(l.nome).includes(termo)) : LIDERANCAS;
+      indicadoList.innerHTML = '';
+      if (!itens.length) {
+        indicadoList.innerHTML = '<div class="ac-empty">Nenhuma liderança encontrada</div>';
+      } else {
+        itens.forEach(l => {
+          const item = document.createElement('div');
+          item.className = 'ac-item';
+          item.textContent = l.nome;
+          item.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            indicadoInput.value = l.nome;
+            indicadoIdInput.value = l.id;
+            indicadoList.classList.remove('show');
+          });
+          indicadoList.appendChild(item);
+        });
+      }
+      indicadoList.classList.add('show');
+    }
+
+    indicadoInput.addEventListener('input', () => { indicadoIdInput.value = ''; renderIndicados(indicadoInput.value); });
+    indicadoInput.addEventListener('focus', () => renderIndicados(indicadoInput.value));
+
     document.addEventListener('click', (e) => {
-      if (!e.target.closest('.ac-wrap')) bairroList.classList.remove('show');
+      if (!e.target.closest('#bairro-wrap')) bairroList.classList.remove('show');
+      if (!e.target.closest('#indicado-wrap')) indicadoList.classList.remove('show');
     });
 
-    const form = document.getElementById('form-eleitor');
+    const form = document.getElementById('form-apoiador');
     const btn = document.getElementById('btn-cadastrar');
     const msgErro = document.getElementById('msg-erro');
 
@@ -386,6 +427,8 @@
       const mae = document.getElementById('l-mae').value.trim();
       const nascimento = document.getElementById('l-nascimento').value.trim();
       const endereco = document.getElementById('l-endereco').value.trim();
+      const indicadoPor = indicadoInput.value.trim();
+      const indicadoPorId = indicadoIdInput.value.trim();
       msgErro.style.display = 'none';
       if (!nome || !numero || !bairro || !mae || !nascimento || !endereco) {
         msgErro.textContent = 'Preencha todos os campos obrigatórios.';
@@ -395,10 +438,10 @@
       btn.disabled = true;
       btn.textContent = 'Enviando…';
       try {
-        const res = await fetch('/api/eleitor', {
+        const res = await fetch('/api/apoiadores', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nome, numero, bairro, mae, nascimento, endereco })
+          body: JSON.stringify({ nome, numero, bairro, mae, nascimento, endereco, indicadoPor, indicadoPorId: indicadoPorId || null })
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || 'Não foi possível enviar. Tente novamente.');

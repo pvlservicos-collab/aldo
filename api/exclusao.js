@@ -3,7 +3,7 @@ const { getPool } = require('./_db');
 // endpoint público (LGPD) — qualquer pessoa pode localizar e apagar os
 // próprios dados pelo número de WhatsApp, sem precisar estar logada.
 // Busca nas 3 tabelas onde um número pode aparecer: formulário de contato
-// (leads.whatsapp), liderança (liderancas.numero) e eleitor (eleitores.numero).
+// (leads.whatsapp), liderança (liderancas.numero) e apoiador (apoiadores.numero).
 
 function normalizarFone(s) {
   return String(s || '').replace(/\D/g, '');
@@ -23,32 +23,32 @@ module.exports = async (req, res) => {
 
   try {
     if (req.method === 'GET') {
-      const [leads, lids, eles] = await Promise.all([
+      const [leads, lids, apo] = await Promise.all([
         getPool().query(`SELECT id, nome FROM leads WHERE regexp_replace(whatsapp, '\\D', '', 'g') = ANY($1)`, [lista]),
         getPool().query(`SELECT id, nome FROM liderancas WHERE regexp_replace(numero, '\\D', '', 'g') = ANY($1)`, [lista]),
-        getPool().query(`SELECT id, nome FROM eleitores WHERE regexp_replace(numero, '\\D', '', 'g') = ANY($1)`, [lista]),
+        getPool().query(`SELECT id, nome FROM apoiadores WHERE regexp_replace(numero, '\\D', '', 'g') = ANY($1)`, [lista]),
       ]);
-      const total = leads.rows.length + lids.rows.length + eles.rows.length;
+      const total = leads.rows.length + lids.rows.length + apo.rows.length;
       if (!total) return res.status(200).json({ found: false });
-      const nome = (lids.rows[0] || eles.rows[0] || leads.rows[0] || {}).nome;
+      const nome = (lids.rows[0] || apo.rows[0] || leads.rows[0] || {}).nome;
       return res.status(200).json({
         found: true,
         nome,
         formulario: leads.rows.length,
         lideranca: lids.rows.length,
-        eleitor: eles.rows.length,
+        apoiador: apo.rows.length,
       });
     }
 
     if (req.method === 'DELETE') {
-      const [leads, lids, eles] = await Promise.all([
+      const [leads, lids, apo] = await Promise.all([
         getPool().query(`DELETE FROM leads WHERE regexp_replace(whatsapp, '\\D', '', 'g') = ANY($1)`, [lista]),
         getPool().query(`DELETE FROM liderancas WHERE regexp_replace(numero, '\\D', '', 'g') = ANY($1)`, [lista]),
-        getPool().query(`DELETE FROM eleitores WHERE regexp_replace(numero, '\\D', '', 'g') = ANY($1)`, [lista]),
+        getPool().query(`DELETE FROM apoiadores WHERE regexp_replace(numero, '\\D', '', 'g') = ANY($1)`, [lista]),
       ]);
       return res.status(200).json({
         ok: true,
-        deletados: { formulario: leads.rowCount, lideranca: lids.rowCount, eleitor: eles.rowCount },
+        deletados: { formulario: leads.rowCount, lideranca: lids.rowCount, apoiador: apo.rowCount },
       });
     }
 

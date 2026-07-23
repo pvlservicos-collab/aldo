@@ -1547,7 +1547,7 @@
 
     .btn-del-lead,
     .btn-del-lid,
-    .btn-del-ele,
+    .btn-del-apo,
     .btn-del-ag {
       background: none;
       border: none;
@@ -1561,7 +1561,7 @@
 
     .btn-del-lead:hover,
     .btn-del-lid:hover,
-    .btn-del-ele:hover,
+    .btn-del-apo:hover,
     .btn-del-ag:hover {
       opacity: 1;
       background: rgba(248, 113, 113, .12)
@@ -1961,12 +1961,12 @@
             <path d="M18.5 14.5c2 1 3 2.9 3 5.5" />
           </svg>
           <span>Lideranças</span></a>
-        <a data-tab="eleitores" onclick="mudarTab('eleitores')">
+        <a data-tab="apoiadores" onclick="mudarTab('apoiadores')">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M5 12l4 4L19 6" />
             <rect x="3" y="17" width="18" height="4" rx="1" />
           </svg>
-          <span>Eleitores</span></a>
+          <span>Apoiadores</span></a>
         <a data-tab="agenda" onclick="mudarTab('agenda')">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="5" width="18" height="16" rx="2" />
@@ -2083,8 +2083,8 @@
             <div class="val" id="st-lid">—</div>
           </div>
           <div class="stat-card sc-blue">
-            <div class="lbl">Eleitores cadastrados</div>
-            <div class="val" id="st-ele">—</div>
+            <div class="lbl">Apoiadores cadastrados</div>
+            <div class="val" id="st-apo">—</div>
           </div>
         </div>
         <div class="chart-box">
@@ -2232,6 +2232,7 @@
                 <th>Nome da mãe</th>
                 <th>Nascimento</th>
                 <th>Endereço</th>
+                <th>Apoiadores</th>
                 <th>Data</th>
                 <th></th>
               </tr>
@@ -2247,20 +2248,20 @@
         </div>
       </div>
 
-      <!-- ELEITORES -->
-      <div class="tab-content" id="tab-eleitores">
+      <!-- APOIADORES -->
+      <div class="tab-content" id="tab-apoiadores">
         <div class="page-header">
-          <h2>Eleitores</h2>
-          <p>Pessoas que se cadastraram na página /eleitor</p>
+          <h2>Apoiadores</h2>
+          <p>Pessoas que se cadastraram na página /apoiadores</p>
         </div>
         <div class="toolbar">
-          <input id="eleSearch" type="text" placeholder="Buscar por nome, WhatsApp, bairro, mãe ou endereço…"
-            oninput="buscarEleitoresDebounced()">
-          <input id="eleFrom" type="date" onchange="aplicarFiltroDataEle()">
+          <input id="apoSearch" type="text" placeholder="Buscar por nome, WhatsApp, bairro, mãe ou endereço…"
+            oninput="buscarApoiadoresDebounced()">
+          <input id="apoFrom" type="date" onchange="aplicarFiltroDataApo()">
           <span class="datesep">até</span>
-          <input id="eleTo" type="date" onchange="aplicarFiltroDataEle()">
-          <button type="button" class="btn-clear" onclick="limparFiltroDataEle()">Limpar datas</button>
-          <button type="button" class="btn-export" onclick="exportarCsvEle()">⬇ Exportar CSV</button>
+          <input id="apoTo" type="date" onchange="aplicarFiltroDataApo()">
+          <button type="button" class="btn-clear" onclick="limparFiltroDataApo()">Limpar datas</button>
+          <button type="button" class="btn-export" onclick="exportarCsvApo()">⬇ Exportar CSV</button>
         </div>
         <div class="table-scroll">
           <table>
@@ -2272,18 +2273,19 @@
                 <th>Nome da mãe</th>
                 <th>Nascimento</th>
                 <th>Endereço</th>
+                <th>Indicado por</th>
                 <th>Data</th>
                 <th></th>
               </tr>
             </thead>
-            <tbody id="eleitoresBody"></tbody>
+            <tbody id="apoiadoresBody"></tbody>
           </table>
         </div>
-        <div id="eleitoresEmpty" class="empty-msg hidden">Nenhum eleitor cadastrado ainda.</div>
+        <div id="apoiadoresEmpty" class="empty-msg hidden">Nenhum apoiador cadastrado ainda.</div>
         <div class="pager">
-          <button id="pgPrevEle" onclick="mudarPaginaEle(-1)">← Anterior</button>
-          <span id="pgInfoEle">página 1</span>
-          <button id="pgNextEle" onclick="mudarPaginaEle(1)">Próxima →</button>
+          <button id="pgPrevApo" onclick="mudarPaginaApo(-1)">← Anterior</button>
+          <span id="pgInfoApo">página 1</span>
+          <button id="pgNextApo" onclick="mudarPaginaApo(1)">Próxima →</button>
         </div>
       </div>
     </div>
@@ -2324,7 +2326,7 @@
   <script>
     let periodoAtual = '7d', paginaAtual = 1, buscaAtual = '', dataDe = '', dataAte = '', totalLeads = 0, chart = null;
     let paginaAtualLid = 1, buscaAtualLid = '', dataDeLid = '', dataAteLid = '', totalLiderancas = 0;
-    let paginaAtualEle = 1, buscaAtualEle = '', dataDeEle = '', dataAteEle = '', totalEleitores = 0;
+    let paginaAtualApo = 1, buscaAtualApo = '', dataDeApo = '', dataAteApo = '', totalApoiadores = 0;
     let resumoVotosTimer = null;
     let customFrom = '', customTo = '';
     const NOTA_DE_CORTE = 3898;
@@ -2378,7 +2380,7 @@
       carregarIgnoredIps();
       carregarLeads();
       carregarLiderancas();
-      carregarEleitores();
+      carregarApoiadores();
       carregarAgenda();
       carregarResumoVotos();
       if (!resumoVotosTimer) resumoVotosTimer = setInterval(carregarResumoVotos, 20000);
@@ -2516,15 +2518,15 @@
         const urlMetrics = periodoAtual === 'custom'
           ? ('/api/admin/metrics?from=' + r.from + '&to=' + r.to)
           : ('/api/admin/metrics?period=' + periodoAtual);
-        const [d, lid, ele] = await Promise.all([
+        const [d, lid, apo] = await Promise.all([
           api(urlMetrics),
           api('/api/admin/liderancas?from=' + r.from + '&to=' + r.to + '&page=1').catch(() => null),
-          api('/api/admin/eleitores?from=' + r.from + '&to=' + r.to + '&page=1').catch(() => null),
+          api('/api/admin/apoiadores?from=' + r.from + '&to=' + r.to + '&page=1').catch(() => null),
         ]);
         document.getElementById('st-site').textContent = d.site_view;
         document.getElementById('st-leads').textContent = d.leads;
         document.getElementById('st-lid').textContent = lid ? lid.total : '—';
-        document.getElementById('st-ele').textContent = ele ? ele.total : '—';
+        document.getElementById('st-apo').textContent = apo ? apo.total : '—';
         desenharGrafico(d.serie);
       } catch (e) {
         if (String(e.message).includes('autenticado')) return logout();
@@ -2905,12 +2907,16 @@
           const dt = new Date(l.criado_em).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
           const nasc = l.data_nascimento ? new Date(l.data_nascimento).toLocaleDateString('pt-BR') : '—';
           const link = waLink(l.numero);
+          const contagemApo = l.apoiadores_count > 0
+            ? '<span style="color:var(--green);font-weight:600">' + l.apoiadores_count + '</span>'
+            : '<span style="color:var(--muted)">Padrão (30)</span>';
           tr.innerHTML = '<td>' + esc(l.nome) + '</td>' +
             '<td>' + (link ? ('<a class="wa-link" target="_blank" href="' + link + '">' + esc(l.numero || '') + '</a>') : '—') + '</td>' +
             '<td>' + esc(l.bairro || '—') + '</td>' +
             '<td>' + esc(l.nome_mae || '—') + '</td>' +
             '<td>' + nasc + '</td>' +
             '<td>' + esc(l.endereco || '—') + '</td>' +
+            '<td>' + contagemApo + '</td>' +
             '<td>' + dt + '</td>' +
             '<td><button type="button" class="btn-del-lid" data-id="' + l.id + '" title="Excluir">🗑</button></td>';
           body.appendChild(tr);
@@ -2943,43 +2949,43 @@
       }
     });
 
-    let searchTimerEle;
-    function buscarEleitoresDebounced() {
-      clearTimeout(searchTimerEle);
-      searchTimerEle = setTimeout(() => { buscaAtualEle = document.getElementById('eleSearch').value.trim(); paginaAtualEle = 1; carregarEleitores(); }, 350);
+    let searchTimerApo;
+    function buscarApoiadoresDebounced() {
+      clearTimeout(searchTimerApo);
+      searchTimerApo = setTimeout(() => { buscaAtualApo = document.getElementById('apoSearch').value.trim(); paginaAtualApo = 1; carregarApoiadores(); }, 350);
     }
 
-    function aplicarFiltroDataEle() {
-      dataDeEle = document.getElementById('eleFrom').value;
-      dataAteEle = document.getElementById('eleTo').value;
-      paginaAtualEle = 1; carregarEleitores();
+    function aplicarFiltroDataApo() {
+      dataDeApo = document.getElementById('apoFrom').value;
+      dataAteApo = document.getElementById('apoTo').value;
+      paginaAtualApo = 1; carregarApoiadores();
     }
-    function limparFiltroDataEle() {
-      document.getElementById('eleFrom').value = ''; document.getElementById('eleTo').value = '';
-      dataDeEle = ''; dataAteEle = ''; paginaAtualEle = 1; carregarEleitores();
+    function limparFiltroDataApo() {
+      document.getElementById('apoFrom').value = ''; document.getElementById('apoTo').value = '';
+      dataDeApo = ''; dataAteApo = ''; paginaAtualApo = 1; carregarApoiadores();
     }
-    function filtrosQSEle() {
+    function filtrosQSApo() {
       const qs = new URLSearchParams();
-      if (buscaAtualEle) qs.set('q', buscaAtualEle);
-      if (dataDeEle) qs.set('from', dataDeEle);
-      if (dataAteEle) qs.set('to', dataAteEle);
+      if (buscaAtualApo) qs.set('q', buscaAtualApo);
+      if (dataDeApo) qs.set('from', dataDeApo);
+      if (dataAteApo) qs.set('to', dataAteApo);
       return qs;
     }
-    function exportarCsvEle() {
-      const qs = filtrosQSEle();
+    function exportarCsvApo() {
+      const qs = filtrosQSApo();
       qs.set('export', 'csv');
-      window.open('/api/admin/eleitores?' + qs.toString(), '_blank');
+      window.open('/api/admin/apoiadores?' + qs.toString(), '_blank');
     }
 
-    async function carregarEleitores() {
+    async function carregarApoiadores() {
       try {
-        const qs = filtrosQSEle();
-        qs.set('page', paginaAtualEle);
-        const d = await api('/api/admin/eleitores?' + qs.toString());
-        totalEleitores = d.total;
-        const body = document.getElementById('eleitoresBody');
+        const qs = filtrosQSApo();
+        qs.set('page', paginaAtualApo);
+        const d = await api('/api/admin/apoiadores?' + qs.toString());
+        totalApoiadores = d.total;
+        const body = document.getElementById('apoiadoresBody');
         body.innerHTML = '';
-        document.getElementById('eleitoresEmpty').classList.toggle('hidden', d.itens.length > 0);
+        document.getElementById('apoiadoresEmpty').classList.toggle('hidden', d.itens.length > 0);
         d.itens.forEach(l => {
           const tr = document.createElement('tr');
           const dt = new Date(l.criado_em).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
@@ -2991,31 +2997,32 @@
             '<td>' + esc(l.nome_mae || '—') + '</td>' +
             '<td>' + nasc + '</td>' +
             '<td>' + esc(l.endereco || '—') + '</td>' +
+            '<td>' + esc(l.indicado_por || '—') + '</td>' +
             '<td>' + dt + '</td>' +
-            '<td><button type="button" class="btn-del-ele" data-id="' + l.id + '" title="Excluir">🗑</button></td>';
+            '<td><button type="button" class="btn-del-apo" data-id="' + l.id + '" title="Excluir">🗑</button></td>';
           body.appendChild(tr);
         });
-        const totalPaginas = Math.max(1, Math.ceil(totalEleitores / 20));
-        document.getElementById('pgInfoEle').textContent = 'página ' + paginaAtualEle + ' de ' + totalPaginas;
-        document.getElementById('pgPrevEle').disabled = paginaAtualEle <= 1;
-        document.getElementById('pgNextEle').disabled = paginaAtualEle >= totalPaginas;
+        const totalPaginas = Math.max(1, Math.ceil(totalApoiadores / 20));
+        document.getElementById('pgInfoApo').textContent = 'página ' + paginaAtualApo + ' de ' + totalPaginas;
+        document.getElementById('pgPrevApo').disabled = paginaAtualApo <= 1;
+        document.getElementById('pgNextApo').disabled = paginaAtualApo >= totalPaginas;
       } catch (e) {
         if (String(e.message).includes('autenticado')) return logout();
       }
     }
 
-    function mudarPaginaEle(delta) {
-      paginaAtualEle = Math.max(1, paginaAtualEle + delta);
-      carregarEleitores();
+    function mudarPaginaApo(delta) {
+      paginaAtualApo = Math.max(1, paginaAtualApo + delta);
+      carregarApoiadores();
     }
 
-    document.getElementById('eleitoresBody').addEventListener('click', async e => {
-      const b = e.target.closest('.btn-del-ele'); if (!b) return;
-      if (!confirm('Excluir esse eleitor? Não dá pra desfazer.')) return;
+    document.getElementById('apoiadoresBody').addEventListener('click', async e => {
+      const b = e.target.closest('.btn-del-apo'); if (!b) return;
+      if (!confirm('Excluir esse apoiador? Não dá pra desfazer.')) return;
       b.disabled = true;
       try {
-        await api('/api/admin/eleitores?id=' + b.dataset.id, { method: 'DELETE' });
-        carregarEleitores();
+        await api('/api/admin/apoiadores?id=' + b.dataset.id, { method: 'DELETE' });
+        carregarApoiadores();
         carregarResumoVotos();
       } catch (e) {
         alert('Erro ao excluir: ' + e.message);

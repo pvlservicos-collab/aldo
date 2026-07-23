@@ -31,21 +31,22 @@ function csvField(v) {
 
 async function exportarCsv(req, res, whereSql, params) {
   const { rows } = await getPool().query(
-    `SELECT nome, numero, bairro, nome_mae, data_nascimento, endereco, criado_em FROM eleitores ${whereSql} ORDER BY criado_em DESC`,
+    `SELECT nome, numero, bairro, nome_mae, data_nascimento, endereco, indicado_por, criado_em FROM apoiadores ${whereSql} ORDER BY criado_em DESC`,
     params
   );
 
-  const header = ['Nome', 'WhatsApp', 'Bairro', 'Nome da mãe', 'Data de nascimento', 'Endereço', 'Data'].map(csvField).join(';');
+  const header = ['Nome', 'WhatsApp', 'Bairro', 'Nome da mãe', 'Data de nascimento', 'Endereço', 'Indicado por', 'Data'].map(csvField).join(';');
   const linhas = rows.map(l => [
     l.nome, l.numero, l.bairro, l.nome_mae,
     l.data_nascimento ? new Date(l.data_nascimento).toLocaleDateString('pt-BR') : '',
     l.endereco,
+    l.indicado_por,
     new Date(l.criado_em).toLocaleString('pt-BR'),
   ].map(csvField).join(';'));
 
   const csv = '﻿' + [header, ...linhas].join('\r\n');
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-  res.setHeader('Content-Disposition', 'attachment; filename="eleitores.csv"');
+  res.setHeader('Content-Disposition', 'attachment; filename="apoiadores.csv"');
   res.status(200).send(csv);
 }
 
@@ -55,7 +56,7 @@ module.exports = async (req, res) => {
     if (req.method === 'DELETE') {
       const id = Number(req.query.id);
       if (!id) return res.status(400).json({ error: 'id inválido' });
-      await getPool().query('DELETE FROM eleitores WHERE id = $1', [id]);
+      await getPool().query('DELETE FROM apoiadores WHERE id = $1', [id]);
       return res.status(200).json({ ok: true });
     }
 
@@ -70,12 +71,12 @@ module.exports = async (req, res) => {
     const page = Math.max(1, Number(req.query.page) || 1);
     const offset = (page - 1) * PAGE_SIZE;
 
-    const totalRes = await getPool().query(`SELECT count(*)::int AS n FROM eleitores ${whereSql}`, params);
+    const totalRes = await getPool().query(`SELECT count(*)::int AS n FROM apoiadores ${whereSql}`, params);
     const total = totalRes.rows[0].n;
 
     const itensRes = await getPool().query(
-      `SELECT id, nome, numero, bairro, nome_mae, data_nascimento, endereco, criado_em
-       FROM eleitores ${whereSql}
+      `SELECT id, nome, numero, bairro, nome_mae, data_nascimento, endereco, indicado_por, criado_em
+       FROM apoiadores ${whereSql}
        ORDER BY criado_em DESC
        LIMIT ${PAGE_SIZE} OFFSET ${offset}`,
       params

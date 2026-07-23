@@ -80,7 +80,8 @@ module.exports = async (req, res) => {
     const bairros = bairrosRes.rows[0].n;
 
     const itensRes = await getPool().query(
-      `SELECT id, nome, numero, bairro, nome_mae, data_nascimento, endereco, criado_em
+      `SELECT id, nome, numero, bairro, nome_mae, data_nascimento, endereco, criado_em,
+              (SELECT count(*)::int FROM apoiadores a WHERE a.indicado_por_id = liderancas.id) AS apoiadores_count
        FROM liderancas ${whereSql}
        ORDER BY criado_em DESC
        LIMIT ${PAGE_SIZE} OFFSET ${offset}`,

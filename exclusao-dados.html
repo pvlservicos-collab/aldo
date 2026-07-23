@@ -118,7 +118,7 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:700}
           <label for="f-fone">Número de WhatsApp</label>
           <input id="f-fone" type="tel" inputmode="numeric" maxlength="16" placeholder="(96) 99999-0000"
             onkeydown="if(event.key==='Enter') buscarDados()">
-          <div class="hint">Use o mesmo número informado no cadastro de liderança, eleitor ou no formulário de contato</div>
+          <div class="hint">Use o mesmo número informado no cadastro de liderança, apoiador ou no formulário de contato</div>
           <span class="err-msg" id="err-fone">Número inválido</span>
         </div>
         <div class="alert alert-error hidden" id="busca-error"></div>
@@ -144,7 +144,7 @@ h1,h2{font-family:'Barlow Condensed',sans-serif;font-weight:700}
         <div class="preview-box">
           <div class="preview-title">⚠️ Dados que serão removidos permanentemente</div>
           <div class="preview-item"><span class="label">🧑‍🤝‍🧑 Cadastro de liderança</span><span class="count" id="preview-lideranca">—</span></div>
-          <div class="preview-item"><span class="label">🗳️ Cadastro de eleitor</span><span class="count" id="preview-eleitor">—</span></div>
+          <div class="preview-item"><span class="label">🗳️ Cadastro de apoiador</span><span class="count" id="preview-apoiador">—</span></div>
           <div class="preview-item"><span class="label">✉️ Formulário de contato</span><span class="count" id="preview-formulario">—</span></div>
         </div>
         <div class="alert alert-error" style="margin-bottom:16px">
@@ -228,7 +228,7 @@ async function buscarDados() {
 function mostrarPreview(data) {
   document.getElementById('preview-sub').textContent = data.nome ? `Dados de ${data.nome}` : 'Dados encontrados para o número informado';
   document.getElementById('preview-lideranca').textContent = data.lideranca || 0;
-  document.getElementById('preview-eleitor').textContent = data.eleitor || 0;
+  document.getElementById('preview-apoiador').textContent = data.apoiador || 0;
   document.getElementById('preview-formulario').textContent = data.formulario || 0;
   document.getElementById('chk-confirm').checked = false;
   document.getElementById('btn-deletar').disabled = true;
@@ -259,7 +259,7 @@ async function deletarDados() {
 function mostrarSucesso(deletados) {
   const partes = [];
   if (deletados.lideranca) partes.push(`${deletados.lideranca} cadastro${deletados.lideranca !== 1 ? 's' : ''} de liderança`);
-  if (deletados.eleitor) partes.push(`${deletados.eleitor} cadastro${deletados.eleitor !== 1 ? 's' : ''} de eleitor`);
+  if (deletados.apoiador) partes.push(`${deletados.apoiador} cadastro${deletados.apoiador !== 1 ? 's' : ''} de apoiador`);
   if (deletados.formulario) partes.push(`${deletados.formulario} mensage${deletados.formulario !== 1 ? 'ns' : 'm'} de contato`);
   document.getElementById('sucesso-details').textContent = partes.length ? `Removidos: ${partes.join(', ')}.` : 'Dados removidos com sucesso.';
   document.getElementById('sucesso-data').textContent = new Date().toLocaleString('pt-BR', { dateStyle: 'long', timeStyle: 'short' });

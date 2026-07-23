@@ -62,7 +62,10 @@ function ensureSchema() {
       ALTER TABLE liderancas ADD COLUMN IF NOT EXISTS lat DOUBLE PRECISION;
       ALTER TABLE liderancas ADD COLUMN IF NOT EXISTS lng DOUBLE PRECISION;
 
-      CREATE TABLE IF NOT EXISTS eleitores (
+      ALTER TABLE IF EXISTS eleitores RENAME TO apoiadores;
+      ALTER INDEX IF EXISTS eleitores_criado_em_idx RENAME TO apoiadores_criado_em_idx;
+
+      CREATE TABLE IF NOT EXISTS apoiadores (
         id BIGSERIAL PRIMARY KEY,
         nome TEXT NOT NULL,
         numero TEXT,
@@ -73,7 +76,9 @@ function ensureSchema() {
         ip TEXT,
         criado_em TIMESTAMPTZ NOT NULL DEFAULT now()
       );
-      CREATE INDEX IF NOT EXISTS eleitores_criado_em_idx ON eleitores (criado_em);
+      CREATE INDEX IF NOT EXISTS apoiadores_criado_em_idx ON apoiadores (criado_em);
+      ALTER TABLE apoiadores ADD COLUMN IF NOT EXISTS indicado_por TEXT;
+      ALTER TABLE apoiadores ADD COLUMN IF NOT EXISTS indicado_por_id BIGINT;
     `);
   }
   return schemaReady;

@@ -2,6 +2,15 @@ const { getPool, ensureSchema, getClientIp } = require('./_db');
 const { geocodeEnderecoBairro } = require('./_geocode');
 
 module.exports = async (req, res) => {
+  if (req.method === 'GET') {
+    try {
+      await ensureSchema();
+      const { rows } = await getPool().query('SELECT id, nome FROM liderancas ORDER BY nome ASC');
+      return res.status(200).json({ liderancas: rows });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido' });
   try {
     await ensureSchema();
