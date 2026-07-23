@@ -331,7 +331,27 @@
         b.onclick = () => escolher(o);
         opcoesEl.appendChild(b);
       });
-      // fixos, sempre por último, em todo passo — não vêm do conteúdo editável
+      // fixo, sempre por último, em todo passo — não vem do conteúdo editável
+      const ajuda = document.createElement('button');
+      ajuda.type = 'button';
+      ajuda.className = 'btn-ajuda';
+      ajuda.textContent = AJUDA_LABEL;
+      ajuda.onclick = () => abrirAjuda();
+      opcoesEl.appendChild(ajuda);
+      ajustarEspaco();
+      rolar();
+    }
+
+    // só aparece depois que a pessoa manda uma mensagem de ajuda — não em
+    // todo passo, ao contrário do botão de ajuda
+    function mostrarOpcoesPosAjuda() {
+      opcoesEl.replaceChildren();
+      const voltar = document.createElement('button');
+      voltar.type = 'button';
+      voltar.textContent = '⟲ Voltar ao início';
+      voltar.onclick = () => escolher({ label: '⟲ Voltar ao início', goto: CFG.inicio });
+      opcoesEl.appendChild(voltar);
+
       const ajuda = document.createElement('button');
       ajuda.type = 'button';
       ajuda.className = 'btn-ajuda';
@@ -429,7 +449,7 @@
         bolha('dele', 'Recebi sua mensagem! Nossa equipe vai dar uma olhada e verificar. Obrigado por falar com a gente 🙏');
         fotoWrap.classList.remove('falando');
         tocando = false;
-        mostrarOpcoes({ opcoes: [] });
+        mostrarOpcoesPosAjuda();
       } catch (err) {
         tocando = false;
         bolha('dele', 'Ops, não consegui enviar agora. Tenta de novo?');
