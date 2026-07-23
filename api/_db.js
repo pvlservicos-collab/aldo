@@ -17,10 +17,20 @@ function getPool() {
   return pool;
 }
 
-let schemaReady;
-function ensureSchema() {
-  if (!schemaReady) {
-    schemaReady = getPool().query(`
+// trava de aplicação (não é do node, é do Postgres) pra garantir que só uma
+// invocação por vez rode esse bloco de CREATE/ALTER — cada função da Vercel
+// tem seu próprio processo e seu próprio "schemaReady", então sem isso duas
+// invocações concorrentes rodando as mesmas alterações em várias tabelas
+// dentro da mesma transação podiam se travar uma na outra (deadlock detected).
+// Importante: é a variante "_xact_" (por transação), não "pg_advisory_lock"
+// (por sessão) — o banco roda atrás de um pooler, e trava de sessão vaza
+// entre conexões reaproveitadas (uma trava nunca liberada deixa toda
+// consulta futura pendurada pra sempre). A de transação libera sozinha
+// quando esse bloco (uma única transação implícita) termina.
+async function ensureSchemaImpl() {
+  return getPool().query(`
+      SELECT pg_advisory_xact_lock(891122);
+
       CREATE TABLE IF NOT EXISTS page_views (
         id BIGSERIAL PRIMARY KEY,
         path TEXT NOT NULL,
@@ -88,8 +98,12 @@ function ensureSchema() {
         version INT NOT NULL DEFAULT 1,
         atualizado_em TIMESTAMPTZ NOT NULL DEFAULT now()
       );
-    `);
-  }
+  `);
+}
+
+let schemaReady;
+function ensureSchema() {
+  if (!schemaReady) schemaReady = ensureSchemaImpl();
   return schemaReady;
 }
 

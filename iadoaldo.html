@@ -7,7 +7,7 @@
   <title>IA do Aldo · Aldo Maurício</title>
   <link rel="icon" type="image/webp" href="img/logo.webp">
   <meta name="description" content="Converse com a IA do Aldo Maurício e conheça as propostas do pré-candidato a deputado estadual." />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Outfit:wght@500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&family=Outfit:wght@500;600&family=Quicksand:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
       color-scheme: dark;
@@ -22,7 +22,7 @@
       --grad-accent: linear-gradient(135deg, #2563eb 0%, #22d3ee 100%);
       --onda: rgba(148, 163, 184, .55);
       --verde: #4ade80;
-      --topo-h: 178px;
+      --topo-h: 214px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0 }
@@ -52,13 +52,13 @@
       pointer-events: none;
     }
 
-    .foto-wrap { position: relative; width: 92px; height: 92px; }
+    .foto-wrap { position: relative; width: 124px; height: 124px; }
 
     .foto-wrap img {
       position: relative; z-index: 2;
-      width: 92px; height: 92px; border-radius: 50%; object-fit: cover;
-      border: 2px solid rgba(150, 190, 255, .35);
-      box-shadow: 0 10px 34px rgba(1, 4, 14, .7), 0 0 0 5px rgba(120, 165, 255, .07);
+      width: 124px; height: 124px; border-radius: 50%; object-fit: cover;
+      border: 2.5px solid rgba(150, 190, 255, .35);
+      box-shadow: 0 12px 40px rgba(1, 4, 14, .7), 0 0 0 6px rgba(120, 165, 255, .07);
       background: var(--bg2);
     }
 
@@ -79,33 +79,33 @@
     }
 
     .topo .nome {
-      margin-top: 10px;
-      font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 17px;
+      margin-top: 13px;
+      font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 20px;
       letter-spacing: -.01em;
     }
     .topo .st {
-      margin-top: 3px;
-      font-family: 'Montserrat', sans-serif; font-weight: 400; font-size: 11.5px;
-      color: var(--muted); display: flex; align-items: center; gap: 6px;
+      margin-top: 4px;
+      font-family: 'Montserrat', sans-serif; font-weight: 400; font-size: 12.5px;
+      color: var(--muted); display: flex; align-items: center; gap: 7px;
     }
     .topo .st .dot {
-      width: 7px; height: 7px; border-radius: 50%; background: var(--verde);
+      width: 8px; height: 8px; border-radius: 50%; background: var(--verde);
       box-shadow: 0 0 8px rgba(74, 222, 128, .8); flex: none;
     }
 
     /* degradê fixo: as mensagens vão sumindo por trás da foto */
     .veu {
       position: fixed; top: 0; left: 0; right: 0; z-index: 20;
-      height: calc(var(--topo-h) + 84px);
+      height: calc(var(--topo-h) + 120px);
       pointer-events: none;
-      background: linear-gradient(to bottom, var(--bg) 0%, var(--bg) 58%, rgba(3, 7, 15, 0) 100%);
+      background: linear-gradient(to bottom, var(--bg) 0%, var(--bg) 64%, rgba(3, 7, 15, 0) 100%);
     }
 
     /* ───── conversa ───── */
     main {
       position: relative; z-index: 10;
       max-width: 560px; margin: 0 auto;
-      padding: calc(var(--topo-h) + 26px) 18px 190px;
+      padding: calc(var(--topo-h) + 26px) 18px 220px;
       display: flex; flex-direction: column; gap: 8px;
     }
 
@@ -156,21 +156,21 @@
     /* ───── botões de resposta (fixos embaixo, no lugar do campo de digitar) ───── */
     .opcoes-area {
       position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
-      padding: 34px 14px calc(16px + env(safe-area-inset-bottom));
+      padding: 48px 14px calc(22px + env(safe-area-inset-bottom));
       background: linear-gradient(to top, var(--bg) 0%, var(--bg) 55%, rgba(3, 7, 15, 0) 100%);
     }
     .opcoes {
       max-width: 560px; margin: 0 auto;
-      display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+      display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
     }
     .opcoes button {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 400; font-size: 12.5px; letter-spacing: .01em;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 600; font-size: 13.5px; letter-spacing: .01em;
       color: var(--ink);
       background: rgba(120, 165, 255, .07);
       border: 1px solid rgba(150, 190, 255, .28);
       border-radius: 999px;
-      padding: 7px 14px;
+      padding: 9px 18px;
       cursor: pointer;
       transition: background .18s, border-color .18s, transform .18s;
       animation: sobe .3s cubic-bezier(.34, 1.3, .5, 1) backwards;
@@ -195,6 +195,58 @@
       .falando .onda { animation-duration: 3.5s }
       html { scroll-behavior: auto }
     }
+
+    /* botão fixo de ajuda, sempre por último, em toda tela */
+    .opcoes button.btn-ajuda {
+      flex-basis: 100%;
+      font-size: 12.5px;
+      opacity: .68;
+      background: transparent;
+      border-style: dashed;
+    }
+    .opcoes button.btn-ajuda:hover, .opcoes button.btn-ajuda:focus-visible {
+      opacity: 1;
+    }
+
+    /* caixa de mensagem (só aparece no fluxo de ajuda) */
+    .ajuda-form {
+      width: 100%;
+      display: flex; align-items: flex-end; gap: 8px;
+    }
+    .ajuda-form textarea {
+      flex: 1;
+      resize: none;
+      max-height: 120px;
+      font: inherit;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      color: var(--ink);
+      background: rgba(120, 165, 255, .07);
+      border: 1px solid rgba(150, 190, 255, .28);
+      border-radius: 20px;
+      padding: 12px 18px;
+      line-height: 1.4;
+    }
+    .ajuda-form textarea::placeholder { color: var(--dim); }
+    .ajuda-form textarea:focus {
+      outline: none;
+      border-color: rgba(150, 190, 255, .55);
+      background: rgba(120, 165, 255, .12);
+    }
+    .ajuda-form button {
+      flex: none;
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      border: none;
+      background: var(--grad-accent);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .15s, opacity .15s;
+    }
+    .ajuda-form button:hover { transform: scale(1.06); }
+    .ajuda-form button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
   </style>
 </head>
 
@@ -270,6 +322,8 @@
       chat.style.paddingBottom = (opcoesArea.offsetHeight + 26) + 'px';
     }
 
+    const AJUDA_LABEL = 'Quero pedir uma ajuda / Relatar um problema!';
+
     function mostrarOpcoes(passo) {
       let ops = (passo.opcoes || []).slice();
       if (!ops.length) ops = [{ label: '⟲ Voltar ao início', goto: CFG.inicio }];
@@ -281,6 +335,13 @@
         b.onclick = () => escolher(o);
         opcoesEl.appendChild(b);
       });
+      // fixo, sempre por último, em todo passo — não vem do conteúdo editável
+      const ajuda = document.createElement('button');
+      ajuda.type = 'button';
+      ajuda.className = 'btn-ajuda';
+      ajuda.textContent = AJUDA_LABEL;
+      ajuda.onclick = () => abrirAjuda();
+      opcoesEl.appendChild(ajuda);
       ajustarEspaco();
       rolar();
     }
@@ -290,6 +351,88 @@
       limparOpcoes();
       bolha('meu', o.label);
       tocar(o.goto || CFG.inicio);
+    }
+
+    function abrirAjuda() {
+      if (tocando) return;
+      limparOpcoes();
+      bolha('meu', AJUDA_LABEL);
+      tocarAjuda();
+    }
+
+    async function tocarAjuda() {
+      tocando = true;
+      fotoWrap.classList.add('falando');
+      const dig = bolhaDigitando();
+      await espera(650);
+      dig.remove();
+      bolha('dele', 'É claro, me fala o que te preocupa?');
+      fotoWrap.classList.remove('falando');
+      tocando = false;
+      mostrarCaixaAjuda();
+    }
+
+    function mostrarCaixaAjuda() {
+      opcoesEl.replaceChildren();
+      const form = document.createElement('form');
+      form.className = 'ajuda-form';
+      const ta = document.createElement('textarea');
+      ta.id = 'ajudaTexto';
+      ta.rows = 1;
+      ta.maxLength = 4000;
+      ta.placeholder = 'Escreve aqui…';
+      ta.required = true;
+      const btn = document.createElement('button');
+      btn.type = 'submit';
+      btn.setAttribute('aria-label', 'Enviar');
+      btn.textContent = '➤';
+      form.append(ta, btn);
+      opcoesEl.appendChild(form);
+      ajustarEspaco();
+      ta.focus();
+
+      ta.addEventListener('input', () => {
+        ta.style.height = 'auto';
+        ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+        ajustarEspaco();
+      });
+      ta.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); }
+      });
+      form.addEventListener('submit', enviarAjuda);
+    }
+
+    async function enviarAjuda(e) {
+      e.preventDefault();
+      const ta = document.getElementById('ajudaTexto');
+      const texto = ta.value.trim();
+      if (!texto || tocando) return;
+      const btn = e.target.querySelector('button');
+      ta.disabled = true; btn.disabled = true;
+      tocando = true;
+      limparOpcoes();
+      bolha('meu', texto);
+      try {
+        const res = await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome: 'Visitante do chat (IA do Aldo)', mensagem: texto }),
+        });
+        if (!res.ok) throw new Error('falha ao enviar');
+        fotoWrap.classList.add('falando');
+        const dig = bolhaDigitando();
+        await espera(650);
+        dig.remove();
+        bolha('dele', 'Recebi sua mensagem! Nossa equipe vai te responder em breve. Obrigado por falar com a gente 🙏');
+        fotoWrap.classList.remove('falando');
+        tocando = false;
+        mostrarOpcoes({ opcoes: [] });
+      } catch (err) {
+        tocando = false;
+        bolha('dele', 'Ops, não consegui enviar agora. Tenta de novo?');
+        mostrarCaixaAjuda();
+        document.getElementById('ajudaTexto').value = texto;
+      }
     }
 
     async function tocar(id) {
