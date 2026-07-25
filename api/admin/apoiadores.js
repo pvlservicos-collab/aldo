@@ -21,6 +21,11 @@ function buildFiltro(query) {
     params.push(to);
     where.push(`criado_em < ($${params.length}::date + interval '1 day')`);
   }
+  const indicadoPorId = Number(query.indicadoPorId);
+  if (indicadoPorId) {
+    params.push(indicadoPorId);
+    where.push(`indicado_por_id = $${params.length}`);
+  }
   return { whereSql: where.length ? 'WHERE ' + where.join(' AND ') : '', params };
 }
 

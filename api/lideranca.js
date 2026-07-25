@@ -33,11 +33,11 @@ module.exports = async (req, res) => {
       const geo = await geocodeEnderecoBairro(endereco, bairro);
       if (geo) { lat = geo.lat; lng = geo.lng; }
     } catch {}
-    await getPool().query(
-      'INSERT INTO liderancas (nome, numero, bairro, nome_mae, data_nascimento, endereco, ip, lat, lng) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+    const r = await getPool().query(
+      'INSERT INTO liderancas (nome, numero, bairro, nome_mae, data_nascimento, endereco, ip, lat, lng) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id',
       [nome, numero, bairro, mae, nascimento, endereco, ip, lat, lng]
     );
-    res.status(201).json({ ok: true });
+    res.status(201).json({ ok: true, id: r.rows[0].id });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

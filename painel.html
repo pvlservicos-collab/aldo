@@ -982,6 +982,69 @@
       cursor: not-allowed
     }
 
+    .cal-head button {
+      cursor: pointer
+    }
+
+    #apoLidTitulo {
+      text-transform: none;
+      text-align: left;
+    }
+
+    .btn-expand-apo {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font: inherit;
+      padding: 2px 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: inherit;
+      border-radius: 6px;
+      transition: background var(--t-fast)
+    }
+
+    .btn-expand-apo:hover {
+      background: var(--glass2)
+    }
+
+    .btn-expand-apo .expand-arrow {
+      font-size: 10px;
+      color: var(--muted)
+    }
+
+    .apo-lid-lista {
+      max-height: 50vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .apo-lid-item {
+      padding: 10px 12px;
+      background: var(--glass2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .apo-lid-item .nome {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .apo-lid-item .data {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
     /* ===== cards de estatística ===== */
     .cards-grid {
       display: grid;
@@ -2459,6 +2522,17 @@
     </div>
   </div>
 
+  <!-- POPUP APOIADORES DE UMA LIDERANÇA (clique no número na aba Lideranças) -->
+  <div class="cal-overlay" id="apoLidOverlay" onclick="if(event.target===this)fecharApoiadoresLid()">
+    <div class="cal-panel">
+      <div class="cal-head">
+        <div class="cal-mes" id="apoLidTitulo">—</div>
+        <button type="button" onclick="fecharApoiadoresLid()">✕</button>
+      </div>
+      <div class="apo-lid-lista" id="apoLidLista"></div>
+    </div>
+  </div>
+
   <script>
     let periodoAtual = '7d', paginaAtual = 1, buscaAtual = '', dataDe = '', dataAte = '', totalLeads = 0, chart = null;
     let paginaAtualLid = 1, buscaAtualLid = '', dataDeLid = '', dataAteLid = '', totalLiderancas = 0;
@@ -3045,7 +3119,9 @@
           const nasc = l.data_nascimento ? new Date(l.data_nascimento).toLocaleDateString('pt-BR') : '—';
           const link = waLink(l.numero);
           const contagemApo = l.apoiadores_count > 0
-            ? '<span style="color:var(--green);font-weight:600">' + l.apoiadores_count + '</span>'
+            ? '<button type="button" class="btn-expand-apo" data-lid="' + l.id + '" data-nome="' + esc(l.nome) + '">' +
+                '<span style="color:var(--green);font-weight:600">' + l.apoiadores_count + '</span>' +
+                '<span class="expand-arrow">▾</span></button>'
             : '<span style="color:var(--muted)">Padrão (30)</span>';
           tr.innerHTML = '<td>' + esc(l.nome) + '</td>' +
             '<td>' + (link ? ('<a class="wa-link" target="_blank" href="' + link + '">' + esc(l.numero || '') + '</a>') : '—') + '</td>' +
@@ -3073,6 +3149,9 @@
     }
 
     document.getElementById('liderancasBody').addEventListener('click', async e => {
+      const expandBtn = e.target.closest('.btn-expand-apo');
+      if (expandBtn) return abrirApoiadoresLid(expandBtn.dataset.lid, expandBtn.dataset.nome);
+
       const b = e.target.closest('.btn-del-lid'); if (!b) return;
       if (!confirm('Excluir essa liderança? Não dá pra desfazer.')) return;
       b.disabled = true;
@@ -3085,6 +3164,30 @@
         b.disabled = false;
       }
     });
+
+    async function abrirApoiadoresLid(id, nome) {
+      document.getElementById('apoLidTitulo').textContent = 'Apoiadores de ' + nome;
+      const lista = document.getElementById('apoLidLista');
+      lista.innerHTML = '<div class="empty-msg">Carregando…</div>';
+      document.getElementById('apoLidOverlay').classList.add('open');
+      try {
+        const d = await api('/api/admin/apoiadores?indicadoPorId=' + encodeURIComponent(id) + '&page=1');
+        if (!d.itens.length) { lista.innerHTML = '<div class="empty-msg">Nenhum apoiador encontrado.</div>'; return; }
+        lista.innerHTML = d.itens.map(a => {
+          const link = waLink(a.numero);
+          const dt = new Date(a.criado_em).toLocaleDateString('pt-BR');
+          return '<div class="apo-lid-item">' +
+            (link ? '<a class="wa-link nome" target="_blank" href="' + link + '">' + esc(a.nome) + '</a>' : '<span class="nome">' + esc(a.nome) + '</span>') +
+            '<span class="data">' + dt + '</span></div>';
+        }).join('');
+      } catch (e) {
+        lista.innerHTML = '<div class="empty-msg">Erro ao carregar: ' + esc(e.message) + '</div>';
+      }
+    }
+
+    function fecharApoiadoresLid() {
+      document.getElementById('apoLidOverlay').classList.remove('open');
+    }
 
     let searchTimerApo;
     function buscarApoiadoresDebounced() {

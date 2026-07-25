@@ -378,7 +378,18 @@
     bairroInput.addEventListener('focus', () => renderBairros(bairroInput.value));
 
     let LIDERANCAS = [];
-    fetch('/api/lideranca').then(r => r.json()).then(d => { LIDERANCAS = d.liderancas || []; }).catch(() => {});
+    fetch('/api/lideranca').then(r => r.json()).then(d => {
+      LIDERANCAS = d.liderancas || [];
+      // veio de um link exclusivo de liderança (?lid=005) — preenche sozinho
+      const lid = Number(new URLSearchParams(location.search).get('lid'));
+      if (lid) {
+        const alvo = LIDERANCAS.find(l => Number(l.id) === lid);
+        if (alvo) {
+          document.getElementById('l-indicado').value = alvo.nome;
+          document.getElementById('l-indicado-id').value = alvo.id;
+        }
+      }
+    }).catch(() => {});
 
     const indicadoInput = document.getElementById('l-indicado');
     const indicadoIdInput = document.getElementById('l-indicado-id');

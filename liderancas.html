@@ -261,6 +261,55 @@
       font-size: .95rem;
       line-height: 1.5;
     }
+
+    .link-box {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1.5px dashed #bfe8c9;
+      text-align: left;
+    }
+
+    .link-box .link-label {
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--text-med);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .link-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .link-row input {
+      flex: 1;
+      min-width: 0;
+      padding: 11px 12px;
+      border: 1.5px solid #bfe8c9;
+      border-radius: 8px;
+      font-size: .82rem;
+      color: var(--text-esc);
+      background: #fff;
+    }
+
+    .link-row button {
+      flex: none;
+      padding: 11px 16px;
+      background: var(--azul);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font: inherit;
+      font-weight: 700;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: background .15s ease;
+    }
+
+    .link-row button.copiado {
+      background: var(--verde);
+    }
   </style>
 </head>
 
@@ -310,6 +359,13 @@
         <div class="check">✓</div>
         <h2>Cadastro recebido!</h2>
         <p>Obrigado por se juntar ao movimento.</p>
+        <div class="link-box" id="linkBox" style="display:none">
+          <p class="link-label">Seu link exclusivo — compartilhe pra trazer apoiadores:</p>
+          <div class="link-row">
+            <input type="text" id="linkUnico" readonly onclick="this.select()">
+            <button type="button" id="btnCopiarLink">Copiar</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -402,6 +458,12 @@
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || 'Não foi possível enviar. Tente novamente.');
+        if (data.id) {
+          const codigo = String(data.id).padStart(3, '0');
+          const link = location.origin + '/apoiadores?lid=' + codigo;
+          document.getElementById('linkUnico').value = link;
+          document.getElementById('linkBox').style.display = 'block';
+        }
         form.style.display = 'none';
         document.getElementById('sucesso').style.display = 'block';
       } catch (err) {
@@ -410,6 +472,24 @@
         btn.disabled = false;
         btn.textContent = 'Cadastrar';
       }
+    });
+
+    document.getElementById('btnCopiarLink').addEventListener('click', async (e) => {
+      const input = document.getElementById('linkUnico');
+      const btnCopiar = e.currentTarget;
+      try {
+        await navigator.clipboard.writeText(input.value);
+      } catch {
+        input.select();
+        document.execCommand('copy');
+      }
+      const textoOriginal = btnCopiar.textContent;
+      btnCopiar.textContent = 'Copiado!';
+      btnCopiar.classList.add('copiado');
+      setTimeout(() => {
+        btnCopiar.textContent = textoOriginal;
+        btnCopiar.classList.remove('copiado');
+      }, 1800);
     });
   </script>
 </body>
