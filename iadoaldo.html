@@ -444,15 +444,19 @@
       mostrarCaixaAjuda();
     }
 
-    function mostrarCaixaAjuda() {
+    let ajudaMensagemPendente = '';
+
+    // caixa de texto genérica (usada tanto pra pedir a mensagem quanto o
+    // nome) — cresce sozinha, Enter envia, Shift+Enter quebra linha
+    function mostrarCaixaTexto(placeholder, maxLength, aoEnviar) {
       opcoesEl.replaceChildren();
       const form = document.createElement('form');
       form.className = 'ajuda-form';
       const ta = document.createElement('textarea');
-      ta.id = 'ajudaTexto';
+      ta.className = 'ajudaCampo';
       ta.rows = 1;
-      ta.maxLength = 4000;
-      ta.placeholder = 'Escreve aqui…';
+      ta.maxLength = maxLength;
+      ta.placeholder = placeholder;
       ta.required = true;
       const btn = document.createElement('button');
       btn.type = 'submit';
@@ -471,24 +475,43 @@
       ta.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); }
       });
-      form.addEventListener('submit', enviarAjuda);
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const valor = ta.value.trim();
+        if (!valor || tocando) return;
+        ta.disabled = true; btn.disabled = true;
+        aoEnviar(valor);
+      });
     }
 
-    async function enviarAjuda(e) {
-      e.preventDefault();
-      const ta = document.getElementById('ajudaTexto');
-      const texto = ta.value.trim();
-      if (!texto || tocando) return;
-      const btn = e.target.querySelector('button');
-      ta.disabled = true; btn.disabled = true;
+    function mostrarCaixaAjuda() {
+      mostrarCaixaTexto('Escreve aqui…', 4000, receberMensagemAjuda);
+    }
+
+    async function receberMensagemAjuda(texto) {
+      ajudaMensagemPendente = texto;
       tocando = true;
       limparOpcoes();
       bolha('meu', texto);
+      fotoWrap.classList.add('falando');
+      const dig = bolhaDigitando();
+      await espera(600);
+      dig.remove();
+      bolha('dele', 'Perfeito! E qual é o seu nome?');
+      fotoWrap.classList.remove('falando');
+      tocando = false;
+      mostrarCaixaTexto('Seu nome…', 200, enviarAjuda);
+    }
+
+    async function enviarAjuda(nome) {
+      tocando = true;
+      limparOpcoes();
+      bolha('meu', nome);
       try {
         const res = await fetch('/api/lead', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nome: 'Visitante do chat (IA do Aldo)', mensagem: texto }),
+          body: JSON.stringify({ nome, mensagem: ajudaMensagemPendente }),
         });
         if (!res.ok) throw new Error('falha ao enviar');
         fotoWrap.classList.add('falando');
@@ -502,8 +525,7 @@
       } catch (err) {
         tocando = false;
         bolha('dele', 'Ops, não consegui enviar agora. Tenta de novo?');
-        mostrarCaixaAjuda();
-        document.getElementById('ajudaTexto').value = texto;
+        mostrarCaixaTexto('Seu nome…', 200, enviarAjuda);
       }
     }
 
