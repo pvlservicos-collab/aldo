@@ -5,7 +5,7 @@ module.exports = async (req, res) => {
   if (req.method === 'GET') {
     try {
       await ensureSchema();
-      const { rows } = await getPool().query('SELECT id, nome FROM liderancas ORDER BY nome ASC');
+      const { rows } = await getPool().query('SELECT id, nome, bairro FROM liderancas ORDER BY nome ASC');
       return res.status(200).json({ liderancas: rows });
     } catch (e) {
       return res.status(500).json({ error: e.message });
