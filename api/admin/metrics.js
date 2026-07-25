@@ -1,4 +1,4 @@
-const { getPool, getClientIp } = require('../_db');
+const { getPool, getClientIp, ensureSchema } = require('../_db');
 const { isAuthenticated } = require('../_auth');
 
 const DAYS_BY_PERIOD = { hoje: 1, '7d': 7, '30d': 30 };
@@ -71,11 +71,26 @@ async function metrics(req, res) {
        WHERE ${sqlDesde} AND ${sqlAte}
          AND (ip IS NULL OR ip NOT IN (SELECT ip FROM ignored_ips))
        GROUP BY 1
+     ),
+     liderancas_dia AS (
+       SELECT date_trunc('day', criado_em)::date AS dia, count(*) AS n
+       FROM liderancas
+       WHERE ${sqlDesde} AND ${sqlAte}
+       GROUP BY 1
+     ),
+     apoiadores_dia AS (
+       SELECT date_trunc('day', criado_em)::date AS dia, count(*) AS n
+       FROM apoiadores
+       WHERE ${sqlDesde} AND ${sqlAte}
+       GROUP BY 1
      )
-     SELECT dias.dia, COALESCE(visitas.n,0) AS site_view, COALESCE(leads_dia.n,0) AS leads
+     SELECT dias.dia, COALESCE(visitas.n,0) AS site_view, COALESCE(leads_dia.n,0) AS leads,
+            COALESCE(liderancas_dia.n,0) AS liderancas, COALESCE(apoiadores_dia.n,0) AS apoiadores
      FROM dias
      LEFT JOIN visitas ON visitas.dia = dias.dia
      LEFT JOIN leads_dia ON leads_dia.dia = dias.dia
+     LEFT JOIN liderancas_dia ON liderancas_dia.dia = dias.dia
+     LEFT JOIN apoiadores_dia ON apoiadores_dia.dia = dias.dia
      ORDER BY dias.dia`,
     params
   );
@@ -84,16 +99,21 @@ async function metrics(req, res) {
     data: r.dia.toISOString().slice(0, 10),
     site_view: Number(r.site_view),
     leads: Number(r.leads),
+    liderancas: Number(r.liderancas),
+    apoiadores: Number(r.apoiadores),
   }));
   const site_view = serie.reduce((s, r) => s + r.site_view, 0);
   const leads = serie.reduce((s, r) => s + r.leads, 0);
+  const liderancas = serie.reduce((s, r) => s + r.liderancas, 0);
+  const apoiadores = serie.reduce((s, r) => s + r.apoiadores, 0);
 
-  res.status(200).json({ site_view, leads, serie });
+  res.status(200).json({ site_view, leads, liderancas, apoiadores, serie });
 }
 
 module.exports = async (req, res) => {
   if (!isAuthenticated(req)) return res.status(401).json({ error: 'não autenticado' });
   try {
+    await ensureSchema();
     if (req.query.resource === 'ignored-ips') return ignoredIps(req, res);
     return metrics(req, res);
   } catch (e) {

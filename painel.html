@@ -2241,6 +2241,14 @@
           <canvas id="chartMetricas"></canvas>
         </div>
         <div class="chart-box">
+          <h3>Lideranças cadastradas por dia</h3>
+          <canvas id="chartLid"></canvas>
+        </div>
+        <div class="chart-box">
+          <h3>Apoiadores cadastrados por dia</h3>
+          <canvas id="chartApo"></canvas>
+        </div>
+        <div class="chart-box">
           <h3>Ignorar meus acessos nas métricas</h3>
           <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px">IPs na lista abaixo não contam em visitas ou
             mensagens no gráfico acima — leads que você criar testando ainda aparecem na aba Formulário, é só excluir
@@ -2534,7 +2542,7 @@
   </div>
 
   <script>
-    let periodoAtual = '7d', paginaAtual = 1, buscaAtual = '', dataDe = '', dataAte = '', totalLeads = 0, chart = null;
+    let periodoAtual = '7d', paginaAtual = 1, buscaAtual = '', dataDe = '', dataAte = '', totalLeads = 0, chart = null, chartLid = null, chartApo = null;
     let paginaAtualLid = 1, buscaAtualLid = '', dataDeLid = '', dataAteLid = '', totalLiderancas = 0;
     let paginaAtualApo = 1, buscaAtualApo = '', dataDeApo = '', dataAteApo = '', totalApoiadores = 0;
     let resumoVotosTimer = null;
@@ -2739,6 +2747,8 @@
         document.getElementById('st-lid').textContent = lid ? lid.total : '—';
         document.getElementById('st-apo').textContent = apo ? apo.total : '—';
         desenharGrafico(d.serie);
+        desenharGraficoLid(d.serie);
+        desenharGraficoApo(d.serie);
       } catch (e) {
         if (String(e.message).includes('autenticado')) return logout();
       }
@@ -2787,6 +2797,53 @@
       };
       if (chart) { chart.data = cfg.data; chart.options = cfg.options; chart.update(); }
       else chart = new Chart(ctx, cfg);
+    }
+
+    // gráfico de uma métrica só (lideranças ou apoiadores), mesmo visual do
+    // "Evolução diária" acima, só que com uma cor própria pra não confundir
+    function desenharGraficoUnico(canvasId, chartAtual, serie, campo, label, cor) {
+      const labels = serie.map(s => s.data.slice(5).split('-').reverse().join('/'));
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      const grad = ctx.createLinearGradient(0, 0, 0, 200);
+      grad.addColorStop(0, cor + '38');
+      grad.addColorStop(1, cor + '00');
+      const cfg = {
+        type: 'line',
+        data: {
+          labels, datasets: [
+            {
+              label, data: serie.map(s => s[campo]), borderColor: cor, backgroundColor: grad,
+              fill: true, tension: .35, borderWidth: 2, pointRadius: 2.5, pointHoverRadius: 5,
+              pointBackgroundColor: cor, pointBorderColor: cor + '59', pointBorderWidth: 3
+            },
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          scales: {
+            x: { ticks: { color: '#8ca3c7', font: { size: 11 } }, grid: { color: 'rgba(150,190,255,.07)' } },
+            y: { beginAtZero: true, ticks: { color: '#8ca3c7', font: { size: 11 }, precision: 0 }, grid: { color: 'rgba(150,190,255,.07)' } }
+          },
+          plugins: {
+            legend: { labels: { color: '#f2f7ff', usePointStyle: true, pointStyle: 'circle', boxWidth: 7, padding: 16 } },
+            tooltip: {
+              backgroundColor: 'rgba(4,9,20,.95)', borderColor: 'rgba(150,190,255,.25)', borderWidth: 1,
+              titleColor: '#f2f7ff', bodyColor: '#8ca3c7', cornerRadius: 10, padding: 12
+            }
+          }
+        }
+      };
+      if (chartAtual) { chartAtual.data = cfg.data; chartAtual.options = cfg.options; chartAtual.update(); return chartAtual; }
+      return new Chart(ctx, cfg);
+    }
+
+    function desenharGraficoLid(serie) {
+      chartLid = desenharGraficoUnico('chartLid', chartLid, serie, 'liderancas', 'Lideranças', '#4ade80');
+    }
+
+    function desenharGraficoApo(serie) {
+      chartApo = desenharGraficoUnico('chartApo', chartApo, serie, 'apoiadores', 'Apoiadores', '#60a5fa');
     }
 
     /* ===== agenda (salva no navegador) ===== */
