@@ -2632,8 +2632,9 @@
     let resumoVotosTimer = null;
 
     /* ===== modo privacidade: oculta os números pra quem tá com a tela
-       compartilhada, sem esconder o painel inteiro ===== */
-    let privacidadeAtiva = localStorage.getItem('painel_privacidade') === '1';
+       compartilhada, sem esconder o painel inteiro — sempre começa
+       mostrando os valores; ocultar é uma escolha do momento, não padrão ===== */
+    let privacidadeAtiva = false;
 
     function mascararTexto(html) {
       return String(html).replace(/[0-9]/g, '0');
@@ -2658,7 +2659,6 @@
 
     function alternarPrivacidade() {
       privacidadeAtiva = !privacidadeAtiva;
-      localStorage.setItem('painel_privacidade', privacidadeAtiva ? '1' : '0');
       document.querySelectorAll('.mascaravel').forEach(el => {
         if (el.dataset.privReal === undefined) el.dataset.privReal = el.innerHTML;
         el.innerHTML = privacidadeAtiva ? mascararTexto(el.dataset.privReal) : el.dataset.privReal;
@@ -2667,11 +2667,9 @@
     }
 
     // valores estáticos (Dados Amapá/Macapá, nota de corte) já vêm prontos no
-    // HTML — guarda o valor real deles antes de qualquer coisa, e já aplica a
-    // máscara de cara se o modo privacidade tiver ficado ativo de uma visita anterior
+    // HTML — só guarda o valor real deles pra caso a pessoa clique no olho
     document.querySelectorAll('.mascaravel').forEach(el => {
       el.dataset.privReal = el.innerHTML;
-      if (privacidadeAtiva) el.innerHTML = mascararTexto(el.dataset.privReal);
     });
     atualizarIconePrivacidade();
     let customFrom = '', customTo = '';
