@@ -327,6 +327,17 @@
       padding: 12px 10px
     }
 
+    nav .nav-secao {
+      font-size: 10px;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: .09em;
+      font-weight: 600;
+      margin: 14px 12px 6px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line)
+    }
+
     nav a {
       display: flex;
       align-items: center;
@@ -1852,6 +1863,12 @@
         box-shadow: 0 -10px 30px rgba(1, 4, 14, .6)
       }
 
+      /* divisor "Extra:" só faz sentido no menu vertical — na barra
+         inferior de ícones ele ficaria espremido e sem espaço pra aparecer */
+      nav .nav-secao {
+        display: none
+      }
+
       nav a {
         flex: 1;
         flex-direction: column;
@@ -2164,6 +2181,7 @@
             <rect x="3" y="17" width="18" height="4" rx="1" />
           </svg>
           <span>Apoiadores</span></a>
+        <div class="nav-secao">Extra:</div>
         <a data-tab="agenda" onclick="mudarTab('agenda')">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="5" width="18" height="16" rx="2" />
