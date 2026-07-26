@@ -2636,7 +2636,7 @@
     let privacidadeAtiva = localStorage.getItem('painel_privacidade') === '1';
 
     function mascararTexto(html) {
-      return String(html).replace(/[0-9]/g, '•');
+      return String(html).replace(/[0-9]/g, '0');
     }
 
     // toda vez que algum valor mascarável for atualizado (métricas, resumo de
