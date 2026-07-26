@@ -515,6 +515,60 @@
       font-size: 12.5px
     }
 
+    .btn-privacidade {
+      position: absolute;
+      top: 10px;
+      right: 16px;
+      z-index: 5;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--glass2);
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all var(--t-fast)
+    }
+
+    .btn-privacidade:hover {
+      color: var(--ink);
+      border-color: var(--line-strong)
+    }
+
+    .btn-privacidade svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor
+    }
+
+    .btn-privacidade .icone-olho-fechado {
+      display: none
+    }
+
+    .btn-privacidade.oculto .icone-olho {
+      display: none
+    }
+
+    .btn-privacidade.oculto .icone-olho-fechado {
+      display: block;
+      color: var(--cyan)
+    }
+
+    .btn-privacidade.oculto {
+      border-color: var(--cyan);
+      color: var(--cyan)
+    }
+
+    /* traço mascarado: mesma cara do número real (mesma largura/peso), só
+       troca o dígito — evita a caixa "ficar feia" ou pular de tamanho */
+    .mascaravel {
+      font-variant-numeric: tabular-nums;
+      letter-spacing: .02em;
+    }
+
     .tbl-camp .big-stat .num {
       font-size: 58px
     }
@@ -653,14 +707,14 @@
       display: flex;
       gap: 22px;
       align-items: flex-start;
-      flex-wrap: nowrap
+      flex-wrap: wrap
     }
 
     .big-stat {
       display: flex;
       flex-direction: column;
-      min-width: 0;
-      white-space: nowrap
+      flex: 0 1 auto;
+      white-space: normal
     }
 
     .big-stat .num {
@@ -2144,19 +2198,31 @@
         <div class="topo-foto"><img src="img/fotocandidato.webp" alt="Aldo Maurício"></div>
 
         <section class="tbl tbl-camp">
+          <button type="button" class="btn-privacidade" id="btnPrivacidade" onclick="alternarPrivacidade()" title="Ocultar valores">
+            <svg class="icone-olho" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            <svg class="icone-olho-fechado" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-7-11-7a20.3 20.3 0 0 1 4.22-5.94" />
+              <path d="M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a20.3 20.3 0 0 1-2.16 3.19" />
+              <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+              <line x1="1" y1="1" x2="23" y2="23" />
+            </svg>
+          </button>
           <div class="eyebrow">Campanha ao vivo <span class="dot-vivo"></span></div>
           <div class="camp-stats">
             <div class="big-stat hero">
-              <div class="num" id="tf-votos">—</div>
+              <div class="num mascaravel" id="tf-votos">—</div>
               <div class="lbl">Votos previstos</div>
               <div class="sub" style="color:var(--muted)">Média de 30 votos por liderança</div>
             </div>
             <div class="big-stat st-green">
-              <div class="num" id="tf-liderancas">—</div>
+              <div class="num mascaravel" id="tf-liderancas">—</div>
               <div class="lbl">Lideranças cadastradas</div>
             </div>
             <div class="big-stat st-amber">
-              <div class="num" id="tf-bairros">—</div>
+              <div class="num mascaravel" id="tf-bairros">—</div>
               <div class="lbl">Bairros com liderança</div>
             </div>
           </div>
@@ -2166,10 +2232,10 @@
           <div class="eyebrow">Dados Amapá 2026</div>
           <div class="mostrar-toggle" onclick="toggleSecao('secAmapa')">Mostrar: <span class="tbl-toggle-arrow">▾</span></div>
           <div class="tbl-body">
-            <div class="num-row"><span class="num">577<small>mil</small></span><span class="lbl">Total de eleitores</span>
+            <div class="num-row"><span class="num mascaravel">577<small>mil</small></span><span class="lbl">Total de eleitores</span>
             </div>
-            <div class="mini-row">Locais de votação: <b>382</b></div>
-            <div class="mini-row dim" style="color:var(--muted)">Santana: <b style="color:#fff">86.030</b> · Laranjal: <b style="color:#fff">28.236</b></div>
+            <div class="mini-row">Locais de votação: <b class="mascaravel">382</b></div>
+            <div class="mini-row dim" style="color:var(--muted)">Santana: <b class="mascaravel" style="color:#fff">86.030</b> · Laranjal: <b class="mascaravel" style="color:#fff">28.236</b></div>
           </div>
         </section>
 
@@ -2177,8 +2243,8 @@
           <div class="eyebrow">Dados Macapá 2026</div>
           <div class="mostrar-toggle" onclick="toggleSecao('secMacapa')">Mostrar: <span class="tbl-toggle-arrow">▾</span></div>
           <div class="tbl-body">
-            <div class="num-row"><span class="num">321.591</span><span class="lbl">Total de eleitores</span></div>
-            <div class="mini-row" style="color:var(--muted)">Locais de votação: <b style="color:#fff">158</b> · Bairros: <b style="color:#fff">64</b></div>
+            <div class="num-row"><span class="num mascaravel">321.591</span><span class="lbl">Total de eleitores</span></div>
+            <div class="mini-row" style="color:var(--muted)">Locais de votação: <b class="mascaravel" style="color:#fff">158</b> · Bairros: <b class="mascaravel" style="color:#fff">64</b></div>
           </div>
         </section>
 
@@ -2193,10 +2259,10 @@
               <option>Governador</option>
             </select>
           </div>
-          <div class="mini-row" style="color:var(--muted)">Nota de corte 2022: <b style="color:#fff">3.898 votos</b> · R Nelson (PL)</div>
+          <div class="mini-row" style="color:var(--muted)">Nota de corte 2022: <b class="mascaravel" style="color:#fff">3.898 votos</b> · R Nelson (PL)</div>
           <div class="faltam-box">
             <div class="faltam-row">
-              <span class="num" id="tf-faltam">—</span>
+              <span class="num mascaravel" id="tf-faltam">—</span>
               <span class="lbl">faltam para a nota de corte</span>
             </div>
             <div class="progress-track">
@@ -2221,19 +2287,19 @@
         <div class="cards-grid">
           <div class="stat-card sc-cyan">
             <div class="lbl">Visitas</div>
-            <div class="val" id="st-site">—</div>
+            <div class="val mascaravel" id="st-site">—</div>
           </div>
           <div class="stat-card sc-indigo">
             <div class="lbl">Mensagens recebidas</div>
-            <div class="val" id="st-leads">—</div>
+            <div class="val mascaravel" id="st-leads">—</div>
           </div>
           <div class="stat-card sc-green">
             <div class="lbl">Lideranças cadastradas</div>
-            <div class="val" id="st-lid">—</div>
+            <div class="val mascaravel" id="st-lid">—</div>
           </div>
           <div class="stat-card sc-blue">
             <div class="lbl">Apoiadores cadastrados</div>
-            <div class="val" id="st-apo">—</div>
+            <div class="val mascaravel" id="st-apo">—</div>
           </div>
         </div>
         <div class="chart-box">
@@ -2546,6 +2612,50 @@
     let paginaAtualLid = 1, buscaAtualLid = '', dataDeLid = '', dataAteLid = '', totalLiderancas = 0;
     let paginaAtualApo = 1, buscaAtualApo = '', dataDeApo = '', dataAteApo = '', totalApoiadores = 0;
     let resumoVotosTimer = null;
+
+    /* ===== modo privacidade: oculta os números pra quem tá com a tela
+       compartilhada, sem esconder o painel inteiro ===== */
+    let privacidadeAtiva = localStorage.getItem('painel_privacidade') === '1';
+
+    function mascararTexto(html) {
+      return String(html).replace(/[0-9]/g, '•');
+    }
+
+    // toda vez que algum valor mascarável for atualizado (métricas, resumo de
+    // votos etc.) passa por aqui em vez de setar textContent direto — assim,
+    // se o modo privacidade tiver ativo, o dado novo já chega mascarado
+    function definirValor(id, valor) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.dataset.privReal = valor;
+      el.innerHTML = privacidadeAtiva ? mascararTexto(valor) : valor;
+    }
+
+    function atualizarIconePrivacidade() {
+      const btn = document.getElementById('btnPrivacidade');
+      if (!btn) return;
+      btn.classList.toggle('oculto', privacidadeAtiva);
+      btn.title = privacidadeAtiva ? 'Mostrar valores' : 'Ocultar valores';
+    }
+
+    function alternarPrivacidade() {
+      privacidadeAtiva = !privacidadeAtiva;
+      localStorage.setItem('painel_privacidade', privacidadeAtiva ? '1' : '0');
+      document.querySelectorAll('.mascaravel').forEach(el => {
+        if (el.dataset.privReal === undefined) el.dataset.privReal = el.innerHTML;
+        el.innerHTML = privacidadeAtiva ? mascararTexto(el.dataset.privReal) : el.dataset.privReal;
+      });
+      atualizarIconePrivacidade();
+    }
+
+    // valores estáticos (Dados Amapá/Macapá, nota de corte) já vêm prontos no
+    // HTML — guarda o valor real deles antes de qualquer coisa, e já aplica a
+    // máscara de cara se o modo privacidade tiver ficado ativo de uma visita anterior
+    document.querySelectorAll('.mascaravel').forEach(el => {
+      el.dataset.privReal = el.innerHTML;
+      if (privacidadeAtiva) el.innerHTML = mascararTexto(el.dataset.privReal);
+    });
+    atualizarIconePrivacidade();
     let customFrom = '', customTo = '';
     const NOTA_DE_CORTE = 3898;
 
@@ -2620,16 +2730,16 @@
     async function carregarResumoVotos() {
       try {
         const d = await api('/api/admin/resumo-votos');
-        document.getElementById('tf-votos').textContent = d.votosPrevistos.toLocaleString('pt-BR');
-        document.getElementById('tf-liderancas').textContent = d.liderancas.toLocaleString('pt-BR');
-        document.getElementById('tf-bairros').textContent = d.bairros.toLocaleString('pt-BR');
+        definirValor('tf-votos', d.votosPrevistos.toLocaleString('pt-BR'));
+        definirValor('tf-liderancas', d.liderancas.toLocaleString('pt-BR'));
+        definirValor('tf-bairros', d.bairros.toLocaleString('pt-BR'));
         const faltamEl = document.getElementById('tf-faltam');
         const faltam = NOTA_DE_CORTE - d.votosPrevistos;
         if (faltam > 0) {
-          faltamEl.textContent = faltam.toLocaleString('pt-BR');
+          definirValor('tf-faltam', faltam.toLocaleString('pt-BR'));
           faltamEl.classList.remove('ok');
         } else {
-          faltamEl.textContent = 'Meta atingida! 🎉';
+          definirValor('tf-faltam', 'Meta atingida! 🎉');
           faltamEl.classList.add('ok');
         }
         const pct = Math.min(100, Math.max(0, (d.votosPrevistos / NOTA_DE_CORTE) * 100));
@@ -2742,10 +2852,10 @@
           api('/api/admin/liderancas?from=' + r.from + '&to=' + r.to + '&page=1').catch(() => null),
           api('/api/admin/apoiadores?from=' + r.from + '&to=' + r.to + '&page=1').catch(() => null),
         ]);
-        document.getElementById('st-site').textContent = d.site_view;
-        document.getElementById('st-leads').textContent = d.leads;
-        document.getElementById('st-lid').textContent = lid ? lid.total : '—';
-        document.getElementById('st-apo').textContent = apo ? apo.total : '—';
+        definirValor('st-site', d.site_view);
+        definirValor('st-leads', d.leads);
+        definirValor('st-lid', lid ? lid.total : '—');
+        definirValor('st-apo', apo ? apo.total : '—');
         desenharGrafico(d.serie);
         desenharGraficoLid(d.serie);
         desenharGraficoApo(d.serie);
