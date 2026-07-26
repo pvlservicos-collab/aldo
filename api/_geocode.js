@@ -1,10 +1,12 @@
 // Geocodifica endereço + bairro via Nominatim (OpenStreetMap), filtrando
-// resultados fora da região metropolitana de Macapá (inclui Santana e
-// Mazagão). Usado tanto no cadastro público (api/lideranca.js) quanto no
-// script de reparo (scripts/geocode-liderancas.js), pra ter uma única
-// lógica de geocodificação em vez de duas cópias divergentes.
+// resultados fora do estado do Amapá. Usado tanto no cadastro público
+// (api/lideranca.js) quanto no script de reparo (scripts/geocode-liderancas.js),
+// pra ter uma única lógica de geocodificação em vez de duas cópias divergentes.
 
-const BOUNDS = { latMin: -0.2, latMax: 0.42, lngMin: -51.4, lngMax: -50.9 };
+// caixa generosa cobrindo todo o Amapá (de Oiapoque, no extremo norte, até
+// Laranjal do Jari/Vitória do Jari, no extremo sul) — só pra rejeitar
+// resultado grosseiramente errado do Nominatim, não precisa ser precisa
+const BOUNDS = { latMin: -1.3, latMax: 4.5, lngMin: -54.9, lngMax: -49.8 };
 function dentroDosLimites(lat, lng) {
   return lat >= BOUNDS.latMin && lat <= BOUNDS.latMax && lng >= BOUNDS.lngMin && lng <= BOUNDS.lngMax;
 }
@@ -15,15 +17,13 @@ function limpa(s) {
 
 // bairros de municípios vizinhos vêm prefixados como "Santana-Central" (ver
 // BAIRROS_MACAPA em liderancas.html/apoiadores.html) — sem isso a busca no
-// Nominatim ia grudar "Macapá" num bairro que é de outro município e nunca achar nada
-const MUNICIPIOS_VIZINHOS = ['Santana', 'Mazagão'];
+// Nominatim ia grudar "Macapá" num bairro que é de outro município e nunca
+// achar nada. Nenhum bairro de Macapá tem hífen no nome, então qualquer
+// "Município-Bairro" aqui é sempre de um dos outros municípios do Amapá.
 function extrairMunicipioBairro(bairroBruto) {
   const bai = limpa(bairroBruto);
   const m = bai.match(/^([^-]+)-(.+)$/);
-  if (m) {
-    const municipio = MUNICIPIOS_VIZINHOS.find(v => v.toLowerCase() === m[1].trim().toLowerCase());
-    if (municipio) return { municipio, bairro: m[2].trim() };
-  }
+  if (m) return { municipio: m[1].trim(), bairro: m[2].trim() };
   return { municipio: 'Macapá', bairro: bai };
 }
 
