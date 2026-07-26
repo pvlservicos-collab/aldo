@@ -176,10 +176,15 @@ function calcularLocaisPorBairro(locais){
 }
 
 /* lideranças cadastradas cujo texto de bairro bate (por aproximação) com o
-   nome do polígono */
+   nome do polígono. Os polígonos aqui são só de Macapá — bairro de município
+   vizinho vem prefixado "Santana-X"/"Mazagão-X" (ver BAIRROS_MACAPA em
+   liderancas.html) e tem que ficar de fora dessa comparação por aproximação,
+   senão "Santana-Central" bateria com o polígono "Central" de Macapá */
+const MUNICIPIO_VIZINHO_RE = /^(Santana|Mazagão)-/i;
 function liderancasDoBairro(nomePoligono){
   const alvo = norm(nomePoligono);
   return LIDERANCAS_GEO.filter(l => {
+    if (MUNICIPIO_VIZINHO_RE.test(String(l.bairro || '').trim())) return false;
     const b = norm(l.bairro);
     return b && (b.includes(alvo) || alvo.includes(b));
   });

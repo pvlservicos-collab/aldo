@@ -1,7 +1,8 @@
 // Geocodifica endereço + bairro via Nominatim (OpenStreetMap), filtrando
-// resultados fora de Macapá. Usado tanto no cadastro público (api/lideranca.js)
-// quanto no script de reparo (scripts/geocode-liderancas.js), pra ter uma
-// única lógica de geocodificação em vez de duas cópias divergentes.
+// resultados fora da região metropolitana de Macapá (inclui Santana e
+// Mazagão). Usado tanto no cadastro público (api/lideranca.js) quanto no
+// script de reparo (scripts/geocode-liderancas.js), pra ter uma única
+// lógica de geocodificação em vez de duas cópias divergentes.
 
 const BOUNDS = { latMin: -0.2, latMax: 0.42, lngMin: -51.4, lngMax: -50.9 };
 function dentroDosLimites(lat, lng) {
@@ -10,6 +11,20 @@ function dentroDosLimites(lat, lng) {
 
 function limpa(s) {
   return String(s || '').replace(/\s+/g, ' ').trim();
+}
+
+// bairros de municípios vizinhos vêm prefixados como "Santana-Central" (ver
+// BAIRROS_MACAPA em liderancas.html/apoiadores.html) — sem isso a busca no
+// Nominatim ia grudar "Macapá" num bairro que é de outro município e nunca achar nada
+const MUNICIPIOS_VIZINHOS = ['Santana', 'Mazagão'];
+function extrairMunicipioBairro(bairroBruto) {
+  const bai = limpa(bairroBruto);
+  const m = bai.match(/^([^-]+)-(.+)$/);
+  if (m) {
+    const municipio = MUNICIPIOS_VIZINHOS.find(v => v.toLowerCase() === m[1].trim().toLowerCase());
+    if (municipio) return { municipio, bairro: m[2].trim() };
+  }
+  return { municipio: 'Macapá', bairro: bai };
 }
 
 async function consultaNominatim(query) {
@@ -23,14 +38,14 @@ async function consultaNominatim(query) {
   return bons[0] || null;
 }
 
-async function geocodeEnderecoBairro(endereco, bairro) {
+async function geocodeEnderecoBairro(endereco, bairroBruto) {
   const end = limpa(endereco);
-  const bai = limpa(bairro);
-  if (!end || !bai) return null;
+  if (!end || !limpa(bairroBruto)) return null;
+  const { municipio, bairro: bai } = extrairMunicipioBairro(bairroBruto);
   const tentativas = [
-    `${end}, ${bai}, Macapá, Amapá, Brasil`,
-    `${end}, Macapá, Amapá, Brasil`,
-    `${bai}, Macapá, Amapá, Brasil`,
+    `${end}, ${bai}, ${municipio}, Amapá, Brasil`,
+    `${end}, ${municipio}, Amapá, Brasil`,
+    `${bai}, ${municipio}, Amapá, Brasil`,
   ];
   for (const query of tentativas) {
     try {
