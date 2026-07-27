@@ -295,7 +295,7 @@
         </div>
         <div class="fg">
           <label for="l-nascimento">Data de nascimento</label>
-          <input type="date" id="l-nascimento" required>
+          <input type="text" id="l-nascimento" inputmode="numeric" placeholder="00/00/0000" maxlength="10" required>
         </div>
         <div class="fg">
           <label for="l-endereco">Endereço</label>
@@ -445,6 +445,23 @@
       if (!e.target.closest('#indicado-wrap')) indicadoList.classList.remove('show');
     });
 
+    const nascimentoInput = document.getElementById('l-nascimento');
+    nascimentoInput.addEventListener('input', () => {
+      let v = nascimentoInput.value.replace(/\D/g, '').slice(0, 8);
+      if (v.length > 4) v = v.replace(/(\d{2})(\d{2})(\d{0,4})/, '$1/$2/$3');
+      else if (v.length > 2) v = v.replace(/(\d{2})(\d{0,2})/, '$1/$2');
+      nascimentoInput.value = v;
+    });
+    function nascimentoParaIso(br) {
+      const m = br.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if (!m) return null;
+      const dia = Number(m[1]), mes = Number(m[2]), ano = Number(m[3]);
+      const dt = new Date(ano, mes - 1, dia);
+      if (dt.getFullYear() !== ano || dt.getMonth() !== mes - 1 || dt.getDate() !== dia) return null;
+      if (ano < 1900 || ano > new Date().getFullYear()) return null;
+      return ano + '-' + String(mes).padStart(2, '0') + '-' + String(dia).padStart(2, '0');
+    }
+
     const form = document.getElementById('form-apoiador');
     const btn = document.getElementById('btn-cadastrar');
     const msgErro = document.getElementById('msg-erro');
@@ -455,11 +472,17 @@
       const numero = document.getElementById('l-numero').value.trim();
       const bairro = document.getElementById('l-bairro').value.trim();
       const mae = document.getElementById('l-mae').value.trim();
-      const nascimento = document.getElementById('l-nascimento').value.trim();
+      const nascimentoBr = nascimentoInput.value.trim();
+      const nascimento = nascimentoParaIso(nascimentoBr);
       const endereco = document.getElementById('l-endereco').value.trim();
       const indicadoPor = indicadoInput.value.trim();
       const indicadoPorId = indicadoIdInput.value.trim();
       msgErro.style.display = 'none';
+      if (nascimentoBr && !nascimento) {
+        msgErro.textContent = 'Data de nascimento inválida. Use o formato 00/00/0000.';
+        msgErro.style.display = 'block';
+        return;
+      }
       if (!nome || !numero || !bairro || !mae || !nascimento || !endereco) {
         msgErro.textContent = 'Preencha todos os campos obrigatórios.';
         msgErro.style.display = 'block';
