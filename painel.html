@@ -1346,6 +1346,29 @@
       max-height: 240px
     }
 
+    .chart-legenda {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .chart-legenda-item {
+      display: inline-flex;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .chart-legenda-item .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-right: 7px;
+      flex: none;
+    }
+
     .ip-row {
       display: flex;
       align-items: center;
@@ -2438,14 +2461,17 @@
         </div>
         <div class="chart-box">
           <h3>Evolução diária</h3>
+          <div class="chart-legenda" id="legendaMetricas"></div>
           <canvas id="chartMetricas"></canvas>
         </div>
         <div class="chart-box">
           <h3>Lideranças cadastradas por dia</h3>
+          <div class="chart-legenda" id="legendaLid"></div>
           <canvas id="chartLid"></canvas>
         </div>
         <div class="chart-box">
           <h3>Apoiadores cadastrados por dia</h3>
+          <div class="chart-legenda" id="legendaApo"></div>
           <canvas id="chartApo"></canvas>
         </div>
         <div class="chart-box">
@@ -3188,6 +3214,16 @@
       }
     }
 
+    // legenda própria (bolinha pequena + espaço até o texto) em vez da
+    // legenda embutida do Chart.js, que não dá pra afinar direito
+    function renderizarLegenda(containerId, itens) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      el.innerHTML = itens.map(it =>
+        '<span class="chart-legenda-item"><i class="dot" style="background:' + it.cor + '"></i>' + esc(it.label) + '</span>'
+      ).join('');
+    }
+
     function desenharGrafico(serie) {
       const labels = serie.map(s => s.data.slice(5).split('-').reverse().join('/'));
       const ctx = document.getElementById('chartMetricas').getContext('2d');
@@ -3221,7 +3257,7 @@
             y: { beginAtZero: true, ticks: { color: '#8ca3c7', font: { size: 11 } }, grid: { color: 'rgba(150,190,255,.07)' } }
           },
           plugins: {
-            legend: { labels: { color: '#f2f7ff', usePointStyle: true, pointStyle: 'circle', boxWidth: 7, padding: 16 } },
+            legend: { display: false },
             tooltip: {
               backgroundColor: 'rgba(4,9,20,.95)', borderColor: 'rgba(150,190,255,.25)', borderWidth: 1,
               titleColor: '#f2f7ff', bodyColor: '#8ca3c7', cornerRadius: 10, padding: 12
@@ -3229,6 +3265,7 @@
           }
         }
       };
+      renderizarLegenda('legendaMetricas', [{ cor: '#22d3ee', label: 'Visitas' }, { cor: '#818cf8', label: 'Mensagens' }]);
       if (chart) { chart.data = cfg.data; chart.options = cfg.options; chart.update(); }
       else chart = new Chart(ctx, cfg);
     }
@@ -3260,7 +3297,7 @@
             y: { beginAtZero: true, ticks: { color: '#8ca3c7', font: { size: 11 }, precision: 0 }, grid: { color: 'rgba(150,190,255,.07)' } }
           },
           plugins: {
-            legend: { labels: { color: '#f2f7ff', usePointStyle: true, pointStyle: 'circle', boxWidth: 7, padding: 16 } },
+            legend: { display: false },
             tooltip: {
               backgroundColor: 'rgba(4,9,20,.95)', borderColor: 'rgba(150,190,255,.25)', borderWidth: 1,
               titleColor: '#f2f7ff', bodyColor: '#8ca3c7', cornerRadius: 10, padding: 12
@@ -3268,6 +3305,7 @@
           }
         }
       };
+      renderizarLegenda(canvasId.replace('chart', 'legenda'), [{ cor, label }]);
       if (chartAtual) { chartAtual.data = cfg.data; chartAtual.options = cfg.options; chartAtual.update(); return chartAtual; }
       return new Chart(ctx, cfg);
     }
