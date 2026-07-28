@@ -1110,6 +1110,126 @@
       white-space: nowrap;
     }
 
+    /* ===== tour de onboarding (?onboarding na URL) ===== */
+    .onb-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 900;
+    }
+
+    .onb-overlay.open {
+      display: block
+    }
+
+    .onb-frame {
+      position: fixed;
+      background: rgba(2, 6, 16, .74);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      transition: top .35s cubic-bezier(.4, 0, .2, 1), left .35s cubic-bezier(.4, 0, .2, 1),
+        width .35s cubic-bezier(.4, 0, .2, 1), height .35s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .onb-highlight {
+      position: fixed;
+      border: 2px solid var(--cyan);
+      border-radius: 12px;
+      box-shadow: 0 0 0 4px rgba(34, 211, 238, .18), 0 0 44px rgba(34, 211, 238, .35);
+      pointer-events: none;
+      transition: top .35s cubic-bezier(.4, 0, .2, 1), left .35s cubic-bezier(.4, 0, .2, 1),
+        width .35s cubic-bezier(.4, 0, .2, 1), height .35s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .onb-tooltip {
+      position: fixed;
+      z-index: 902;
+      width: 300px;
+      max-width: calc(100vw - 24px);
+      background: linear-gradient(165deg, rgba(12, 23, 48, .98), rgba(5, 10, 24, .98));
+      border: 1px solid var(--line-strong);
+      border-radius: 14px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow-pop);
+      transition: top .35s cubic-bezier(.4, 0, .2, 1), left .35s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .onb-tooltip-titulo {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: #fff;
+      margin-bottom: 6px
+    }
+
+    .onb-tooltip-texto {
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 14px
+    }
+
+    .onb-tooltip-rodape {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px
+    }
+
+    .onb-passo {
+      font-size: 11px;
+      color: var(--dim);
+      white-space: nowrap
+    }
+
+    .onb-botoes {
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .onb-sair {
+      background: none;
+      border: none;
+      color: var(--dim);
+      font-size: 11.5px;
+      cursor: pointer;
+      padding: 6px 4px;
+      text-decoration: underline;
+    }
+
+    .onb-sair:hover {
+      color: var(--muted)
+    }
+
+    .onb-nav {
+      background: var(--glass2);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 7px 12px;
+      font: inherit;
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: all var(--t-fast)
+    }
+
+    .onb-nav:hover {
+      border-color: var(--line-strong)
+    }
+
+    .onb-nav:disabled {
+      opacity: .35;
+      cursor: not-allowed
+    }
+
+    .onb-nav-principal {
+      background: var(--grad-accent);
+      border: none;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, .4)
+    }
+
     /* ===== cards de estatística ===== */
     .cards-grid {
       display: grid;
@@ -2625,6 +2745,27 @@
     </div>
   </div>
 
+  <!-- TOUR DE ONBOARDING (só aparece com ?onboarding na URL do painel) -->
+  <div class="onb-overlay" id="onboardingOverlay">
+    <div class="onb-frame" id="onbFrameTop"></div>
+    <div class="onb-frame" id="onbFrameBottom"></div>
+    <div class="onb-frame" id="onbFrameLeft"></div>
+    <div class="onb-frame" id="onbFrameRight"></div>
+    <div class="onb-highlight" id="onbHighlight"></div>
+    <div class="onb-tooltip" id="onbTooltip">
+      <div class="onb-tooltip-titulo" id="onbTitulo">—</div>
+      <div class="onb-tooltip-texto" id="onbTexto">—</div>
+      <div class="onb-tooltip-rodape">
+        <span class="onb-passo" id="onbPasso">1 / 8</span>
+        <div class="onb-botoes">
+          <button type="button" class="onb-sair" onclick="sairOnboarding()">Pular tour</button>
+          <button type="button" class="onb-nav" id="onbAnterior" onclick="onboardingAnterior()">‹</button>
+          <button type="button" class="onb-nav onb-nav-principal" id="onbProximo" onclick="onboardingProximo()">Próximo ›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     let periodoAtual = '7d', paginaAtual = 1, buscaAtual = '', dataDe = '', dataAte = '', totalLeads = 0, chart = null, chartLid = null, chartApo = null;
     let paginaAtualLid = 1, buscaAtualLid = '', dataDeLid = '', dataAteLid = '', totalLiderancas = 0;
@@ -2728,6 +2869,180 @@
       carregarAgenda();
       carregarResumoVotos();
       if (!resumoVotosTimer) resumoVotosTimer = setInterval(carregarResumoVotos, 20000);
+      if (new URLSearchParams(location.search).has('onboarding')) {
+        // tira o parâmetro da URL já de cara, pra um F5 no meio do tour não reiniciar ele sozinho
+        history.replaceState(null, '', location.pathname);
+        setTimeout(iniciarOnboarding, 400);
+      }
+    }
+
+    /* ══════════ tour de onboarding (?onboarding) ══════════
+       roteiro fixo de "passos": cada um pode trocar de aba (função
+       mudarTab já existente, sem duplicar lógica nenhuma) e sempre aponta
+       pra um ou mais elementos que formam o "recorte" iluminado — o resto
+       da tela fica com uma moldura escura + desfocada por cima */
+    const ONBOARDING_PASSOS = [
+      {
+        tab: null,
+        alvo: () => ['chartMetricas', 'chartLid', 'chartApo'].map(id => document.getElementById(id)?.closest('.chart-box')),
+        titulo: 'Gráficos do site',
+        texto: 'Visitas, mensagens, lideranças e apoiadores cadastrados, dia a dia. Dá pra trocar o período lá em cima.',
+      },
+      {
+        tab: null,
+        alvo: () => [document.getElementById('topoFixo')],
+        titulo: 'Resumo ao vivo',
+        texto: 'Sempre visível: votos previstos, lideranças cadastradas e os dados oficiais da eleição.',
+      },
+      {
+        tab: null,
+        alvo: () => [document.querySelector('nav')],
+        titulo: 'Menu do painel',
+        texto: 'Por aqui você navega entre todas as áreas do painel.',
+      },
+      {
+        tab: 'mapa',
+        alvo: () => [document.getElementById('tab-mapa')],
+        titulo: 'Mapa',
+        texto: 'Lideranças cadastradas e locais de votação, no mapa da região.',
+      },
+      {
+        tab: 'leads',
+        alvo: () => [document.getElementById('tab-leads')],
+        titulo: 'Formulário',
+        texto: 'Mensagens recebidas pelo formulário de contato do site.',
+      },
+      {
+        tab: 'liderancas',
+        alvo: () => [document.getElementById('tab-liderancas')],
+        titulo: 'Lideranças',
+        texto: 'Lideranças cadastradas — busca, filtro por data e exportação em CSV.',
+      },
+      {
+        tab: 'apoiadores',
+        alvo: () => [document.getElementById('tab-apoiadores')],
+        titulo: 'Apoiadores',
+        texto: 'Apoiadores individuais, cadastrados pelo site ou pelo link exclusivo de cada liderança.',
+      },
+      {
+        tab: null,
+        alvo: () => [
+          document.querySelector('nav .nav-secao'),
+          document.querySelector('nav a[data-tab="agenda"]'),
+          document.querySelector('nav a[data-tab="iadoaldo"]'),
+        ],
+        titulo: 'Extras',
+        texto: 'Agenda de compromissos e a IA do Aldo, o assistente de conversa do site.',
+      },
+    ];
+
+    let onboardingIndex = 0;
+    let onboardingAtivo = false;
+    let onboardingRaf = null;
+
+    function iniciarOnboarding() {
+      onboardingAtivo = true;
+      onboardingIndex = 0;
+      document.getElementById('onboardingOverlay').classList.add('open');
+      window.addEventListener('resize', onboardingReposicionarDebounced);
+      window.addEventListener('scroll', onboardingReposicionarDebounced, true);
+      document.addEventListener('keydown', onboardingTeclado);
+      onboardingMostrarPasso();
+    }
+
+    function encerrarOnboarding() {
+      onboardingAtivo = false;
+      document.getElementById('onboardingOverlay').classList.remove('open');
+      window.removeEventListener('resize', onboardingReposicionarDebounced);
+      window.removeEventListener('scroll', onboardingReposicionarDebounced, true);
+      document.removeEventListener('keydown', onboardingTeclado);
+    }
+
+    function sairOnboarding() {
+      encerrarOnboarding();
+    }
+
+    function onboardingProximo() {
+      if (onboardingIndex >= ONBOARDING_PASSOS.length - 1) {
+        encerrarOnboarding();
+        mudarTab('mapa');
+        return;
+      }
+      onboardingIndex++;
+      onboardingMostrarPasso();
+    }
+
+    function onboardingAnterior() {
+      if (onboardingIndex === 0) return;
+      onboardingIndex--;
+      onboardingMostrarPasso();
+    }
+
+    function onboardingTeclado(e) {
+      if (!onboardingAtivo) return;
+      if (e.key === 'ArrowRight') onboardingProximo();
+      else if (e.key === 'ArrowLeft') onboardingAnterior();
+      else if (e.key === 'Escape') sairOnboarding();
+    }
+
+    function onboardingMostrarPasso() {
+      const passo = ONBOARDING_PASSOS[onboardingIndex];
+      if (passo.tab) mudarTab(passo.tab);
+      document.getElementById('onbTitulo').textContent = passo.titulo;
+      document.getElementById('onbTexto').textContent = passo.texto;
+      document.getElementById('onbPasso').textContent = (onboardingIndex + 1) + ' / ' + ONBOARDING_PASSOS.length;
+      document.getElementById('onbAnterior').disabled = onboardingIndex === 0;
+      document.getElementById('onbProximo').textContent = (onboardingIndex === ONBOARDING_PASSOS.length - 1) ? 'Concluir ✓' : 'Próximo ›';
+      // dá um tempo pro layout assentar (troca de aba pode mudar altura/scroll) antes de medir posições
+      requestAnimationFrame(() => requestAnimationFrame(onboardingReposicionar));
+    }
+
+    function onboardingUniaoRetangulo(elementos) {
+      const rects = elementos.filter(Boolean).map(el => el.getBoundingClientRect()).filter(r => r.width > 0 || r.height > 0);
+      if (!rects.length) return null;
+      const top = Math.min(...rects.map(r => r.top));
+      const left = Math.min(...rects.map(r => r.left));
+      const bottom = Math.max(...rects.map(r => r.bottom));
+      const right = Math.max(...rects.map(r => r.right));
+      return { top, left, bottom, right, width: right - left, height: bottom - top };
+    }
+
+    function onboardingPosRect(el, top, left, width, height) {
+      el.style.top = Math.round(top) + 'px';
+      el.style.left = Math.round(left) + 'px';
+      el.style.width = Math.max(0, Math.round(width)) + 'px';
+      el.style.height = Math.max(0, Math.round(height)) + 'px';
+    }
+
+    function onboardingReposicionarDebounced() {
+      if (onboardingRaf) return;
+      onboardingRaf = requestAnimationFrame(() => { onboardingRaf = null; onboardingReposicionar(); });
+    }
+
+    function onboardingReposicionar() {
+      if (!onboardingAtivo) return;
+      const passo = ONBOARDING_PASSOS[onboardingIndex];
+      const r = onboardingUniaoRetangulo(passo.alvo());
+      if (!r) return;
+      const pad = 8;
+      const vw = window.innerWidth, vh = window.innerHeight;
+      const top = Math.max(0, r.top - pad), left = Math.max(0, r.left - pad);
+      const bottom = Math.min(vh, r.bottom + pad), right = Math.min(vw, r.right + pad);
+      const largura = right - left, altura = bottom - top;
+
+      onboardingPosRect(document.getElementById('onbFrameTop'), 0, 0, vw, top);
+      onboardingPosRect(document.getElementById('onbFrameBottom'), bottom, 0, vw, vh - bottom);
+      onboardingPosRect(document.getElementById('onbFrameLeft'), top, 0, left, altura);
+      onboardingPosRect(document.getElementById('onbFrameRight'), top, right, vw - right, altura);
+      onboardingPosRect(document.getElementById('onbHighlight'), top, left, largura, altura);
+
+      const tip = document.getElementById('onbTooltip');
+      const tipRect = tip.getBoundingClientRect();
+      let tipTop = bottom + 16;
+      if (tipTop + tipRect.height > vh - 12) tipTop = Math.max(12, top - tipRect.height - 16);
+      let tipLeft = Math.min(Math.max(12, left), vw - tipRect.width - 12);
+      tip.style.top = tipTop + 'px';
+      tip.style.left = tipLeft + 'px';
     }
 
     function mudarTab(tab) {
