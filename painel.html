@@ -1143,15 +1143,17 @@
 
     .onb-tooltip {
       position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 902;
       width: 300px;
       max-width: calc(100vw - 24px);
       background: linear-gradient(165deg, rgba(12, 23, 48, .98), rgba(5, 10, 24, .98));
       border: 1px solid var(--line-strong);
       border-radius: 14px;
-      padding: 16px 18px;
+      padding: 14px 18px;
       box-shadow: var(--shadow-pop);
-      transition: top .35s cubic-bezier(.4, 0, .2, 1), left .35s cubic-bezier(.4, 0, .2, 1);
     }
 
     .onb-tooltip-titulo {
@@ -1159,14 +1161,8 @@
       font-weight: 700;
       font-size: 15px;
       color: #fff;
-      margin-bottom: 6px
-    }
-
-    .onb-tooltip-texto {
-      font-size: 12.5px;
-      color: var(--muted);
-      line-height: 1.55;
-      margin-bottom: 14px
+      margin-bottom: 10px;
+      text-align: center
     }
 
     .onb-tooltip-rodape {
@@ -2754,7 +2750,6 @@
     <div class="onb-highlight" id="onbHighlight"></div>
     <div class="onb-tooltip" id="onbTooltip">
       <div class="onb-tooltip-titulo" id="onbTitulo">—</div>
-      <div class="onb-tooltip-texto" id="onbTexto">—</div>
       <div class="onb-tooltip-rodape">
         <span class="onb-passo" id="onbPasso">1 / 8</span>
         <div class="onb-botoes">
@@ -2886,43 +2881,36 @@
         tab: null,
         alvo: () => ['chartMetricas', 'chartLid', 'chartApo'].map(id => document.getElementById(id)?.closest('.chart-box')),
         titulo: 'Gráficos do site',
-        texto: 'Visitas, mensagens, lideranças e apoiadores cadastrados, dia a dia. Dá pra trocar o período lá em cima.',
       },
       {
         tab: null,
         alvo: () => [document.getElementById('topoFixo')],
         titulo: 'Resumo ao vivo',
-        texto: 'Sempre visível: votos previstos, lideranças cadastradas e os dados oficiais da eleição.',
       },
       {
         tab: null,
         alvo: () => [document.querySelector('nav')],
         titulo: 'Menu do painel',
-        texto: 'Por aqui você navega entre todas as áreas do painel.',
       },
       {
         tab: 'mapa',
         alvo: () => [document.getElementById('tab-mapa')],
         titulo: 'Mapa',
-        texto: 'Lideranças cadastradas e locais de votação, no mapa da região.',
       },
       {
         tab: 'leads',
         alvo: () => [document.getElementById('tab-leads')],
         titulo: 'Formulário',
-        texto: 'Mensagens recebidas pelo formulário de contato do site.',
       },
       {
         tab: 'liderancas',
         alvo: () => [document.getElementById('tab-liderancas')],
         titulo: 'Lideranças',
-        texto: 'Lideranças cadastradas — busca, filtro por data e exportação em CSV.',
       },
       {
         tab: 'apoiadores',
         alvo: () => [document.getElementById('tab-apoiadores')],
         titulo: 'Apoiadores',
-        texto: 'Apoiadores individuais, cadastrados pelo site ou pelo link exclusivo de cada liderança.',
       },
       {
         tab: null,
@@ -2932,7 +2920,6 @@
           document.querySelector('nav a[data-tab="iadoaldo"]'),
         ],
         titulo: 'Extras',
-        texto: 'Agenda de compromissos e a IA do Aldo, o assistente de conversa do site.',
       },
     ];
 
@@ -2989,12 +2976,14 @@
       const passo = ONBOARDING_PASSOS[onboardingIndex];
       if (passo.tab) mudarTab(passo.tab);
       document.getElementById('onbTitulo').textContent = passo.titulo;
-      document.getElementById('onbTexto').textContent = passo.texto;
       document.getElementById('onbPasso').textContent = (onboardingIndex + 1) + ' / ' + ONBOARDING_PASSOS.length;
       document.getElementById('onbAnterior').disabled = onboardingIndex === 0;
       document.getElementById('onbProximo').textContent = (onboardingIndex === ONBOARDING_PASSOS.length - 1) ? 'Concluir ✓' : 'Próximo ›';
-      // dá um tempo pro layout assentar (troca de aba pode mudar altura/scroll) antes de medir posições
-      requestAnimationFrame(() => requestAnimationFrame(onboardingReposicionar));
+      // dá um tempo pro layout assentar (troca de aba pode mudar altura) antes de medir/rolar
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        onboardingCentralizarAlvo();
+        onboardingReposicionar();
+      }));
     }
 
     function onboardingUniaoRetangulo(elementos) {
@@ -3019,6 +3008,18 @@
       onboardingRaf = requestAnimationFrame(() => { onboardingRaf = null; onboardingReposicionar(); });
     }
 
+    // rola a página pra deixar o alvo do passo atual centralizado na tela —
+    // o listener de scroll já ativo vai reposicionar o recorte sozinho
+    // durante a animação (scrollTo com behavior:'smooth' dispara 'scroll')
+    function onboardingCentralizarAlvo() {
+      const passo = ONBOARDING_PASSOS[onboardingIndex];
+      const r = onboardingUniaoRetangulo(passo.alvo());
+      if (!r) return;
+      const centroAbsolutoY = r.top + window.scrollY + r.height / 2;
+      const alvoScroll = Math.max(0, centroAbsolutoY - window.innerHeight / 2);
+      window.scrollTo({ top: alvoScroll, behavior: 'smooth' });
+    }
+
     function onboardingReposicionar() {
       if (!onboardingAtivo) return;
       const passo = ONBOARDING_PASSOS[onboardingIndex];
@@ -3035,14 +3036,6 @@
       onboardingPosRect(document.getElementById('onbFrameLeft'), top, 0, left, altura);
       onboardingPosRect(document.getElementById('onbFrameRight'), top, right, vw - right, altura);
       onboardingPosRect(document.getElementById('onbHighlight'), top, left, largura, altura);
-
-      const tip = document.getElementById('onbTooltip');
-      const tipRect = tip.getBoundingClientRect();
-      let tipTop = bottom + 16;
-      if (tipTop + tipRect.height > vh - 12) tipTop = Math.max(12, top - tipRect.height - 16);
-      let tipLeft = Math.min(Math.max(12, left), vw - tipRect.width - 12);
-      tip.style.top = tipTop + 'px';
-      tip.style.left = tipLeft + 'px';
     }
 
     function mudarTab(tab) {
