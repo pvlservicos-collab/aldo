@@ -1620,6 +1620,16 @@
       font-weight: 600
     }
 
+    .cal-box {
+      margin-left: -26px;
+      margin-right: -26px;
+      padding-left: 14px;
+      padding-right: 14px;
+      border-radius: 0;
+      border-left: none;
+      border-right: none
+    }
+
     .week-viewport {
       overflow: auto;
       max-height: 680px;
@@ -2178,6 +2188,13 @@
         grid-column: 1/-1
       }
 
+      .cal-box {
+        margin-left: -14px;
+        margin-right: -14px;
+        padding-left: 8px;
+        padding-right: 8px
+      }
+
       .week-viewport {
         max-height: 58vh
       }
@@ -2555,7 +2572,7 @@
           <p>Compromissos da campanha — adicione e exporte para o Google Maps</p>
         </div>
 
-        <div class="chart-box">
+        <div class="chart-box cal-box">
           <h3>Calendário da semana</h3>
           <div class="week-nav">
             <button type="button" onclick="semanaNavegar(-1)" aria-label="Semana anterior">‹</button>
@@ -3481,19 +3498,23 @@
         if (fim > maxH) maxH = Math.min(24, fim + 1);
       });
 
-      let html = '<div class="whg-corner"></div>';
+      /* toda célula (cabeçalho, hora, dia) recebe grid-column/grid-row explícitos —
+         se deixasse o encaixe automático do CSS Grid cuidar disso, a posição fixa dos
+         compromissos "furava" a sequência e empurrava tudo dali pra frente uma casa */
+      let html = '<div class="whg-corner" style="grid-column:1;grid-row:1"></div>';
       dias.forEach((d, idx) => {
         const iso = isoDias[idx];
-        html += '<div class="whg-daycol' + (iso === hoje ? ' hoje' : '') + '">' +
+        html += '<div class="whg-daycol' + (iso === hoje ? ' hoje' : '') + '" style="grid-column:' + (idx + 2) + ';grid-row:1">' +
           '<div class="whg-wd">' + DIAS_SEMANA[idx] + '</div>' +
           '<div class="whg-num">' + d.getDate() + '</div></div>';
       });
       for (let h = minH; h < maxH; h++) {
         const hh = String(h).padStart(2, '0');
-        html += '<div class="whg-hora">' + hh + ':00</div>';
+        const linha = 2 + (h - minH);
+        html += '<div class="whg-hora" style="grid-column:1;grid-row:' + linha + '">' + hh + ':00</div>';
         dias.forEach((d, idx) => {
           const iso = isoDias[idx];
-          html += '<div class="whg-cell' + (iso === hoje ? ' hoje' : '') + '" onclick="abrirEvento(\'' + iso + '\',\'' + hh + '\')"></div>';
+          html += '<div class="whg-cell' + (iso === hoje ? ' hoje' : '') + '" style="grid-column:' + (idx + 2) + ';grid-row:' + linha + '" onclick="abrirEvento(\'' + iso + '\',\'' + hh + '\')"></div>';
         });
       }
 
