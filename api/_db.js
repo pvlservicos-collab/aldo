@@ -98,6 +98,18 @@ async function ensureSchemaImpl() {
         version INT NOT NULL DEFAULT 1,
         atualizado_em TIMESTAMPTZ NOT NULL DEFAULT now()
       );
+
+      CREATE TABLE IF NOT EXISTS agenda (
+        id BIGSERIAL PRIMARY KEY,
+        titulo TEXT NOT NULL,
+        data DATE NOT NULL,
+        hora TEXT,
+        duracao NUMERIC,
+        local TEXT,
+        obs TEXT,
+        criado_em TIMESTAMPTZ NOT NULL DEFAULT now()
+      );
+      CREATE INDEX IF NOT EXISTS agenda_data_idx ON agenda (data);
   `);
 }
 

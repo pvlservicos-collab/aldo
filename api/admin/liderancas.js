@@ -62,6 +62,16 @@ module.exports = async (req, res) => {
 
     if (req.method !== 'GET') return res.status(405).json({ error: 'Método não permitido' });
 
+    // fonte única de verdade pro mapa (mapa.html): consulta o banco ao vivo,
+    // não um json gerado uma vez — quem for excluído/cadastrado aqui
+    // aparece/some no mapa imediatamente, sem precisar rodar script nenhum
+    if (req.query.geo) {
+      const { rows } = await getPool().query(
+        'SELECT id, nome, numero, bairro, endereco, lat, lng FROM liderancas ORDER BY id'
+      );
+      return res.status(200).json(rows);
+    }
+
     const { whereSql, params } = buildFiltro(req.query);
 
     if (req.query.export === 'csv') {
