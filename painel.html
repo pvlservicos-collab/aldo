@@ -1620,25 +1620,36 @@
       font-weight: 600
     }
 
-    .week-hourgrid {
-      display: grid;
-      grid-template-columns: 48px repeat(7, minmax(86px, 1fr));
+    .week-viewport {
+      overflow: auto;
+      max-height: 680px;
       border: 1px solid var(--line);
       border-radius: 12px;
-      overflow: hidden;
-      touch-action: pan-y;
-      min-width: 640px;
       background: rgba(255, 255, 255, .015)
     }
 
+    .week-hourgrid {
+      display: grid;
+      grid-template-columns: 48px repeat(7, minmax(86px, 1fr));
+      touch-action: pan-y;
+      min-width: 640px
+    }
+
     .whg-corner {
-      background: rgba(4, 9, 20, .6);
+      position: sticky;
+      top: 0;
+      left: 0;
+      z-index: 6;
+      background: rgba(6, 12, 26, .97);
       border-right: 1px solid var(--line);
       border-bottom: 1px solid var(--line-strong)
     }
 
     .whg-daycol {
-      background: rgba(4, 9, 20, .6);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: rgba(6, 12, 26, .97);
       border-right: 1px solid var(--line);
       border-bottom: 1px solid var(--line-strong);
       text-align: center;
@@ -1665,11 +1676,19 @@
       margin-top: 1px
     }
 
+    .whg-daycol.hoje {
+      background: rgba(34, 211, 238, .09)
+    }
+
     .whg-daycol.hoje .whg-num {
       color: var(--cyan)
     }
 
     .whg-hora {
+      position: sticky;
+      left: 0;
+      z-index: 4;
+      background: rgba(6, 12, 26, .97);
       font-size: 10px;
       color: var(--dim);
       text-align: right;
@@ -2159,6 +2178,38 @@
         grid-column: 1/-1
       }
 
+      .week-viewport {
+        max-height: 58vh
+      }
+
+      .week-hourgrid {
+        grid-template-columns: 30px repeat(7, minmax(0, 1fr));
+        min-width: 0
+      }
+
+      .whg-daycol {
+        padding: 6px 2px
+      }
+
+      .whg-daycol .whg-wd {
+        font-size: 7.5px
+      }
+
+      .whg-daycol .whg-num {
+        font-size: 12px
+      }
+
+      .whg-hora {
+        font-size: 8px;
+        padding: 4px 3px 0 0
+      }
+
+      .week-item {
+        font-size: 9px;
+        padding: 2px 4px;
+        line-height: 1.25
+      }
+
       .mapa-frame {
         height: calc(100vh - 220px);
         min-height: 70vh
@@ -2503,6 +2554,22 @@
           <h2>Agenda</h2>
           <p>Compromissos da campanha — adicione e exporte para o Google Maps</p>
         </div>
+
+        <div class="chart-box">
+          <h3>Calendário da semana</h3>
+          <div class="week-nav">
+            <button type="button" onclick="semanaNavegar(-1)" aria-label="Semana anterior">‹</button>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="week-label" id="semanaLabel">—</div>
+              <button type="button" class="btn-hoje" onclick="semanaHoje()">Hoje</button>
+            </div>
+            <button type="button" onclick="semanaNavegar(1)" aria-label="Próxima semana">›</button>
+          </div>
+          <div class="week-viewport" id="weekViewport">
+            <div class="week-hourgrid" id="weekGrid"></div>
+          </div>
+        </div>
+
         <div class="chart-box">
           <h3>Novo compromisso</h3>
           <div class="form-agenda">
@@ -2538,18 +2605,6 @@
           </table>
         </div>
         <div id="agendaEmpty" class="empty-msg hidden">Nenhum compromisso ainda. Adicione o primeiro acima.</div>
-
-        <div class="chart-box" style="overflow-x:auto">
-          <div class="week-nav">
-            <button type="button" onclick="semanaNavegar(-1)" aria-label="Semana anterior">‹</button>
-            <div style="display:flex;align-items:center;gap:10px">
-              <div class="week-label" id="semanaLabel">—</div>
-              <button type="button" class="btn-hoje" onclick="semanaHoje()">Hoje</button>
-            </div>
-            <button type="button" onclick="semanaNavegar(1)" aria-label="Próxima semana">›</button>
-          </div>
-          <div class="week-hourgrid" id="weekGrid"></div>
-        </div>
       </div>
 
       <!-- LEADS -->
@@ -3373,12 +3428,14 @@
           '<td><button type="button" class="btn-del-ag" onclick="excluirAgenda(' + i.id + ')" title="Excluir">🗑</button></td>';
         body.appendChild(tr);
       });
-      renderSemana();
+      renderSemana(!agendaCentralizada);
+      agendaCentralizada = true;
     }
 
     /* ===== visão semanal (Seg a Dom, navega por semana) ===== */
     const DIAS_SEMANA = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
     let semanaRef = segundaDaSemana(new Date());
+    let agendaCentralizada = false;
     function segundaDaSemana(d) {
       const dt = new Date(d); dt.setHours(0, 0, 0, 0);
       const dow = dt.getDay();
@@ -3392,9 +3449,16 @@
     }
     function semanaHoje() {
       semanaRef = segundaDaSemana(new Date());
-      renderSemana();
+      renderSemana(true);
     }
-    function renderSemana() {
+    function centralizarNaHoraAtual() {
+      const vp = document.getElementById('weekViewport');
+      if (!vp) return;
+      const hh = String(new Date().getHours()).padStart(2, '0') + ':00';
+      const alvo = Array.from(document.querySelectorAll('#weekGrid .whg-hora')).find(el => el.textContent === hh);
+      if (alvo) vp.scrollTop = Math.max(0, alvo.offsetTop - vp.clientHeight / 3);
+    }
+    function renderSemana(foco) {
       const itens = lerAgenda();
       const hoje = isoLocal(new Date());
       const dias = [];
@@ -3406,6 +3470,16 @@
       document.getElementById('semanaLabel').textContent = fmtCurto(dias[0]) + ' – ' + fmtCurto(dias[6]);
 
       const isoDias = dias.map(isoLocal);
+      const itensDaSemana = itens.filter(i => isoDias.includes(i.data));
+
+      /* janela de horas visível: 6h–22h por padrão, expande se tiver compromisso fora desse intervalo */
+      let minH = 6, maxH = 22;
+      itensDaSemana.forEach(i => {
+        const h = i.hora ? parseInt(i.hora.slice(0, 2), 10) : 0;
+        const fim = h + Math.max(1, Math.round(i.duracao || 1));
+        if (h < minH) minH = Math.max(0, h - 1);
+        if (fim > maxH) maxH = Math.min(24, fim + 1);
+      });
 
       let html = '<div class="whg-corner"></div>';
       dias.forEach((d, idx) => {
@@ -3414,7 +3488,7 @@
           '<div class="whg-wd">' + DIAS_SEMANA[idx] + '</div>' +
           '<div class="whg-num">' + d.getDate() + '</div></div>';
       });
-      for (let h = 0; h < 24; h++) {
+      for (let h = minH; h < maxH; h++) {
         const hh = String(h).padStart(2, '0');
         html += '<div class="whg-hora">' + hh + ':00</div>';
         dias.forEach((d, idx) => {
@@ -3425,13 +3499,12 @@
 
       /* eventos: blocos posicionados explicitamente na grade, ocupando tantas
          linhas (horas) quanto a duração pedir, sobrepostos nas células vazias */
-      itens.forEach(i => {
+      itensDaSemana.forEach(i => {
         const idx = isoDias.indexOf(i.data);
-        if (idx === -1) return;
         const h = i.hora ? parseInt(i.hora.slice(0, 2), 10) : 0;
         const dur = Math.max(1, Math.round(i.duracao || 1));
-        const linhaIni = 2 + h;
-        const linhaFim = Math.min(26, linhaIni + dur);
+        const linhaIni = 2 + (h - minH);
+        const linhaFim = Math.min(2 + (maxH - minH), linhaIni + dur);
         const col = idx + 2;
         const horaFim = String(Math.min(24, h + dur)).padStart(2, '0') + ':00';
         html += '<div class="week-item" style="grid-column:' + col + ';grid-row:' + linhaIni + '/' + linhaFim + '" onclick="event.stopPropagation();excluirAgenda(' + i.id + ')" title="' +
@@ -3441,6 +3514,7 @@
       });
 
       document.getElementById('weekGrid').innerHTML = html;
+      if (foco && isoDias.includes(hoje)) requestAnimationFrame(centralizarNaHoraAtual);
     }
 
     /* popup rápido: clicar num quadrado vazio da grade abre um mini-form pra
