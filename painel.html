@@ -3842,7 +3842,7 @@
       const cont = document.getElementById('iaPassos');
       cont.innerHTML = '<div class="empty-msg">Carregando…</div>';
       try {
-        const d = await api('/api/iadoaldo');
+        const d = await api('/api/admin/iadoaldo');
         iaCfg = d.config; iaVersion = d.version; iaDirty = false; iaCarregou = true;
         pintarIA();
         iaMsgStatus(iaVersion === 0 ? 'Mostrando o conteúdo padrão — edite e salve para publicar a sua versão.' : '', '');
@@ -3997,7 +3997,7 @@
       const btn = document.getElementById('iaSalvarBtn');
       btn.disabled = true; iaMsgStatus('Salvando…', '');
       try {
-        const d = await api('/api/iadoaldo', {
+        const d = await api('/api/admin/iadoaldo', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ config: iaCfg, version: iaVersion }),
@@ -4020,7 +4020,7 @@
     async function restaurarIA() {
       if (!confirm('Voltar a conversa pro conteúdo padrão? A versão que está no ar será substituída.')) return;
       try {
-        const d = await api('/api/iadoaldo', { method: 'DELETE' });
+        const d = await api('/api/admin/iadoaldo', { method: 'DELETE' });
         iaCfg = d.config; iaVersion = d.version; iaDirty = false;
         pintarIA();
         iaMsgStatus('Padrão restaurado — a página /iadoaldo já está com o conteúdo original.', 'ok');

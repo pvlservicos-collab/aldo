@@ -314,7 +314,7 @@ fetch('locais-geo.json')
    ser sempre exata — só desenha quadrado em quem tem lat/lng. */
 const marcadoresLid = {};
 function carregarLiderancas(){
-  return fetch('/api/admin/liderancas?geo=1', { credentials: 'same-origin' })
+  return fetch('/api/admin/liderancas-geo', { credentials: 'same-origin' })
     .then(r => r.ok ? r.json() : [])
     .catch(() => [])
     .then(lids => {

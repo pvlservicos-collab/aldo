@@ -1,5 +1,5 @@
 // Conteúdo padrão + validação da "IA do Aldo".
-// Usado por api/iadoaldo.js (GET público + PUT/DELETE do painel, protegidos por login).
+// Usado por api/iadoaldo.js (GET público) e api/admin/iadoaldo.js (GET/PUT/DELETE do painel, protegidos por login).
 
 const DEFAULT_CONFIG = {
   nome: 'Aldo Maurício',

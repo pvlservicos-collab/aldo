@@ -61,11 +61,7 @@ function send(res, status, body, headers) {
   res.end(body);
 }
 
-// espelha os "rewrites" do vercel.json (o servidor local não lê esse arquivo)
-const API_REWRITES = { track: 'lead' };
-
 function handleApi(req, res, apiPath, query) {
-  apiPath = API_REWRITES[apiPath] || apiPath;
   // CORS liberado localmente — evita 405/erro de rede se o painel.html for
   // aberto direto como arquivo (file://) em vez de via http://localhost
   const origin = req.headers.origin || '*';
