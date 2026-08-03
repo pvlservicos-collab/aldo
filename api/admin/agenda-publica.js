@@ -9,7 +9,7 @@ module.exports = async (req, res) => {
     if (req.method === 'GET') {
       const { rows } = await getPool().query(
         `SELECT id, titulo, to_char(data,'YYYY-MM-DD') AS data, hora, duracao, local, obs, criado_por
-         FROM agenda ORDER BY data, hora`
+         FROM agenda_publica ORDER BY data, hora`
       );
       return res.status(200).json({ itens: rows });
     }
@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'preencha ao menos o compromisso e a data' });
       }
       const { rows } = await getPool().query(
-        `INSERT INTO agenda (titulo, data, hora, duracao, local, obs, criado_por) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
+        `INSERT INTO agenda_publica (titulo, data, hora, duracao, local, obs, criado_por) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
         [titulo, data, hora, duracao, local, obs, criadoPor]
       );
       return res.status(201).json({ ok: true, id: rows[0].id });
@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
     if (req.method === 'DELETE') {
       const id = Number(req.query.id);
       if (!id) return res.status(400).json({ error: 'id inválido' });
-      await getPool().query('DELETE FROM agenda WHERE id = $1', [id]);
+      await getPool().query('DELETE FROM agenda_publica WHERE id = $1', [id]);
       return res.status(200).json({ ok: true });
     }
 

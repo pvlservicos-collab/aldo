@@ -110,6 +110,23 @@ async function ensureSchemaImpl() {
         criado_em TIMESTAMPTZ NOT NULL DEFAULT now()
       );
       CREATE INDEX IF NOT EXISTS agenda_data_idx ON agenda (data);
+      ALTER TABLE agenda ADD COLUMN IF NOT EXISTS criado_por TEXT;
+
+      -- agenda pública: mesma estrutura da agenda interna, mas em tabela própria
+      -- porque os compromissos daqui aparecem pra qualquer visitante em /agenda,
+      -- enquanto a "agenda" acima só é lida pelo painel autenticado
+      CREATE TABLE IF NOT EXISTS agenda_publica (
+        id BIGSERIAL PRIMARY KEY,
+        titulo TEXT NOT NULL,
+        data DATE NOT NULL,
+        hora TEXT,
+        duracao NUMERIC,
+        local TEXT,
+        obs TEXT,
+        criado_por TEXT,
+        criado_em TIMESTAMPTZ NOT NULL DEFAULT now()
+      );
+      CREATE INDEX IF NOT EXISTS agenda_publica_data_idx ON agenda_publica (data);
   `);
 }
 

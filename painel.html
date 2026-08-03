@@ -32,7 +32,9 @@
       --green: #4ade80;
       --amber: #fbbf24;
       --red: #f87171;
+      --violet: #a78bfa;
       --grad-accent: linear-gradient(135deg, #2563eb 0%, #22d3ee 100%);
+      --grad-accent-pub: linear-gradient(135deg, #7c3aed 0%, #c084fc 100%);
       --grad-card: linear-gradient(160deg, var(--glass) 0%, var(--glass2) 100%);
       --shadow-card: 0 10px 34px rgba(1, 4, 14, .55);
       --shadow-pop: 0 18px 50px rgba(1, 4, 14, .7);
@@ -1540,6 +1542,42 @@
       font-family: inherit
     }
 
+    .form-agenda select {
+      width: 100%;
+      padding: 11px 12px;
+      background: var(--field);
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      color: var(--ink);
+      font: inherit;
+      font-size: 13.5px
+    }
+
+    .fg-cadastrado {
+      grid-column: 1/-1
+    }
+
+    .fg-cadastrado>label {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 6px
+    }
+
+    .fg-cadastrado-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+
+    .fg-cadastrado-row input {
+      display: none
+    }
+
+    .fg-cadastrado.tem-outro .fg-cadastrado-row input {
+      display: block
+    }
+
     .btn-add-agenda {
       padding: 11px 22px;
       background: var(--grad-accent);
@@ -1756,6 +1794,30 @@
       font-weight: 700;
       color: var(--cyan);
       margin-right: 3px
+    }
+
+    /* ===== agenda pública: mesmo layout da interna, cor diferente para
+       distinguir os dois calendários de cara ===== */
+    .agenda-pub {
+      --cyan: var(--violet);
+      --grad-accent: var(--grad-accent-pub)
+    }
+
+    .agenda-pub .whg-daycol.hoje {
+      background: rgba(167, 139, 250, .1)
+    }
+
+    .agenda-pub .whg-cell.hoje {
+      background: rgba(167, 139, 250, .05)
+    }
+
+    .agenda-pub .week-item:hover {
+      background: rgba(167, 139, 250, .18)
+    }
+
+    .agenda-pub.chart-box,
+    .chart-box.agenda-pub {
+      border-color: rgba(167, 139, 250, .3)
     }
 
     /* ===== tabelas ===== */
@@ -2596,6 +2658,17 @@
             <input id="ag-duracao" type="number" min="0.5" step="0.5" placeholder="Duração (h)">
             <input id="ag-local" type="text" placeholder="Endereço (ex.: Av. FAB, 1234 — Centro, Macapá)">
             <textarea id="ag-obs" class="full" placeholder="Observações (opcional)"></textarea>
+            <div class="fg-cadastrado" id="ag-cadastrado-wrap">
+              <label>Cadastrado por:</label>
+              <div class="fg-cadastrado-row">
+                <select id="ag-cadastrado" onchange="toggleCadastradoOutro('ag')">
+                  <option value="Aldo Maurício">Aldo Maurício</option>
+                  <option value="Equipe Aldo Maurício">Equipe Aldo Maurício</option>
+                  <option value="personalizado">Personalizado</option>
+                </select>
+                <input type="text" id="ag-cadastrado-outro" placeholder="Digite o nome">
+              </div>
+            </div>
           </div>
           <button type="button" class="btn-add-agenda" onclick="adicionarAgenda()">+ Adicionar à agenda</button>
         </div>
@@ -2615,6 +2688,7 @@
                 <th>Compromisso</th>
                 <th>Endereço</th>
                 <th>Observações</th>
+                <th>Cadastrado por</th>
                 <th></th>
               </tr>
             </thead>
@@ -2622,6 +2696,75 @@
           </table>
         </div>
         <div id="agendaEmpty" class="empty-msg hidden">Nenhum compromisso ainda. Adicione o primeiro acima.</div>
+
+        <!-- AGENDA PÚBLICA: aparece pra qualquer visitante em /agenda, por isso fica
+             separada da agenda interna (que só existe dentro do painel) e com
+             cor diferente (roxo) pra não confundir uma com a outra -->
+        <div class="page-header" style="margin-top:36px">
+          <h2>Agenda pública</h2>
+          <p>Compromissos visíveis para os apoiadores na página <b>/agenda</b></p>
+        </div>
+
+        <div class="chart-box cal-box agenda-pub">
+          <h3>Calendário da semana (pública)</h3>
+          <div class="week-nav">
+            <button type="button" onclick="semanaNavegarPub(-1)" aria-label="Semana anterior">‹</button>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="week-label" id="semanaLabelPub">—</div>
+              <button type="button" class="btn-hoje" onclick="semanaHojePub()">Hoje</button>
+            </div>
+            <button type="button" onclick="semanaNavegarPub(1)" aria-label="Próxima semana">›</button>
+          </div>
+          <div class="week-viewport" id="weekViewportPub">
+            <div class="week-hourgrid" id="weekGridPub"></div>
+          </div>
+        </div>
+
+        <div class="chart-box agenda-pub">
+          <h3>Novo compromisso público</h3>
+          <div class="form-agenda">
+            <input id="agp-titulo" type="text" placeholder="Compromisso (ex.: Caminhada no Buritizal)">
+            <input id="agp-data" type="date">
+            <input id="agp-hora" type="time">
+            <input id="agp-duracao" type="number" min="0.5" step="0.5" placeholder="Duração (h)">
+            <input id="agp-local" type="text" placeholder="Endereço (ex.: Av. FAB, 1234 — Centro, Macapá)">
+            <textarea id="agp-obs" class="full" placeholder="Observações (opcional)"></textarea>
+            <div class="fg-cadastrado" id="agp-cadastrado-wrap">
+              <label>Cadastrado por:</label>
+              <div class="fg-cadastrado-row">
+                <select id="agp-cadastrado" onchange="toggleCadastradoOutro('agp')">
+                  <option value="Aldo Maurício">Aldo Maurício</option>
+                  <option value="Equipe Aldo Maurício">Equipe Aldo Maurício</option>
+                  <option value="personalizado">Personalizado</option>
+                </select>
+                <input type="text" id="agp-cadastrado-outro" placeholder="Digite o nome">
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn-add-agenda" onclick="adicionarAgendaPub()">+ Adicionar à agenda pública</button>
+        </div>
+        <p class="agenda-nota">💡 Esses compromissos ficam públicos em <b>/agenda</b>, pra qualquer apoiador ver — não aparecem na agenda interna e vice-versa.</p>
+        <div class="toolbar">
+          <span style="font-size:13px;color:var(--muted)"><b id="agPubTotal" style="color:var(--ink)">0</b>
+            compromissos</span>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Hora</th>
+                <th>Compromisso</th>
+                <th>Endereço</th>
+                <th>Observações</th>
+                <th>Cadastrado por</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="agendaPubBody"></tbody>
+          </table>
+        </div>
+        <div id="agendaPubEmpty" class="empty-msg hidden">Nenhum compromisso público ainda. Adicione o primeiro acima.</div>
       </div>
 
       <!-- LEADS -->
@@ -2821,6 +2964,17 @@
       </div>
       <div class="login-field"><label>Compromisso</label><input id="ev-titulo" type="text" placeholder="Ex.: Reunião com lideranças"></div>
       <div class="login-field"><label>Endereço (opcional)</label><input id="ev-local" type="text" placeholder="Ex.: Av. FAB, 1234 — Centro, Macapá"></div>
+      <div class="fg-cadastrado" id="ev-cadastrado-wrap">
+        <label>Cadastrado por:</label>
+        <div class="fg-cadastrado-row">
+          <select id="ev-cadastrado" onchange="toggleCadastradoOutro('ev')">
+            <option value="Aldo Maurício">Aldo Maurício</option>
+            <option value="Equipe Aldo Maurício">Equipe Aldo Maurício</option>
+            <option value="personalizado">Personalizado</option>
+          </select>
+          <input type="text" id="ev-cadastrado-outro" placeholder="Digite o nome">
+        </div>
+      </div>
       <div class="cal-actions">
         <button type="button" class="cal-limpar" onclick="fecharEvento()">Cancelar</button>
         <button type="button" class="cal-aplicar" onclick="salvarEventoRapido()">Adicionar</button>
@@ -2960,6 +3114,7 @@
       carregarLiderancas();
       carregarApoiadores();
       carregarAgenda();
+      carregarAgendaPub();
       carregarResumoVotos();
       if (!resumoVotosTimer) resumoVotosTimer = setInterval(carregarResumoVotos, 20000);
       if (new URLSearchParams(location.search).has('onboarding')) {
@@ -3390,7 +3545,24 @@
       chartApo = desenharGraficoUnico('chartApo', chartApo, serie, 'apoiadores', 'Apoiadores', '#60a5fa');
     }
 
-    /* ===== agenda (salva no banco, via /api/admin/agenda) ===== */
+    /* ===== campo "Cadastrado por" (select + campo livre quando "Personalizado") ===== */
+    function toggleCadastradoOutro(prefixo) {
+      const wrap = document.getElementById(prefixo + '-cadastrado-wrap');
+      const sel = document.getElementById(prefixo + '-cadastrado');
+      wrap.classList.toggle('tem-outro', sel.value === 'personalizado');
+    }
+    function lerCadastradoPor(prefixo) {
+      const sel = document.getElementById(prefixo + '-cadastrado');
+      if (sel.value === 'personalizado') return document.getElementById(prefixo + '-cadastrado-outro').value.trim();
+      return sel.value;
+    }
+    function limparCadastradoPor(prefixo) {
+      document.getElementById(prefixo + '-cadastrado').value = 'Aldo Maurício';
+      document.getElementById(prefixo + '-cadastrado-outro').value = '';
+      toggleCadastradoOutro(prefixo);
+    }
+
+    /* ===== agenda interna (salva no banco, via /api/admin/agenda — só aparece no painel) ===== */
     let agendaCache = [];
     function lerAgenda() { return agendaCache; }
     async function adicionarAgenda() {
@@ -3400,11 +3572,12 @@
       const duracao = Number(document.getElementById('ag-duracao').value) || 1;
       const local = document.getElementById('ag-local').value.trim();
       const obs = document.getElementById('ag-obs').value.trim();
+      const criadoPor = lerCadastradoPor('ag');
       if (!titulo || !data) { alert('Preencha pelo menos o compromisso e a data.'); return; }
       try {
         await api('/api/admin/agenda', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ titulo, data, hora, duracao, local, obs })
+          body: JSON.stringify({ titulo, data, hora, duracao, local, obs, criadoPor })
         });
       } catch (e) { alert('Não foi possível salvar o compromisso: ' + e.message); return; }
       document.getElementById('ag-titulo').value = '';
@@ -3413,6 +3586,7 @@
       document.getElementById('ag-duracao').value = '';
       document.getElementById('ag-local').value = '';
       document.getElementById('ag-obs').value = '';
+      limparCadastradoPor('ag');
       carregarAgenda();
     }
     async function excluirAgenda(id) {
@@ -3442,6 +3616,7 @@
           celulaMsg(i.titulo) +
           celulaMsg(i.local) +
           celulaMsg(i.obs) +
+          celulaMsg(i.criado_por) +
           '<td><button type="button" class="btn-del-ag" onclick="excluirAgenda(' + i.id + ')" title="Excluir">🗑</button></td>';
         body.appendChild(tr);
       });
@@ -3449,10 +3624,74 @@
       agendaCentralizada = true;
     }
 
-    /* ===== visão semanal (Seg a Dom, navega por semana) ===== */
+    /* ===== agenda pública (salva no banco, via /api/admin/agenda-publica — aparece em /agenda) ===== */
+    let agendaPubCache = [];
+    function lerAgendaPub() { return agendaPubCache; }
+    async function adicionarAgendaPub() {
+      const titulo = document.getElementById('agp-titulo').value.trim();
+      const data = document.getElementById('agp-data').value;
+      const hora = document.getElementById('agp-hora').value;
+      const duracao = Number(document.getElementById('agp-duracao').value) || 1;
+      const local = document.getElementById('agp-local').value.trim();
+      const obs = document.getElementById('agp-obs').value.trim();
+      const criadoPor = lerCadastradoPor('agp');
+      if (!titulo || !data) { alert('Preencha pelo menos o compromisso e a data.'); return; }
+      try {
+        await api('/api/admin/agenda-publica', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ titulo, data, hora, duracao, local, obs, criadoPor })
+        });
+      } catch (e) { alert('Não foi possível salvar o compromisso: ' + e.message); return; }
+      document.getElementById('agp-titulo').value = '';
+      document.getElementById('agp-data').value = '';
+      document.getElementById('agp-hora').value = '';
+      document.getElementById('agp-duracao').value = '';
+      document.getElementById('agp-local').value = '';
+      document.getElementById('agp-obs').value = '';
+      limparCadastradoPor('agp');
+      carregarAgendaPub();
+    }
+    async function excluirAgendaPub(id) {
+      if (!confirm('Excluir esse compromisso público?')) return;
+      try {
+        await api('/api/admin/agenda-publica?id=' + id, { method: 'DELETE' });
+      } catch (e) { alert('Não foi possível excluir: ' + e.message); return; }
+      carregarAgendaPub();
+    }
+    async function carregarAgendaPub() {
+      try {
+        const d = await api('/api/admin/agenda-publica');
+        agendaPubCache = (d.itens || []).sort((a, b) => ((a.data + (a.hora || '')) < (b.data + (b.hora || ''))) ? -1 : 1);
+      } catch (e) { agendaPubCache = []; }
+      const itens = agendaPubCache;
+      const body = document.getElementById('agendaPubBody');
+      const hoje = isoLocal(new Date());
+      body.innerHTML = '';
+      document.getElementById('agendaPubEmpty').classList.toggle('hidden', itens.length > 0);
+      document.getElementById('agPubTotal').textContent = itens.length;
+      itens.forEach(i => {
+        const tr = document.createElement('tr');
+        if (i.data < hoje) tr.className = 'ag-passado';
+        const dataFmt = i.data.split('-').reverse().join('/');
+        tr.innerHTML = '<td>' + dataFmt + (i.data === hoje ? '<span class="badge-hoje">hoje</span>' : '') + '</td>' +
+          '<td>' + (i.hora || '—') + '</td>' +
+          celulaMsg(i.titulo) +
+          celulaMsg(i.local) +
+          celulaMsg(i.obs) +
+          celulaMsg(i.criado_por) +
+          '<td><button type="button" class="btn-del-ag" onclick="excluirAgendaPub(' + i.id + ')" title="Excluir">🗑</button></td>';
+        body.appendChild(tr);
+      });
+      renderSemanaPub(!agendaPubCentralizada);
+      agendaPubCentralizada = true;
+    }
+
+    /* ===== visão semanal (Seg a Dom, navega por semana) — uma instância pra cada agenda ===== */
     const DIAS_SEMANA = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
     let semanaRef = segundaDaSemana(new Date());
+    let semanaRefPub = segundaDaSemana(new Date());
     let agendaCentralizada = false;
+    let agendaPubCentralizada = false;
     function segundaDaSemana(d) {
       const dt = new Date(d); dt.setHours(0, 0, 0, 0);
       const dow = dt.getDay();
@@ -3468,26 +3707,35 @@
       semanaRef = segundaDaSemana(new Date());
       renderSemana(true);
     }
-    function centralizarNaHoraAtual() {
-      const vp = document.getElementById('weekViewport');
+    function semanaNavegarPub(delta) {
+      semanaRefPub.setDate(semanaRefPub.getDate() + delta * 7);
+      renderSemanaPub();
+    }
+    function semanaHojePub() {
+      semanaRefPub = segundaDaSemana(new Date());
+      renderSemanaPub(true);
+    }
+    function centralizarNaHoraAtual(viewportId, gridId) {
+      const vp = document.getElementById(viewportId);
       if (!vp) return;
       const hh = String(new Date().getHours()).padStart(2, '0') + ':00';
-      const alvo = Array.from(document.querySelectorAll('#weekGrid .whg-hora')).find(el => el.textContent === hh);
+      const alvo = Array.from(document.querySelectorAll('#' + gridId + ' .whg-hora')).find(el => el.textContent === hh);
       if (alvo) vp.scrollTop = Math.max(0, alvo.offsetTop - vp.clientHeight / 3);
     }
-    function renderSemana(foco) {
-      const itens = lerAgenda();
+    /* monta a grade semanal; "cfg" isola tudo que muda entre a agenda interna e a
+       pública (ids dos elementos, itens, alvo do clique) sem duplicar a lógica de grid */
+    function montarSemana(cfg, foco) {
       const hoje = isoLocal(new Date());
       const dias = [];
       for (let i = 0; i < 7; i++) {
-        const d = new Date(semanaRef); d.setDate(d.getDate() + i);
+        const d = new Date(cfg.semanaRef); d.setDate(d.getDate() + i);
         dias.push(d);
       }
       const fmtCurto = d => d.getDate() + ' ' + MESES[d.getMonth()].slice(0, 3);
-      document.getElementById('semanaLabel').textContent = fmtCurto(dias[0]) + ' – ' + fmtCurto(dias[6]);
+      document.getElementById(cfg.labelId).textContent = fmtCurto(dias[0]) + ' – ' + fmtCurto(dias[6]);
 
       const isoDias = dias.map(isoLocal);
-      const itensDaSemana = itens.filter(i => isoDias.includes(i.data));
+      const itensDaSemana = cfg.itens.filter(i => isoDias.includes(i.data));
 
       /* janela de horas visível: 6h–22h por padrão, expande se tiver compromisso fora desse intervalo */
       let minH = 6, maxH = 22;
@@ -3514,7 +3762,7 @@
         html += '<div class="whg-hora" style="grid-column:1;grid-row:' + linha + '">' + hh + ':00</div>';
         dias.forEach((d, idx) => {
           const iso = isoDias[idx];
-          html += '<div class="whg-cell' + (iso === hoje ? ' hoje' : '') + '" style="grid-column:' + (idx + 2) + ';grid-row:' + linha + '" onclick="abrirEvento(\'' + iso + '\',\'' + hh + '\')"></div>';
+          html += '<div class="whg-cell' + (iso === hoje ? ' hoje' : '') + '" style="grid-column:' + (idx + 2) + ';grid-row:' + linha + '" onclick="abrirEvento(\'' + cfg.alvo + '\',\'' + iso + '\',\'' + hh + '\')"></div>';
         });
       }
 
@@ -3528,25 +3776,34 @@
         const linhaFim = Math.min(2 + (maxH - minH), linhaIni + dur);
         const col = idx + 2;
         const horaFim = String(Math.min(24, h + dur)).padStart(2, '0') + ':00';
-        html += '<div class="week-item" style="grid-column:' + col + ';grid-row:' + linhaIni + '/' + linhaFim + '" onclick="event.stopPropagation();excluirAgenda(' + i.id + ')" title="' +
+        html += '<div class="week-item" style="grid-column:' + col + ';grid-row:' + linhaIni + '/' + linhaFim + '" onclick="event.stopPropagation();' + cfg.onExcluir + '(' + i.id + ')" title="' +
           esc(i.titulo) + (i.local ? ' — ' + esc(i.local) : '') + ' (clique para excluir)">' +
           (i.hora ? '<span class="wi-hora">' + esc(i.hora) + '–' + horaFim + '</span><br>' : '') +
           esc(i.titulo) + '</div>';
       });
 
-      document.getElementById('weekGrid').innerHTML = html;
-      if (foco && isoDias.includes(hoje)) requestAnimationFrame(centralizarNaHoraAtual);
+      document.getElementById(cfg.gridId).innerHTML = html;
+      if (foco && isoDias.includes(hoje)) requestAnimationFrame(() => centralizarNaHoraAtual(cfg.viewportId, cfg.gridId));
+    }
+    function renderSemana(foco) {
+      montarSemana({ semanaRef, itens: lerAgenda(), labelId: 'semanaLabel', gridId: 'weekGrid', viewportId: 'weekViewport', alvo: 'interna', onExcluir: 'excluirAgenda' }, foco);
+    }
+    function renderSemanaPub(foco) {
+      montarSemana({ semanaRef: semanaRefPub, itens: lerAgendaPub(), labelId: 'semanaLabelPub', gridId: 'weekGridPub', viewportId: 'weekViewportPub', alvo: 'publica', onExcluir: 'excluirAgendaPub' }, foco);
     }
 
-    /* popup rápido: clicar num quadrado vazio da grade abre um mini-form pra
-       criar o compromisso já com data/hora daquele quadrado preenchidas */
-    let eventoData = '', eventoHora = '';
-    function abrirEvento(iso, hh) {
+    /* popup rápido: clicar num quadrado vazio da grade (interna ou pública) abre um
+       mini-form pra criar o compromisso já com data/hora daquele quadrado preenchidas */
+    let eventoData = '', eventoHora = '', eventoAlvo = 'interna';
+    function abrirEvento(alvo, iso, hh) {
+      eventoAlvo = alvo;
       eventoData = iso; eventoHora = hh + ':00';
       const [ano, mes, dia] = iso.split('-');
-      document.getElementById('eventoQuando').textContent = dia + '/' + mes + '/' + ano + ' às ' + eventoHora;
+      document.getElementById('eventoQuando').textContent = dia + '/' + mes + '/' + ano + ' às ' + eventoHora +
+        (alvo === 'publica' ? ' (agenda pública)' : ' (agenda interna)');
       document.getElementById('ev-titulo').value = '';
       document.getElementById('ev-local').value = '';
+      limparCadastradoPor('ev');
       document.getElementById('eventoOverlay').classList.add('open');
       setTimeout(() => document.getElementById('ev-titulo').focus(), 50);
     }
@@ -3557,25 +3814,30 @@
       const titulo = document.getElementById('ev-titulo').value.trim();
       if (!titulo) { alert('Preencha o compromisso.'); return; }
       const local = document.getElementById('ev-local').value.trim();
+      const criadoPor = lerCadastradoPor('ev');
+      const endpoint = eventoAlvo === 'publica' ? '/api/admin/agenda-publica' : '/api/admin/agenda';
       try {
-        await api('/api/admin/agenda', {
+        await api(endpoint, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ titulo, data: eventoData, hora: eventoHora, local, obs: '' })
+          body: JSON.stringify({ titulo, data: eventoData, hora: eventoHora, local, obs: '', criadoPor })
         });
       } catch (e) { alert('Não foi possível salvar o compromisso: ' + e.message); return; }
       fecharEvento();
-      carregarAgenda();
+      if (eventoAlvo === 'publica') carregarAgendaPub(); else carregarAgenda();
     }
-    (function () {
-      const grid = document.getElementById('weekGrid');
+    function ativarSwipeSemana(gridId, onSwipe) {
+      const grid = document.getElementById(gridId);
       let tx = 0, ty = 0;
       grid.addEventListener('touchstart', e => { const t = e.touches[0]; tx = t.clientX; ty = t.clientY; }, { passive: true });
       grid.addEventListener('touchend', e => {
         const t = e.changedTouches[0];
         const dx = t.clientX - tx, dy = t.clientY - ty;
-        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) semanaNavegar(dx < 0 ? 1 : -1);
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) onSwipe(dx < 0 ? 1 : -1);
       }, { passive: true });
-    })();
+    }
+    ativarSwipeSemana('weekGrid', semanaNavegar);
+    ativarSwipeSemana('weekGridPub', semanaNavegarPub);
+
     function csvCampo(s) { return '"' + String(s || '').replace(/"/g, '""') + '"'; }
     function exportarCsvAgenda() {
       const itens = lerAgenda().sort((a, b) => ((a.data + (a.hora || '')) < (b.data + (b.hora || ''))) ? -1 : 1);

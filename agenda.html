@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Agenda — Aldo Maurício</title>
+  <link rel="icon" type="image/webp" href="img/logo.webp">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=DM+Sans:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --azul: #091f80;
+      --azul-esc: #050e52;
+      --azul-med: #0e2eaa;
+      --ouro: #f5c518;
+      --ouro-esc: #c8a000;
+      --verde: #1a8c2a;
+      --text-esc: #0a1540;
+      --text-med: #3a4a7a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      overflow-x: hidden
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-esc);
+      background: radial-gradient(circle at 50% -10%, var(--azul-med) 0%, var(--azul) 45%, var(--azul-esc) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .estrelas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .estrelas i {
+      position: absolute;
+      display: block;
+      border-radius: 50%;
+      background: #fff;
+      opacity: .5;
+      animation: pisca 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pisca {
+
+      0%,
+      100% {
+        opacity: .15
+      }
+
+      50% {
+        opacity: .8
+      }
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .topo {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .topo img {
+      height: 84px;
+      margin-bottom: 14px;
+    }
+
+    .topo h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.9rem, 5vw, 2.4rem);
+      color: #fff;
+      line-height: 1.1;
+    }
+
+    .topo p {
+      color: rgba(255, 255, 255, .78);
+      font-size: .95rem;
+      margin-top: 8px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 28px 26px;
+      box-shadow: 0 24px 60px rgba(5, 14, 82, .45);
+    }
+
+    .lista {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 60vh;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .item {
+      display: flex;
+      gap: 14px;
+      padding: 14px;
+      border: 1.5px solid #eef0fa;
+      border-radius: 14px;
+      background: #f8f9fd;
+    }
+
+    .item.passado {
+      opacity: .55;
+    }
+
+    .item .data {
+      flex: 0 0 auto;
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      background: var(--azul);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.05;
+    }
+
+    .item .data .dia {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+    }
+
+    .item .data .mes {
+      font-size: .62rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      opacity: .85;
+    }
+
+    .item.hoje .data {
+      background: var(--ouro);
+      color: var(--azul-esc);
+    }
+
+    .item .info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .item .titulo {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-esc);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .item .badge-hoje {
+      font-size: .68rem;
+      font-weight: 700;
+      color: #033;
+      background: var(--verde);
+      color: #fff;
+      border-radius: 99px;
+      padding: 2px 8px;
+    }
+
+    .item .linha {
+      font-size: .86rem;
+      color: var(--text-med);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .item .obs {
+      font-size: .82rem;
+      color: var(--text-med);
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    .item .por {
+      font-size: .72rem;
+      color: #9a9a9a;
+      margin-top: 8px;
+    }
+
+    .vazio,
+    .erro {
+      text-align: center;
+      padding: 30px 10px;
+      color: var(--text-med);
+      font-size: .95rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="estrelas" id="estrelas"></div>
+
+  <div class="wrap">
+    <div class="topo">
+      <img src="img/logo.webp" alt="Aldo Maurício">
+      <h1>Agenda de Compromissos</h1>
+      <p>Confira os próximos compromissos de Aldo Maurício e da equipe.</p>
+    </div>
+
+    <div class="card">
+      <div class="lista" id="lista">
+        <div class="vazio">Carregando agenda…</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function criarEstrelas() {
+      const c = document.getElementById('estrelas');
+      for (let i = 0; i < 50; i++) {
+        const s = document.createElement('i');
+        const size = Math.random() * 2.2 + 1;
+        s.style.cssText = `left:${Math.random() * 100}%;top:${Math.random() * 100}%;width:${size}px;height:${size}px;animation-delay:${(Math.random() * 2).toFixed(1)}s;animation-duration:${(Math.random() * 1.6 + 1.6).toFixed(1)}s`;
+        c.appendChild(s);
+      }
+    })();
+
+    const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    function esc(s) {
+      return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    function isoLocal(d) {
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+
+    fetch('/api/agenda').then(r => r.json()).then(d => {
+      const itens = (d.itens || []).slice().sort((a, b) => ((a.data + (a.hora || '')) < (b.data + (b.hora || ''))) ? -1 : 1);
+      const lista = document.getElementById('lista');
+      if (!itens.length) {
+        lista.innerHTML = '<div class="vazio">Nenhum compromisso público no momento. Volte em breve!</div>';
+        return;
+      }
+      const hoje = isoLocal(new Date());
+      lista.innerHTML = itens.map(i => {
+        const [ano, mes, dia] = i.data.split('-');
+        const ehHoje = i.data === hoje;
+        const passado = i.data < hoje;
+        return '<div class="item' + (ehHoje ? ' hoje' : '') + (passado ? ' passado' : '') + '">' +
+          '<div class="data"><div class="dia">' + Number(dia) + '</div><div class="mes">' + MESES[Number(mes) - 1] + '</div></div>' +
+          '<div class="info">' +
+          '<div class="titulo">' + esc(i.titulo) + (ehHoje ? '<span class="badge-hoje">hoje</span>' : '') + '</div>' +
+          (i.hora ? '<div class="linha">🕒 ' + esc(i.hora) + '</div>' : '') +
+          (i.local ? '<div class="linha">📍 ' + esc(i.local) + '</div>' : '') +
+          (i.obs ? '<div class="obs">' + esc(i.obs) + '</div>' : '') +
+          (i.criado_por ? '<div class="por">Organização: ' + esc(i.criado_por) + '</div>' : '') +
+          '</div></div>';
+      }).join('');
+    }).catch(() => {
+      document.getElementById('lista').innerHTML = '<div class="erro">Não foi possível carregar a agenda agora. Tente novamente mais tarde.</div>';
+    });
+  </script>
+</body>
+
+</html>
