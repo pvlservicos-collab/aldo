@@ -221,7 +221,8 @@
       font-weight: 600
     }
 
-    .login-field input {
+    .login-field input,
+    .login-field textarea {
       width: 100%;
       padding: 12px 14px;
       background: var(--field);
@@ -233,7 +234,13 @@
       transition: border-color var(--t-fast), box-shadow var(--t-fast)
     }
 
-    .login-field input:focus {
+    .login-field textarea {
+      resize: vertical;
+      min-height: 44px
+    }
+
+    .login-field input:focus,
+    .login-field textarea:focus {
       outline: none;
       border-color: var(--cyan);
       box-shadow: 0 0 0 3px rgba(34, 211, 238, .14)
@@ -3045,6 +3052,7 @@
       </div>
       <div class="login-field"><label>Compromisso</label><input id="ev-titulo" type="text" placeholder="Ex.: Reunião com lideranças"></div>
       <div class="login-field"><label>Endereço (opcional)</label><input id="ev-local" type="text" placeholder="Ex.: Av. FAB, 1234 — Centro, Macapá"></div>
+      <div class="login-field"><label>Observações (opcional)</label><textarea id="ev-obs" rows="3" placeholder="Detalhes do compromisso, o que levar, com quem falar…"></textarea></div>
       <div class="fg-cadastrado" id="ev-cadastrado-wrap">
         <label>Cadastrado por:</label>
         <div class="fg-cadastrado-row">
@@ -3885,6 +3893,7 @@
         (alvo === 'publica' ? ' (agenda pública)' : ' (agenda interna)');
       document.getElementById('ev-titulo').value = '';
       document.getElementById('ev-local').value = '';
+      document.getElementById('ev-obs').value = '';
       limparCadastradoPor('ev');
       document.getElementById('eventoOverlay').classList.add('open');
       setTimeout(() => document.getElementById('ev-titulo').focus(), 50);
@@ -3896,12 +3905,13 @@
       const titulo = document.getElementById('ev-titulo').value.trim();
       if (!titulo) { alert('Preencha o compromisso.'); return; }
       const local = document.getElementById('ev-local').value.trim();
+      const obs = document.getElementById('ev-obs').value.trim();
       const criadoPor = lerCadastradoPor('ev');
       const endpoint = eventoAlvo === 'publica' ? '/api/admin/agenda-publica' : '/api/admin/agenda';
       try {
         await api(endpoint, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ titulo, data: eventoData, hora: eventoHora, local, obs: '', criadoPor })
+          body: JSON.stringify({ titulo, data: eventoData, hora: eventoHora, local, obs, criadoPor })
         });
       } catch (e) { alert('Não foi possível salvar o compromisso: ' + e.message); return; }
       fecharEvento();
