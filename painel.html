@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Painel · Aldo Maurício</title>
-  <link rel="icon" type="image/webp" href="img/logo.webp">
+  <link rel="icon" type="image/webp" href="img/fotocandidato.webp">
   <meta name="robots" content="noindex" />
   <link
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&family=Inter:wght@400;500;600&display=swap"
@@ -1542,26 +1542,63 @@
       font-family: inherit
     }
 
-    .form-agenda select {
+    .fg-cadastrado select {
       width: 100%;
-      padding: 11px 12px;
-      background: var(--field);
-      border: 1px solid var(--line);
+      padding: 11px 34px 11px 13px;
+      background-color: var(--field);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238ca3c7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 13px center;
+      border: 1px solid var(--line-strong);
       border-radius: 9px;
       color: var(--ink);
       font: inherit;
-      font-size: 13.5px
+      font-size: 13.5px;
+      appearance: none;
+      -webkit-appearance: none;
+      color-scheme: dark;
+      cursor: pointer;
+      transition: border-color var(--t-fast), background-color var(--t-fast)
+    }
+
+    .fg-cadastrado select option {
+      background: var(--bg2);
+      color: var(--ink)
+    }
+
+    .fg-cadastrado select:hover {
+      border-color: var(--cyan)
+    }
+
+    .fg-cadastrado select:focus {
+      outline: none;
+      border-color: var(--cyan);
+      background-color: rgba(140, 190, 255, .06)
     }
 
     .fg-cadastrado {
-      grid-column: 1/-1
+      grid-column: 1/-1;
+      background: var(--glass2);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 13px 15px
     }
 
     .fg-cadastrado>label {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 6px;
       font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 6px
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 10px
+    }
+
+    .fg-cadastrado>label::before {
+      content: '👤';
+      font-size: 12px
     }
 
     .fg-cadastrado-row {
@@ -1571,7 +1608,22 @@
     }
 
     .fg-cadastrado-row input {
-      display: none
+      display: none;
+      width: 100%;
+      padding: 10px 13px;
+      background: var(--field);
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      font: inherit;
+      font-size: 13.5px;
+      color: var(--ink);
+      transition: border-color var(--t-fast), box-shadow var(--t-fast)
+    }
+
+    .fg-cadastrado-row input:focus {
+      outline: none;
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, .12)
     }
 
     .fg-cadastrado.tem-outro .fg-cadastrado-row input {
@@ -1778,7 +1830,6 @@
       margin: 1px;
       font-size: 11px;
       line-height: 1.35;
-      cursor: pointer;
       overflow: hidden;
       white-space: normal;
       z-index: 2;
@@ -1788,6 +1839,36 @@
 
     .week-item:hover {
       background: rgba(34, 211, 238, .18)
+    }
+
+    .week-item-del {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 15px;
+      height: 15px;
+      padding: 0;
+      border: none;
+      border-radius: 50%;
+      background: rgba(3, 7, 15, .55);
+      color: #fff;
+      font-size: 9px;
+      line-height: 15px;
+      text-align: center;
+      cursor: pointer;
+      opacity: 0;
+      transform: scale(.8);
+      transition: opacity var(--t-fast), transform var(--t-fast), background var(--t-fast);
+      z-index: 3
+    }
+
+    .week-item:hover .week-item-del {
+      opacity: 1;
+      transform: scale(1)
+    }
+
+    .week-item-del:hover {
+      background: var(--red)
     }
 
     .week-item .wi-hora {
@@ -3776,8 +3857,9 @@
         const linhaFim = Math.min(2 + (maxH - minH), linhaIni + dur);
         const col = idx + 2;
         const horaFim = String(Math.min(24, h + dur)).padStart(2, '0') + ':00';
-        html += '<div class="week-item" style="grid-column:' + col + ';grid-row:' + linhaIni + '/' + linhaFim + '" onclick="event.stopPropagation();' + cfg.onExcluir + '(' + i.id + ')" title="' +
-          esc(i.titulo) + (i.local ? ' — ' + esc(i.local) : '') + ' (clique para excluir)">' +
+        html += '<div class="week-item" style="grid-column:' + col + ';grid-row:' + linhaIni + '/' + linhaFim + '" onclick="event.stopPropagation()" title="' +
+          esc(i.titulo) + (i.local ? ' — ' + esc(i.local) : '') + '">' +
+          '<button type="button" class="week-item-del" onclick="event.stopPropagation();' + cfg.onExcluir + '(' + i.id + ')" title="Excluir">✕</button>' +
           (i.hora ? '<span class="wi-hora">' + esc(i.hora) + '–' + horaFim + '</span><br>' : '') +
           esc(i.titulo) + '</div>';
       });
