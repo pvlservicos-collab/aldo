@@ -1060,6 +1060,122 @@
       cursor: pointer
     }
 
+    /* ===== popup final da demonstração ===== */
+    .demo-final-panel {
+      background: linear-gradient(165deg, rgba(12, 23, 48, .98), rgba(5, 10, 24, .98));
+      border: 1px solid var(--line-strong);
+      border-radius: 20px;
+      padding: 26px 24px;
+      width: 100%;
+      max-width: 440px;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-pop)
+    }
+
+    .demo-final-topo {
+      text-align: center;
+      margin-bottom: 18px
+    }
+
+    .demo-final-emoji {
+      font-size: 34px;
+      margin-bottom: 6px
+    }
+
+    .demo-final-topo h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #f2f7ff 20%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 6px
+    }
+
+    .demo-final-topo p {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .demo-final-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px
+    }
+
+    .demo-final-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 11px 12px;
+      background: var(--glass2);
+      border: 1px solid var(--line);
+      border-radius: 12px
+    }
+
+    .demo-final-item span {
+      font-size: 18px;
+      line-height: 1.3
+    }
+
+    .demo-final-item b {
+      display: block;
+      font-size: 13.5px;
+      color: var(--ink)
+    }
+
+    .demo-final-item small {
+      display: block;
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 2px;
+      line-height: 1.4
+    }
+
+    .demo-final-whats {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #25d366 0%, #128c4a 100%);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(37, 211, 102, .35);
+      transition: transform var(--t-fast), filter var(--t-fast)
+    }
+
+    .demo-final-whats:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px)
+    }
+
+    .demo-final-fechar {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font: inherit;
+      font-size: 12.5px;
+      cursor: pointer
+    }
+
+    .demo-final-fechar:hover {
+      color: var(--ink)
+    }
+
     #apoLidTitulo {
       text-transform: none;
       text-align: left;
@@ -3082,6 +3198,28 @@
     </div>
   </div>
 
+  <!-- POPUP FINAL DA DEMONSTRAÇÃO (só existe em painel.html?demo) -->
+  <div class="cal-overlay" id="demoFinalOverlay">
+    <div class="demo-final-panel">
+      <div class="demo-final-topo">
+        <div class="demo-final-emoji">🚀</div>
+        <h2>Isso tudo já está pronto</h2>
+        <p>Um painel completo de campanha, funcionando hoje mesmo:</p>
+      </div>
+      <div class="demo-final-lista">
+        <div class="demo-final-item"><span>📊</span><div><b>Métricas do site</b><small>Acessos e cadastros por dia, em gráfico</small></div></div>
+        <div class="demo-final-item"><span>🗺️</span><div><b>Mapa de eleitores</b><small>Lideranças e apoiadores plotados por bairro</small></div></div>
+        <div class="demo-final-item"><span>📋</span><div><b>Formulário de contato</b><small>Todo lead do site cai aqui, com exportação em CSV</small></div></div>
+        <div class="demo-final-item"><span>🤝</span><div><b>Lideranças e apoiadores</b><small>Cadastro, busca, exportação e vínculo entre eles</small></div></div>
+        <div class="demo-final-item"><span>📅</span><div><b>Agenda dupla</b><small>Uma interna (só o painel) e uma pública, direto pros apoiadores</small></div></div>
+        <div class="demo-final-item"><span>🤖</span><div><b>IA do Aldo</b><small>Chatbot do site, com conversa e aparência editáveis</small></div></div>
+        <div class="demo-final-item"><span>🔒</span><div><b>Login protegido + modo privacidade</b><small>Oculte valores sensíveis com um clique</small></div></div>
+      </div>
+      <a class="demo-final-whats" id="demoFinalWhats" href="#" target="_blank" rel="noopener">📲 Fale comigo no WhatsApp</a>
+      <button type="button" class="demo-final-fechar" onclick="fecharResumoFinalDemo()">Fechar</button>
+    </div>
+  </div>
+
   <!-- TOUR DE ONBOARDING (só aparece com ?onboarding na URL do painel) -->
   <div class="onb-overlay" id="onboardingOverlay">
     <div class="onb-frame" id="onbFrameTop"></div>
@@ -3152,11 +3290,182 @@
     let customFrom = '', customTo = '';
     const NOTA_DE_CORTE = 3898;
 
+    /* ══════════ modo demonstração (link painel.html?demo, sem login) ══════════
+       pra mandar o link do painel pra alguém conhecer o sistema sem precisar
+       de usuário/senha. Nunca toca no banco real: todo fetch autenticado é
+       respondido aqui mesmo, com dados fictícios que só existem na memória
+       dessa aba (path começando com /api/admin/ nem chega a sair pra rede).
+       Importante: isso é um recurso NOVO e diferente do "?onboarding" que já
+       existia — aquele continua exigindo login e mostrando dados reais,
+       pensado pra repetir o tour com quem já usa o painel de verdade. */
+    const MODO_DEMO = /^\/apresentacao\/?$/.test(location.pathname) || new URLSearchParams(location.search).has('demo');
+
     async function api(path, opts) {
+      if (MODO_DEMO) return apiDemo(path, opts);
       const res = await fetch(path, Object.assign({ credentials: 'same-origin' }, opts || {}));
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || ('Erro ' + res.status));
       return data;
+    }
+
+    /* dataset fictício do modo demo — nomes, números e mensagens de exemplo,
+       nada real. Vive só na memória: some ao recarregar a página. */
+    const demoDB = (function () {
+      const hoje = new Date();
+      const isoDiasAtras = n => { const d = new Date(hoje); d.setDate(d.getDate() - n); return d.toISOString(); };
+      const isoDiasNaFrente = n => {
+        const d = new Date(hoje); d.setDate(d.getDate() + n);
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      };
+      const liderancas = [
+        { id: 1, nome: 'Carlos Ferreira', numero: '(96) 99111-2233', bairro: 'Macapá-Buritizal', nome_mae: 'Rosa Ferreira', data_nascimento: '1978-04-12', endereco: 'Rua das Flores, 120', criado_em: isoDiasAtras(6) },
+        { id: 2, nome: 'Fernanda Alves', numero: '(96) 98222-3344', bairro: 'Santana-Central', nome_mae: 'Iracema Alves', data_nascimento: '1985-09-03', endereco: 'Av. Amazonas, 55', criado_em: isoDiasAtras(4) },
+        { id: 3, nome: 'José Ribamar', numero: '(96) 99777-8899', bairro: 'Macapá-Trem', nome_mae: 'Antônia Ribamar', data_nascimento: '1970-11-22', endereco: 'Rua Curiaú, 45', criado_em: isoDiasAtras(2) },
+      ];
+      const apoiadores = [
+        { id: 1, nome: 'Roberto Nascimento', numero: '(96) 99333-4455', bairro: 'Macapá-Jesus de Nazaré', nome_mae: 'Célia Nascimento', data_nascimento: '1990-01-20', endereco: 'Tv. Boa Esperança, 8', indicado_por: 'Carlos Ferreira', indicado_por_id: 1, criado_em: isoDiasAtras(3) },
+        { id: 2, nome: 'Juliana Pires', numero: '(96) 98444-5566', bairro: 'Macapá-Trem', nome_mae: 'Dora Pires', data_nascimento: '1995-06-30', endereco: 'Rua Curiaú, 300', indicado_por: 'Carlos Ferreira', indicado_por_id: 1, criado_em: isoDiasAtras(2) },
+        { id: 3, nome: 'Marcos Vinícius', numero: '(96) 98999-1122', bairro: 'Santana-Fonte Nova', nome_mae: 'Wanda Vinícius', data_nascimento: '1988-03-14', endereco: 'Av. Central, 900', indicado_por: '', indicado_por_id: null, criado_em: isoDiasAtras(1) },
+      ];
+      const leads = [
+        { id: 1, nome: 'Mariana Costa', whatsapp: '(96) 99123-4567', cidade: 'Macapá', mensagem: 'Quero ajudar na campanha! Como faço?', criado_em: isoDiasAtras(0) },
+        { id: 2, nome: 'João Pedro Lima', whatsapp: '(96) 98877-1122', cidade: 'Santana', mensagem: 'Gostaria de mais informações sobre as propostas.', criado_em: isoDiasAtras(1) },
+        { id: 3, nome: 'Ana Beatriz Souza', whatsapp: '(96) 99555-3344', cidade: 'Macapá', mensagem: '', criado_em: isoDiasAtras(2) },
+      ];
+      const agenda = [
+        { id: 1, titulo: 'Reunião com lideranças do Buritizal', data: isoDiasNaFrente(1), hora: '18:00', duracao: 1.5, local: 'Salão Comunitário, Buritizal', obs: 'Levar material de campanha', criado_por: 'Equipe Aldo Maurício' },
+        { id: 2, titulo: 'Caminhada de rua', data: isoDiasNaFrente(3), hora: '08:00', duracao: 2, local: 'Av. FAB, Centro', obs: '', criado_por: 'Aldo Maurício' },
+      ];
+      const agendaPub = [
+        { id: 1, titulo: 'Caminhada aberta ao público', data: isoDiasNaFrente(2), hora: '17:00', duracao: 2, local: 'Orla de Macapá', obs: 'Todos são bem-vindos!', criado_por: 'Equipe Aldo Maurício' },
+      ];
+      const serie = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(hoje); d.setDate(d.getDate() - i);
+        serie.push({
+          data: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'),
+          site_view: 40 + Math.round(Math.random() * 60),
+          leads: Math.round(Math.random() * 4),
+          liderancas: i === 2 ? 1 : 0,
+          apoiadores: i <= 3 ? 1 : 0,
+        });
+      }
+      return { liderancas, apoiadores, leads, agenda, agendaPub, ignoredIps: [], ia: null, serie, nextId: 100 };
+    })();
+
+    // mesmo conteúdo padrão que a página /iadoaldo mostra de verdade (ver api/_iadoaldo.js)
+    const DEMO_IA_PADRAO = {
+      nome: 'Aldo Maurício', status: 'Pode perguntar 👇', foto: 'img/fotocandidato.webp', inicio: 'p1',
+      passos: [
+        { id: 'p1', titulo: 'Boas-vindas', msgs: ['Eae! Tudo beleza? 👋', 'Aqui é o Aldo Maurício, pré-candidato a deputado estadual pelo Amapá.', 'Pode perguntar sem cerimônia — escolhe aí embaixo o que você quer saber. Tamo junto! 🙏'],
+          opcoes: [{ label: 'Quem é Aldo Maurício?', goto: 'p2' }, { label: 'Quais são os seus projetos?', goto: 'p3' }, { label: 'Fé e valores?', goto: 'p4' }] },
+        { id: 'p2', titulo: 'Quem é Aldo Maurício', msgs: ['Boa! Deixa eu me apresentar direitinho 😄', 'Sou enfermeiro há 26 anos e professor há 15. Também sou bacharel em Direito pela UNIFAP.'],
+          opcoes: [{ label: 'Quais são os seus projetos?', goto: 'p3' }, { label: '⟲ Voltar ao início', goto: 'p1' }] },
+        { id: 'p3', titulo: 'Quais são os seus projetos', msgs: ['Tenho vários projetos que já saíram do papel 💪', 'Sou diretor da UBS Cláudio Leão e já fui voluntário da Cruz Vermelha.'],
+          opcoes: [{ label: 'Fé e valores?', goto: 'p4' }, { label: '⟲ Voltar ao início', goto: 'p1' }] },
+        { id: 'p4', titulo: 'Fé e valores', msgs: ['Aqui é simples: fé, verdade, coragem e coerência 🙏', 'Defendo a família, a vida e a liberdade religiosa.'],
+          opcoes: [{ label: '⟲ Voltar ao início', goto: 'p1' }] },
+      ],
+    };
+
+    function demoFiltrarBusca(lista, campos, q) {
+      if (!q) return lista;
+      const termo = String(q).toLowerCase();
+      return lista.filter(item => campos.some(c => String(item[c] || '').toLowerCase().includes(termo)));
+    }
+    function demoFiltrarData(lista, from, to) {
+      if (!from && !to) return lista;
+      return lista.filter(item => {
+        const dia = String(item.criado_em || item.data || '').slice(0, 10);
+        if (from && dia < from) return false;
+        if (to && dia > to) return false;
+        return true;
+      });
+    }
+    function demoPaginar(lista, page) {
+      const P = 20, p = Math.max(1, Number(page) || 1);
+      return lista.slice((p - 1) * P, p * P);
+    }
+
+    async function apiDemo(path, opts) {
+      const method = (opts && opts.method) || 'GET';
+      const [rota, qs] = path.split('?');
+      const query = Object.fromEntries(new URLSearchParams(qs || ''));
+      const body = opts && opts.body ? JSON.parse(opts.body) : {};
+      await new Promise(r => setTimeout(r, 150)); // simula uma latência de rede de verdade
+
+      if (rota === '/api/admin/metrics') {
+        if (query.resource === 'ignored-ips') {
+          if (method === 'POST' || method === 'DELETE') return { ok: true };
+          return { mine: '203.0.113.42 (demonstração)', ignored: demoDB.ignoredIps };
+        }
+        return {
+          site_view: demoDB.serie.reduce((s, r) => s + r.site_view, 0),
+          leads: demoDB.serie.reduce((s, r) => s + r.leads, 0),
+          liderancas: demoDB.liderancas.length,
+          apoiadores: demoDB.apoiadores.length,
+          serie: demoDB.serie,
+        };
+      }
+
+      if (rota === '/api/admin/resumo-votos') {
+        const votosLiderancas = demoDB.liderancas.reduce((soma, l) => {
+          const n = demoDB.apoiadores.filter(a => a.indicado_por_id === l.id).length;
+          return soma + (n > 0 ? n : 30);
+        }, 0);
+        const apoiadoresIndividuais = demoDB.apoiadores.filter(a => !a.indicado_por_id).length;
+        const bairros = new Set(demoDB.liderancas.map(l => l.bairro)).size;
+        return { liderancas: demoDB.liderancas.length, apoiadoresIndividuais, bairros, votosPrevistos: votosLiderancas + apoiadoresIndividuais };
+      }
+
+      if (rota === '/api/admin/leads') {
+        if (method === 'DELETE') { demoDB.leads = demoDB.leads.filter(l => String(l.id) !== String(query.id)); return { ok: true }; }
+        let itens = demoFiltrarData(demoFiltrarBusca(demoDB.leads, ['nome', 'whatsapp', 'cidade', 'mensagem'], query.q), query.from, query.to);
+        return { total: itens.length, itens: demoPaginar(itens, query.page) };
+      }
+
+      if (rota === '/api/admin/liderancas') {
+        if (method === 'DELETE') { demoDB.liderancas = demoDB.liderancas.filter(l => String(l.id) !== String(query.id)); return { ok: true }; }
+        let itens = demoFiltrarData(demoFiltrarBusca(demoDB.liderancas, ['nome', 'numero', 'bairro', 'nome_mae', 'endereco'], query.q), query.from, query.to);
+        itens = itens.map(l => Object.assign({}, l, { apoiadores_count: demoDB.apoiadores.filter(a => a.indicado_por_id === l.id).length }));
+        return { total: itens.length, itens: demoPaginar(itens, query.page) };
+      }
+
+      if (rota === '/api/admin/apoiadores') {
+        if (method === 'DELETE') { demoDB.apoiadores = demoDB.apoiadores.filter(a => String(a.id) !== String(query.id)); return { ok: true }; }
+        let itens = demoDB.apoiadores;
+        if (query.indicadoPorId) itens = itens.filter(a => String(a.indicado_por_id) === String(query.indicadoPorId));
+        itens = demoFiltrarData(demoFiltrarBusca(itens, ['nome', 'numero', 'bairro', 'nome_mae', 'endereco'], query.q), query.from, query.to);
+        return { total: itens.length, itens: demoPaginar(itens, query.page) };
+      }
+
+      if (rota === '/api/admin/agenda') {
+        if (method === 'POST') {
+          const item = { id: demoDB.nextId++, titulo: body.titulo, data: body.data, hora: body.hora || null, duracao: body.duracao || null, local: body.local || null, obs: body.obs || null, criado_por: body.criadoPor || null };
+          demoDB.agenda.push(item);
+          return { ok: true, id: item.id };
+        }
+        if (method === 'DELETE') { demoDB.agenda = demoDB.agenda.filter(a => String(a.id) !== String(query.id)); return { ok: true }; }
+        return { itens: demoDB.agenda };
+      }
+
+      if (rota === '/api/admin/agenda-publica') {
+        if (method === 'POST') {
+          const item = { id: demoDB.nextId++, titulo: body.titulo, data: body.data, hora: body.hora || null, duracao: body.duracao || null, local: body.local || null, obs: body.obs || null, criado_por: body.criadoPor || null };
+          demoDB.agendaPub.push(item);
+          return { ok: true, id: item.id };
+        }
+        if (method === 'DELETE') { demoDB.agendaPub = demoDB.agendaPub.filter(a => String(a.id) !== String(query.id)); return { ok: true }; }
+        return { itens: demoDB.agendaPub };
+      }
+
+      if (rota === '/api/admin/iadoaldo') {
+        if (method === 'PUT') { demoDB.ia = { config: body.config, version: ((demoDB.ia && demoDB.ia.version) || 0) + 1 }; return { ok: true, config: demoDB.ia.config, version: demoDB.ia.version }; }
+        if (method === 'DELETE') { demoDB.ia = null; return { ok: true, config: DEMO_IA_PADRAO, version: 0 }; }
+        return demoDB.ia ? { config: demoDB.ia.config, version: demoDB.ia.version } : { config: DEMO_IA_PADRAO, version: 0 };
+      }
+
+      return {};
     }
 
     async function fazerLogin() {
@@ -3188,10 +3497,17 @@
     aplicarCorEstagio();
 
     function logout() {
+      if (MODO_DEMO) { location.href = location.pathname; return; }
       api('/api/admin/auth', { method: 'DELETE' }).catch(() => { }).finally(() => {
         document.getElementById('screen-painel').style.display = 'none';
         document.getElementById('screen-login').style.display = 'flex';
       });
+    }
+
+    function iniciarModoDemo() {
+      history.replaceState(null, '', location.pathname); // tira o ?demo da barra de endereço
+      mostrarPainel();
+      setTimeout(iniciarOnboarding, 600);
     }
 
     function mostrarPainel() {
@@ -3289,16 +3605,29 @@
 
     function sairOnboarding() {
       encerrarOnboarding();
+      if (MODO_DEMO) mostrarResumoFinalDemo();
     }
 
     function onboardingProximo() {
       if (onboardingIndex >= ONBOARDING_PASSOS.length - 1) {
         encerrarOnboarding();
+        if (MODO_DEMO) { mostrarResumoFinalDemo(); return; }
         mudarTab('mapa');
         return;
       }
       onboardingIndex++;
       onboardingMostrarPasso();
+    }
+
+    /* ══════════ popup final da demonstração: resumo comercial + WhatsApp ══════════ */
+    const DEMO_WHATSAPP = '559691712835';
+    function mostrarResumoFinalDemo() {
+      const texto = encodeURIComponent('Olá! Vi a demonstração do sistema de gestão de campanha e quero saber mais.');
+      document.getElementById('demoFinalWhats').href = 'https://wa.me/' + DEMO_WHATSAPP + '?text=' + texto;
+      document.getElementById('demoFinalOverlay').classList.add('open');
+    }
+    function fecharResumoFinalDemo() {
+      document.getElementById('demoFinalOverlay').classList.remove('open');
     }
 
     function onboardingAnterior() {
@@ -4480,10 +4809,14 @@
       if (iaDirty) { e.preventDefault(); e.returnValue = ''; }
     });
 
-    /* tenta reaproveitar sessão já aberta */
-    (async function () {
-      try { await api('/api/admin/metrics?period=hoje'); mostrarPainel(); } catch (e) { }
-    })();
+    /* tenta reaproveitar sessão já aberta (pulado no modo demo — lá não existe login nenhum) */
+    if (MODO_DEMO) {
+      iniciarModoDemo();
+    } else {
+      (async function () {
+        try { await api('/api/admin/metrics?period=hoje'); mostrarPainel(); } catch (e) { }
+      })();
+    }
   </script>
 </body>
 

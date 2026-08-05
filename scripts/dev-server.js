@@ -135,7 +135,11 @@ const server = http.createServer((req, res) => {
     return handleApi(req, res, pathname.slice(5).replace(/\/$/, ''), parsed.query);
   }
 
-  let rel = pathname === '/' ? '/index.html' : pathname;
+  // espelha o rewrite do vercel.json (/apresentacao -> painel.html) pra
+  // testar o link de demonstração localmente igual à produção
+  let rel = pathname === '/' ? '/index.html'
+    : /^\/apresentacao\/?$/.test(pathname) ? '/painel.html'
+    : pathname;
   let filePath = path.join(ROOT, rel);
   if (!filePath.startsWith(ROOT)) return send(res, 403, 'forbidden');
   if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {

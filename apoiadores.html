@@ -272,6 +272,139 @@
       font-size: .95rem;
       line-height: 1.5;
     }
+
+    .edicao-aviso {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: #fff7e0;
+      border: 1.5px solid #f2dfa0;
+      color: var(--ouro-esc);
+      font-size: .82rem;
+      font-weight: 600;
+      padding: 10px 14px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+
+    .dup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 14, 82, .55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease;
+    }
+
+    .dup-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .dup-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 28px 24px;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0 24px 60px rgba(5, 14, 82, .45);
+      text-align: center;
+      transform: translateY(6px);
+      transition: transform .18s ease;
+    }
+
+    .dup-overlay.show .dup-card {
+      transform: translateY(0);
+    }
+
+    .dup-icone {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .dup-card h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--azul-esc);
+      margin-bottom: 8px;
+    }
+
+    .dup-card p {
+      color: var(--text-med);
+      font-size: .9rem;
+      line-height: 1.5;
+    }
+
+    .dup-info {
+      margin: 14px 0;
+      padding: 12px 14px;
+      background: #f4f6fb;
+      border: 1.5px solid #e3e7f5;
+      border-radius: 12px;
+      text-align: left;
+    }
+
+    .dup-info strong {
+      display: block;
+      color: var(--text-esc);
+      font-size: 1.02rem;
+    }
+
+    .dup-info span {
+      color: var(--text-med);
+      font-size: .84rem;
+    }
+
+    .dup-pergunta {
+      font-weight: 700;
+      color: var(--text-esc);
+    }
+
+    .dup-botoes {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .dup-btn-editar {
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      background: var(--ouro);
+      color: var(--azul-esc);
+      font: inherit;
+      font-weight: 700;
+      font-size: .95rem;
+      cursor: pointer;
+      transition: filter .15s ease;
+    }
+
+    .dup-btn-editar:hover {
+      filter: brightness(1.06);
+    }
+
+    .dup-btn-outro {
+      padding: 11px;
+      border: 1.5px solid #dfe3f2;
+      border-radius: 10px;
+      background: #fff;
+      color: var(--text-med);
+      font: inherit;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: background .15s ease;
+    }
+
+    .dup-btn-outro:hover {
+      background: #f4f6fb;
+    }
   </style>
 </head>
 
@@ -285,6 +418,8 @@
         <h1>Cadastro de Apoiador</h1>
         <p>Faça parte do movimento com Aldo Maurício. Preencha seus dados abaixo.</p>
       </div>
+
+      <div class="edicao-aviso" id="modo-edicao-aviso">✏️ Você está editando um cadastro que já existia, em vez de criar um novo.</div>
 
       <form id="form-apoiador">
         <div class="fg">
@@ -326,8 +461,27 @@
 
       <div class="sucesso" id="sucesso">
         <div class="check">✓</div>
-        <h2>Cadastro recebido!</h2>
-        <p>Obrigado por se juntar ao movimento.</p>
+        <h2 id="sucesso-titulo">Cadastro recebido!</h2>
+        <p id="sucesso-texto">Obrigado por se juntar ao movimento.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAIXINHA "JÁ É CADASTRADO?" — aparece se o nome ou WhatsApp digitados
+       baterem com um cadastro existente, pra evitar duplicata -->
+  <div class="dup-overlay" id="dupOverlay">
+    <div class="dup-card">
+      <div class="dup-icone">👋</div>
+      <h3>Olá! Você já é cadastrado?</h3>
+      <p>Encontramos um cadastro com esse nome ou WhatsApp:</p>
+      <div class="dup-info">
+        <strong id="dup-nome">—</strong>
+        <span id="dup-bairro"></span>
+      </div>
+      <p class="dup-pergunta">Isso é você?</p>
+      <div class="dup-botoes">
+        <button type="button" class="dup-btn-editar" onclick="editarDuplicata()">✏️ Sim, editar meus dados</button>
+        <button type="button" class="dup-btn-outro" onclick="fecharDuplicata()">Não sou eu, continuar cadastro</button>
       </div>
     </div>
   </div>
@@ -474,6 +628,64 @@
       return ano + '-' + String(mes).padStart(2, '0') + '-' + String(dia).padStart(2, '0');
     }
 
+    /* ===== "você já é cadastrado?" — evita duplicata quando o nome ou o
+       WhatsApp digitados baterem com um cadastro existente ===== */
+    let modoEdicao = false;
+    let duplicataChave = null; // { id, numero, nome } originais, usados só pra autorizar a edição
+    let duplicataPendente = null;
+
+    function normalizarNumeroCliente(s) {
+      return String(s || '').replace(/\D/g, '');
+    }
+
+    async function verificarDuplicata() {
+      if (modoEdicao) return;
+      const nome = document.getElementById('l-nome').value.trim();
+      const numeroDigits = normalizarNumeroCliente(document.getElementById('l-numero').value);
+      if (!nome && numeroDigits.length < 8) return;
+      try {
+        const params = new URLSearchParams();
+        if (nome) params.set('nome', nome);
+        if (numeroDigits.length >= 8) params.set('numero', numeroDigits);
+        const r = await fetch('/api/apoiadores?' + params.toString());
+        const d = await r.json();
+        if (d.encontrado) mostrarDuplicata(d.apoiador);
+      } catch (e) { /* verificação é só conveniência — se falhar, segue o cadastro normal */ }
+    }
+
+    function mostrarDuplicata(ap) {
+      duplicataPendente = ap;
+      document.getElementById('dup-nome').textContent = ap.nome;
+      document.getElementById('dup-bairro').textContent = ap.bairro || '';
+      document.getElementById('dupOverlay').classList.add('show');
+    }
+
+    function fecharDuplicata() {
+      document.getElementById('dupOverlay').classList.remove('show');
+    }
+
+    function editarDuplicata() {
+      const ap = duplicataPendente;
+      if (!ap) return;
+      modoEdicao = true;
+      duplicataChave = { id: ap.id, numero: ap.numero, nome: ap.nome };
+      document.getElementById('l-nome').value = ap.nome || '';
+      document.getElementById('l-numero').value = ap.numero || '';
+      document.getElementById('l-bairro').value = ap.bairro || '';
+      document.getElementById('l-mae').value = ap.mae || '';
+      if (ap.nascimento) {
+        const [ano, mes, dia] = ap.nascimento.split('-');
+        nascimentoInput.value = dia + '/' + mes + '/' + ano;
+      }
+      document.getElementById('l-endereco').value = ap.endereco || '';
+      btn.textContent = 'Salvar alterações';
+      document.getElementById('modo-edicao-aviso').style.display = 'flex';
+      fecharDuplicata();
+    }
+
+    document.getElementById('l-nome').addEventListener('blur', verificarDuplicata);
+    document.getElementById('l-numero').addEventListener('blur', verificarDuplicata);
+
     const form = document.getElementById('form-apoiador');
     const btn = document.getElementById('btn-cadastrar');
     const msgErro = document.getElementById('msg-erro');
@@ -501,22 +713,33 @@
         return;
       }
       btn.disabled = true;
-      btn.textContent = 'Enviando…';
+      btn.textContent = modoEdicao ? 'Salvando…' : 'Enviando…';
       try {
+        const payload = modoEdicao
+          ? { id: duplicataChave.id, chaveNumero: duplicataChave.numero, chaveNome: duplicataChave.nome, nome, numero, bairro, mae, nascimento, endereco }
+          : { nome, numero, bairro, mae, nascimento, endereco, indicadoPor, indicadoPorId: indicadoPorId || null };
         const res = await fetch('/api/apoiadores', {
-          method: 'POST',
+          method: modoEdicao ? 'PUT' : 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nome, numero, bairro, mae, nascimento, endereco, indicadoPor, indicadoPorId: indicadoPorId || null })
+          body: JSON.stringify(payload)
         });
         const data = await res.json().catch(() => ({}));
+        if (res.status === 409 && data.apoiador) {
+          btn.disabled = false;
+          btn.textContent = 'Cadastrar';
+          mostrarDuplicata(data.apoiador);
+          return;
+        }
         if (!res.ok) throw new Error(data.error || 'Não foi possível enviar. Tente novamente.');
+        document.getElementById('sucesso-titulo').textContent = modoEdicao ? 'Dados atualizados!' : 'Cadastro recebido!';
+        document.getElementById('sucesso-texto').textContent = modoEdicao ? 'Suas informações foram atualizadas com sucesso.' : 'Obrigado por se juntar ao movimento.';
         form.style.display = 'none';
         document.getElementById('sucesso').style.display = 'block';
       } catch (err) {
         msgErro.textContent = err.message;
         msgErro.style.display = 'block';
         btn.disabled = false;
-        btn.textContent = 'Cadastrar';
+        btn.textContent = modoEdicao ? 'Salvar alterações' : 'Cadastrar';
       }
     });
   </script>
