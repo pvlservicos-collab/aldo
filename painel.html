@@ -1094,45 +1094,32 @@
       margin-bottom: 6px
     }
 
-    .demo-final-topo p {
+    .demo-final-topo p:not(.demo-final-destaque) {
       font-size: 13px;
-      color: var(--muted)
+      color: var(--muted);
+      line-height: 1.5
     }
 
-    .demo-final-lista {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 20px
+    .demo-final-destaque {
+      font-weight: 700;
+      font-size: 14.5px;
+      color: var(--ink);
+      margin-bottom: 4px
     }
 
-    .demo-final-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 11px 12px;
+    .demo-final-preco {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 14px 16px;
       background: var(--glass2);
       border: 1px solid var(--line);
       border-radius: 12px
     }
 
-    .demo-final-item span {
-      font-size: 18px;
-      line-height: 1.3
-    }
-
-    .demo-final-item b {
-      display: block;
-      font-size: 13.5px;
-      color: var(--ink)
-    }
-
-    .demo-final-item small {
-      display: block;
-      font-size: 11.5px;
+    .demo-final-preco p {
+      font-size: 13px;
       color: var(--muted);
-      margin-top: 2px;
-      line-height: 1.4
+      line-height: 1.5
     }
 
     .demo-final-whats {
@@ -1272,22 +1259,76 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 902;
-      width: 300px;
+      width: 380px;
       max-width: calc(100vw - 24px);
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
       background: linear-gradient(165deg, rgba(12, 23, 48, .98), rgba(5, 10, 24, .98));
       border: 1px solid var(--line-strong);
-      border-radius: 14px;
-      padding: 14px 18px;
+      border-radius: 16px;
+      padding: 20px 24px;
       box-shadow: var(--shadow-pop);
+      transition: width .25s ease;
+    }
+
+    /* passo de boas-vindas (sem alvo/recorte): a tela inteira já está escura,
+       então em vez de ficar preso embaixo, o card ocupa o centro — bem maior,
+       já que não corre risco de tapar nenhum elemento iluminado */
+    .onb-tooltip.intro {
+      bottom: auto;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 560px;
+      padding: 32px 36px;
+    }
+
+    .onb-progresso {
+      height: 3px;
+      width: 100%;
+      background: rgba(255, 255, 255, .1);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 14px
+    }
+
+    .onb-progresso-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--grad-accent);
+      border-radius: 99px;
+      transition: width .3s cubic-bezier(.4, 0, .2, 1)
     }
 
     .onb-tooltip-titulo {
       font-family: 'Outfit', sans-serif;
       font-weight: 700;
-      font-size: 15px;
+      font-size: 18px;
       color: #fff;
       margin-bottom: 10px;
       text-align: center
+    }
+
+    .onb-tooltip.intro .onb-tooltip-titulo {
+      font-size: 26px;
+      margin-bottom: 16px
+    }
+
+    .onb-tooltip-desc {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: #eef3ff;
+      text-align: center;
+      margin-bottom: 16px
+    }
+
+    .onb-tooltip.intro .onb-tooltip-desc {
+      font-size: 16.5px;
+      line-height: 1.65;
+      margin-bottom: 22px
+    }
+
+    .onb-tooltip-desc:empty {
+      display: none
     }
 
     .onb-tooltip-rodape {
@@ -1307,20 +1348,6 @@
       display: flex;
       align-items: center;
       gap: 6px
-    }
-
-    .onb-sair {
-      background: none;
-      border: none;
-      color: var(--dim);
-      font-size: 11.5px;
-      cursor: pointer;
-      padding: 6px 4px;
-      text-decoration: underline;
-    }
-
-    .onb-sair:hover {
-      color: var(--muted)
     }
 
     .onb-nav {
@@ -2514,6 +2541,41 @@
       .msg-toggle {
         display: inline-block
       }
+
+      /* onboarding no mobile: o menu vira barra fixa embaixo da tela, então
+         o card do tour precisa subir pra não brigar com ela — e fica mais
+         enxuto (menos preenchimento, fontes menores) pra caber direito numa
+         tela estreita em vez de ocupar espaço demais */
+      .onb-tooltip {
+        width: calc(100vw - 24px);
+        bottom: calc(84px + env(safe-area-inset-bottom));
+        padding: 16px 18px;
+        border-radius: 14px
+      }
+
+      .onb-tooltip.intro {
+        width: calc(100vw - 24px);
+        padding: 22px 20px
+      }
+
+      .onb-tooltip-titulo {
+        font-size: 16px
+      }
+
+      .onb-tooltip.intro .onb-tooltip-titulo {
+        font-size: 20px;
+        margin-bottom: 12px
+      }
+
+      .onb-tooltip-desc {
+        font-size: 13px;
+        margin-bottom: 12px
+      }
+
+      .onb-tooltip.intro .onb-tooltip-desc {
+        font-size: 14px;
+        margin-bottom: 16px
+      }
     }
     /* ===== aba IA do Aldo ===== */
     .ia-top { display: grid; grid-template-columns: 120px 1fr; gap: 18px; align-items: start }
@@ -3204,16 +3266,11 @@
       <div class="demo-final-topo">
         <div class="demo-final-emoji">🚀</div>
         <h2>Isso tudo já está pronto</h2>
-        <p>Um painel completo de campanha, funcionando hoje mesmo:</p>
+        <p class="demo-final-destaque">Plataforma pronta e personalizável</p>
+        <p>A base do sistema já está desenvolvida e pronta para uso, reduzindo tempo de implantação e custos.</p>
       </div>
-      <div class="demo-final-lista">
-        <div class="demo-final-item"><span>📊</span><div><b>Métricas do site</b><small>Acessos e cadastros por dia, em gráfico</small></div></div>
-        <div class="demo-final-item"><span>🗺️</span><div><b>Mapa de eleitores</b><small>Lideranças e apoiadores plotados por bairro</small></div></div>
-        <div class="demo-final-item"><span>📋</span><div><b>Formulário de contato</b><small>Todo lead do site cai aqui, com exportação em CSV</small></div></div>
-        <div class="demo-final-item"><span>🤝</span><div><b>Lideranças e apoiadores</b><small>Cadastro, busca, exportação e vínculo entre eles</small></div></div>
-        <div class="demo-final-item"><span>📅</span><div><b>Agenda dupla</b><small>Uma interna (só o painel) e uma pública, direto pros apoiadores</small></div></div>
-        <div class="demo-final-item"><span>🤖</span><div><b>IA do Aldo</b><small>Chatbot do site, com conversa e aparência editáveis</small></div></div>
-        <div class="demo-final-item"><span>🔒</span><div><b>Login protegido + modo privacidade</b><small>Oculte valores sensíveis com um clique</small></div></div>
+      <div class="demo-final-preco">
+        <p>Clique no botão abaixo para falar comigo no WhatsApp e solicite uma demonstração sem compromisso.</p>
       </div>
       <a class="demo-final-whats" id="demoFinalWhats" href="#" target="_blank" rel="noopener">📲 Fale comigo no WhatsApp</a>
       <button type="button" class="demo-final-fechar" onclick="fecharResumoFinalDemo()">Fechar</button>
@@ -3228,11 +3285,12 @@
     <div class="onb-frame" id="onbFrameRight"></div>
     <div class="onb-highlight" id="onbHighlight"></div>
     <div class="onb-tooltip" id="onbTooltip">
+      <div class="onb-progresso"><div class="onb-progresso-fill" id="onbProgressoFill"></div></div>
       <div class="onb-tooltip-titulo" id="onbTitulo">—</div>
+      <div class="onb-tooltip-desc" id="onbDescricao"></div>
       <div class="onb-tooltip-rodape">
         <span class="onb-passo" id="onbPasso">1 / 8</span>
         <div class="onb-botoes">
-          <button type="button" class="onb-sair" onclick="sairOnboarding()">Pular tour</button>
           <button type="button" class="onb-nav" id="onbAnterior" onclick="onboardingAnterior()">‹</button>
           <button type="button" class="onb-nav onb-nav-principal" id="onbProximo" onclick="onboardingProximo()">Próximo ›</button>
         </div>
@@ -3537,38 +3595,49 @@
     const ONBOARDING_PASSOS = [
       {
         tab: null,
-        alvo: () => ['chartMetricas', 'chartLid', 'chartApo'].map(id => document.getElementById(id)?.closest('.chart-box')),
-        titulo: 'Gráficos do site',
-      },
-      {
-        tab: null,
-        alvo: () => [document.getElementById('topoFixo')],
-        titulo: 'Resumo ao vivo',
+        intro: true,
+        alvo: () => [],
+        titulo: 'Bem-vindo(a)!',
+        descricao: 'Nesta apresentação você conhecerá os principais recursos da plataforma e como cada um deles pode ajudar na organização da sua campanha.<br><br>' +
+          'Ao longo das próximas etapas, vamos mostrar o funcionamento de cada módulo.<br><br>' +
+          'Clique em avançar para continuar.',
       },
       {
         tab: null,
         alvo: () => [document.querySelector('nav')],
         titulo: 'Menu do painel',
+        descricao: 'É por aqui que você navega entre todas as áreas do sistema: métricas, mapa, formulário, lideranças, apoiadores, agenda e IA do Aldo. Tudo a um clique de distância.',
+      },
+      {
+        tab: null,
+        alvo: () => [document.getElementById('topoFixo')],
+        titulo: 'Resumo ao vivo',
+        descricao: 'Acompanhe em tempo real quantos votos a campanha já tem previstos, quantas lideranças e bairros estão engajados, e quanto ainda falta pra bater a meta.',
+      },
+      {
+        tab: null,
+        alvo: () => ['chartMetricas', 'chartLid', 'chartApo'].map(id => document.getElementById(id)?.closest('.chart-box')),
+        titulo: 'Gráficos do site',
+        descricao: 'Veja dia a dia quantas pessoas visitam o site e quantas lideranças e apoiadores se cadastram — assim dá pra saber se uma ação (post, evento, panfletagem) realmente trouxe resultado.',
       },
       {
         tab: 'mapa',
         alvo: () => [document.getElementById('tab-mapa')],
         titulo: 'Mapa',
-      },
-      {
-        tab: 'leads',
-        alvo: () => [document.getElementById('tab-leads')],
-        titulo: 'Formulário',
+        descricao: 'Visualize onde estão as lideranças e os apoiadores cadastrados, bairro por bairro. Ajuda a decidir onde reforçar a campanha e onde ela já está mais forte.',
       },
       {
         tab: 'liderancas',
         alvo: () => [document.getElementById('tab-liderancas')],
         titulo: 'Lideranças',
+        descricao: 'Cadastre as lideranças que apoiam a campanha:<br><br>' +
+          'Toda liderança recebe um link personalizado pra trazer apoiadores, e cada cadastro feito por ele já entra vinculado a ela.',
       },
       {
         tab: 'apoiadores',
         alvo: () => [document.getElementById('tab-apoiadores')],
         titulo: 'Apoiadores',
+        descricao: 'Veja quem se cadastrou apoiando a campanha e por indicação de qual liderança — é assim que você mede o alcance real de cada uma delas.',
       },
       {
         tab: null,
@@ -3578,6 +3647,7 @@
           document.querySelector('nav a[data-tab="iadoaldo"]'),
         ],
         titulo: 'Extras',
+        descricao: 'Organize os compromissos numa agenda (inclusive uma pública, direto pros apoiadores) e edite a conversa do chatbot do site sem precisar de programador.',
       },
     ];
 
@@ -3647,7 +3717,10 @@
       const passo = ONBOARDING_PASSOS[onboardingIndex];
       if (passo.tab) mudarTab(passo.tab);
       document.getElementById('onbTitulo').textContent = passo.titulo;
+      document.getElementById('onbDescricao').innerHTML = passo.descricao || '';
+      document.getElementById('onbTooltip').classList.toggle('intro', !!passo.intro);
       document.getElementById('onbPasso').textContent = (onboardingIndex + 1) + ' / ' + ONBOARDING_PASSOS.length;
+      document.getElementById('onbProgressoFill').style.width = ((onboardingIndex + 1) / ONBOARDING_PASSOS.length * 100) + '%';
       document.getElementById('onbAnterior').disabled = onboardingIndex === 0;
       document.getElementById('onbProximo').textContent = (onboardingIndex === ONBOARDING_PASSOS.length - 1) ? 'Concluir ✓' : 'Próximo ›';
       // dá um tempo pro layout assentar (troca de aba pode mudar altura) antes de medir/rolar
@@ -3695,9 +3768,17 @@
       if (!onboardingAtivo) return;
       const passo = ONBOARDING_PASSOS[onboardingIndex];
       const r = onboardingUniaoRetangulo(passo.alvo());
-      if (!r) return;
-      const pad = 8;
       const vw = window.innerWidth, vh = window.innerHeight;
+      if (!r) {
+        // passo sem alvo (boas-vindas): escurece a tela inteira, sem recorte iluminado
+        onboardingPosRect(document.getElementById('onbFrameTop'), 0, 0, vw, vh);
+        onboardingPosRect(document.getElementById('onbFrameBottom'), vh, 0, vw, 0);
+        onboardingPosRect(document.getElementById('onbFrameLeft'), 0, 0, 0, vh);
+        onboardingPosRect(document.getElementById('onbFrameRight'), 0, vw, 0, vh);
+        onboardingPosRect(document.getElementById('onbHighlight'), 0, 0, 0, 0);
+        return;
+      }
+      const pad = 8;
       const top = Math.max(0, r.top - pad), left = Math.max(0, r.left - pad);
       const bottom = Math.min(vh, r.bottom + pad), right = Math.min(vw, r.right + pad);
       const largura = right - left, altura = bottom - top;
