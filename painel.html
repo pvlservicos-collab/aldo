@@ -2576,6 +2576,19 @@
         font-size: 14px;
         margin-bottom: 16px
       }
+
+      /* por passo: no gráfico o card desce (fica mais perto do rodapé, longe
+         do gráfico que fica mais acima na tela) — em lideranças/apoiadores
+         ele sobe pro topo, porque o alvo é a aba inteira (tabela comprida) e
+         embaixo o card tampava linhas/botões */
+      .onb-tooltip.pos-baixo {
+        bottom: calc(8px + env(safe-area-inset-bottom))
+      }
+
+      .onb-tooltip.pos-cima {
+        bottom: auto;
+        top: 12px
+      }
     }
     /* ===== aba IA do Aldo ===== */
     .ia-top { display: grid; grid-template-columns: 120px 1fr; gap: 18px; align-items: start }
@@ -3619,6 +3632,7 @@
         alvo: () => ['chartMetricas', 'chartLid', 'chartApo'].map(id => document.getElementById(id)?.closest('.chart-box')),
         titulo: 'Gráficos do site',
         descricao: 'Veja dia a dia quantas pessoas visitam o site e quantas lideranças e apoiadores se cadastram — assim dá pra saber se uma ação (post, evento, panfletagem) realmente trouxe resultado.',
+        posicaoMobile: 'baixo',
       },
       {
         tab: 'mapa',
@@ -3632,12 +3646,14 @@
         titulo: 'Lideranças',
         descricao: 'Cadastre as lideranças que apoiam a campanha:<br><br>' +
           'Toda liderança recebe um link personalizado pra trazer apoiadores, e cada cadastro feito por ele já entra vinculado a ela.',
+        posicaoMobile: 'cima',
       },
       {
         tab: 'apoiadores',
         alvo: () => [document.getElementById('tab-apoiadores')],
         titulo: 'Apoiadores',
         descricao: 'Veja quem se cadastrou apoiando a campanha e por indicação de qual liderança — é assim que você mede o alcance real de cada uma delas.',
+        posicaoMobile: 'cima',
       },
       {
         tab: null,
@@ -3647,7 +3663,8 @@
           document.querySelector('nav a[data-tab="iadoaldo"]'),
         ],
         titulo: 'Extras',
-        descricao: 'Organize os compromissos numa agenda (inclusive uma pública, direto pros apoiadores) e edite a conversa do chatbot do site sem precisar de programador.',
+        descricao: 'Organize os compromissos numa agenda (inclusive uma pública, direto pros apoiadores) e edite a conversa do chatbot do site sem precisar de programador.<br><br>' +
+          'Também fazemos demandas personalizadas que alguns candidatos pedem, como uma agenda pra organizar compromissos públicos e uma IA de chat pro eleitor conversar com um avatar do candidato.',
       },
     ];
 
@@ -3719,6 +3736,8 @@
       document.getElementById('onbTitulo').textContent = passo.titulo;
       document.getElementById('onbDescricao').innerHTML = passo.descricao || '';
       document.getElementById('onbTooltip').classList.toggle('intro', !!passo.intro);
+      document.getElementById('onbTooltip').classList.toggle('pos-baixo', passo.posicaoMobile === 'baixo');
+      document.getElementById('onbTooltip').classList.toggle('pos-cima', passo.posicaoMobile === 'cima');
       document.getElementById('onbPasso').textContent = (onboardingIndex + 1) + ' / ' + ONBOARDING_PASSOS.length;
       document.getElementById('onbProgressoFill').style.width = ((onboardingIndex + 1) / ONBOARDING_PASSOS.length * 100) + '%';
       document.getElementById('onbAnterior').disabled = onboardingIndex === 0;
