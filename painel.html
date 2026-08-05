@@ -1107,34 +1107,57 @@
       margin-bottom: 4px
     }
 
-    .demo-final-preco {
-      text-align: center;
-      margin-bottom: 20px;
-      padding: 14px 16px;
-      background: var(--glass2);
-      border: 1px solid var(--line);
-      border-radius: 12px
+    .demo-final-recursos {
+      margin-bottom: 20px
     }
 
-    .demo-final-preco p {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.5
+    .demo-final-recursos-titulo {
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--cyan);
+      text-align: center;
+      margin-bottom: 10px
+    }
+
+    .demo-final-lista {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .demo-final-lista li {
+      font-size: 13.5px;
+      color: #eef3ff;
+      background: var(--glass2);
+      border-radius: 10px;
+      padding: 9px 12px
+    }
+
+    .demo-final-cta {
+      text-align: center;
+      margin-bottom: 18px;
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.4
     }
 
     .demo-final-whats {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       width: 100%;
-      padding: 14px;
+      padding: 18px;
       background: linear-gradient(135deg, #25d366 0%, #128c4a 100%);
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       color: #fff;
       font-weight: 700;
-      font-size: 15px;
+      font-size: 17.5px;
       text-decoration: none;
       cursor: pointer;
       box-shadow: 0 6px 20px rgba(37, 211, 102, .35);
@@ -1144,23 +1167,6 @@
     .demo-final-whats:hover {
       filter: brightness(1.06);
       transform: translateY(-1px)
-    }
-
-    .demo-final-fechar {
-      display: block;
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      font: inherit;
-      font-size: 12.5px;
-      cursor: pointer
-    }
-
-    .demo-final-fechar:hover {
-      color: var(--ink)
     }
 
     #apoLidTitulo {
@@ -1335,29 +1341,30 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px
+      gap: 14px
     }
 
     .onb-passo {
-      font-size: 11px;
-      color: var(--dim);
+      font-size: 13px;
+      color: var(--muted);
       white-space: nowrap
     }
 
     .onb-botoes {
       display: flex;
       align-items: center;
-      gap: 6px
+      gap: 10px
     }
 
     .onb-nav {
       background: var(--glass2);
       border: 1px solid var(--line);
       color: var(--ink);
-      border-radius: 8px;
-      padding: 7px 12px;
+      border-radius: 10px;
+      padding: 12px 20px;
       font: inherit;
-      font-size: 12.5px;
+      font-size: 15.5px;
+      font-weight: 600;
       cursor: pointer;
       transition: all var(--t-fast)
     }
@@ -3274,19 +3281,31 @@
   </div>
 
   <!-- POPUP FINAL DA DEMONSTRAÇÃO (só existe em painel.html?demo) -->
-  <div class="cal-overlay" id="demoFinalOverlay">
+  <div class="cal-overlay" id="demoFinalOverlay" onclick="if(event.target===this)fecharResumoFinalDemo()">
     <div class="demo-final-panel">
       <div class="demo-final-topo">
         <div class="demo-final-emoji">🚀</div>
         <h2>Isso tudo já está pronto</h2>
-        <p class="demo-final-destaque">Plataforma pronta e personalizável</p>
-        <p>A base do sistema já está desenvolvida e pronta para uso, reduzindo tempo de implantação e custos.</p>
+        <p class="demo-final-destaque">Tenha uma plataforma desenvolvida para as necessidades da SUA CAMPANHA</p>
+        <p>Personalizada e com a sua marca, sem mensalidade.</p>
       </div>
-      <div class="demo-final-preco">
-        <p>Clique no botão abaixo para falar comigo no WhatsApp e solicite uma demonstração sem compromisso.</p>
+      <div class="demo-final-recursos">
+        <p class="demo-final-recursos-titulo">Recursos disponíveis</p>
+        <ul class="demo-final-lista">
+          <li>📊 Sistema de contagem de votos</li>
+          <li>🗺️ Mapa de eleitores</li>
+          <li>📋 Formulário de contato para cada liderança</li>
+          <li>🤝 Gestão de lideranças e apoiadores</li>
+          <li>📅 Agenda dupla</li>
+          <li>🤖 Chatbot com IA</li>
+          <li>+ Qualquer demanda que sua campanha precisar</li>
+        </ul>
       </div>
-      <a class="demo-final-whats" id="demoFinalWhats" href="#" target="_blank" rel="noopener">📲 Fale comigo no WhatsApp</a>
-      <button type="button" class="demo-final-fechar" onclick="fecharResumoFinalDemo()">Fechar</button>
+      <p class="demo-final-cta">Solicite uma demonstração sem compromisso pelo WhatsApp.</p>
+      <a class="demo-final-whats" id="demoFinalWhats" href="#" target="_blank" rel="noopener">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m0 1.67a8.23 8.23 0 0 1 5.83 2.42 8.19 8.19 0 0 1 2.41 5.82c0 4.54-3.7 8.24-8.25 8.24a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 0 1-1.26-4.38c.01-4.55 3.71-8.24 8.25-8.24M8.53 6.85c-.17 0-.45.06-.68.32-.24.25-.9.88-.9 2.15 0 1.27.92 2.5 1.05 2.67.13.17 1.79 2.86 4.42 3.9 2.19.86 2.63.69 3.11.65.48-.04 1.55-.63 1.77-1.24.22-.6.22-1.13.15-1.24-.06-.11-.24-.17-.5-.3-.26-.13-1.55-.77-1.79-.85-.24-.09-.41-.13-.6.13-.17.26-.68.85-.83 1.02-.15.17-.31.19-.57.06-.26-.13-1.09-.4-2.08-1.28-.77-.68-1.29-1.53-1.44-1.79-.15-.26-.02-.4.11-.53.12-.12.26-.31.4-.47.13-.15.17-.26.26-.44.09-.17.04-.33-.02-.46-.06-.13-.6-1.45-.82-1.99-.22-.52-.44-.45-.6-.46-.15-.01-.33-.01-.5-.01"/></svg>
+        Fale conosco por WhatsApp
+      </a>
     </div>
   </div>
 
@@ -3632,7 +3651,7 @@
         alvo: () => ['chartMetricas', 'chartLid', 'chartApo'].map(id => document.getElementById(id)?.closest('.chart-box')),
         titulo: 'Gráficos do site',
         descricao: 'Veja dia a dia quantas pessoas visitam o site e quantas lideranças e apoiadores se cadastram — assim dá pra saber se uma ação (post, evento, panfletagem) realmente trouxe resultado.',
-        posicaoMobile: 'baixo',
+        posicaoMobile: 'cima',
       },
       {
         tab: 'mapa',
@@ -3663,8 +3682,7 @@
           document.querySelector('nav a[data-tab="iadoaldo"]'),
         ],
         titulo: 'Extras',
-        descricao: 'Organize os compromissos numa agenda (inclusive uma pública, direto pros apoiadores) e edite a conversa do chatbot do site sem precisar de programador.<br><br>' +
-          'Também fazemos demandas personalizadas que alguns candidatos pedem, como uma agenda pra organizar compromissos públicos e uma IA de chat pro eleitor conversar com um avatar do candidato.',
+        descricao: 'Também fazemos demandas personalizadas que alguns candidatos pedem, como uma agenda pra organizar compromissos públicos e uma IA de chat pro eleitor conversar com um avatar do candidato.',
       },
     ];
 
