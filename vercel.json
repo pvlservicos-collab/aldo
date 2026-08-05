@@ -2,6 +2,6 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/apresentacao", "destination": "/painel.html" }
+    { "source": "/apresentacao", "destination": "/painel" }
   ]
 }
