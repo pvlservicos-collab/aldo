@@ -66,6 +66,27 @@ module.exports = async (req, res) => {
       return res.status(200).json({ ok: true });
     }
 
+    if (req.method === 'PUT') {
+      // reatribuição manual: troca (ou remove) qual liderança "trouxe" esse
+      // apoiador — indicado_por fica em texto (denormalizado, pra exportação/
+      // exibição sem precisar de join) sempre em sincronia com indicado_por_id
+      const id = Number(req.query.id);
+      if (!id) return res.status(400).json({ error: 'id inválido' });
+      const body = req.body || {};
+      const indicadoPorId = Number(body.indicadoPorId) || null;
+      let indicadoPor = null;
+      if (indicadoPorId) {
+        const lid = await getPool().query('SELECT nome FROM liderancas WHERE id = $1', [indicadoPorId]);
+        if (!lid.rows.length) return res.status(400).json({ error: 'Liderança não encontrada.' });
+        indicadoPor = lid.rows[0].nome;
+      }
+      await getPool().query(
+        'UPDATE apoiadores SET indicado_por = $1, indicado_por_id = $2 WHERE id = $3',
+        [indicadoPor, indicadoPorId, id]
+      );
+      return res.status(200).json({ ok: true, indicadoPor });
+    }
+
     if (req.method !== 'GET') return res.status(405).json({ error: 'Método não permitido' });
 
     const { whereSql, params } = buildFiltro(req.query);
@@ -81,7 +102,7 @@ module.exports = async (req, res) => {
     const total = totalRes.rows[0].n;
 
     const itensRes = await getPool().query(
-      `SELECT id, nome, numero, bairro, nome_mae, data_nascimento, endereco, indicado_por, criado_em
+      `SELECT id, nome, numero, bairro, nome_mae, data_nascimento, endereco, indicado_por, indicado_por_id, criado_em
        FROM apoiadores ${whereSql}
        ORDER BY criado_em DESC
        LIMIT ${PAGE_SIZE} OFFSET ${offset}`,

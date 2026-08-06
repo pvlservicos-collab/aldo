@@ -222,7 +222,8 @@
     }
 
     .login-field input,
-    .login-field textarea {
+    .login-field textarea,
+    .login-field select {
       width: 100%;
       padding: 12px 14px;
       background: var(--field);
@@ -240,7 +241,8 @@
     }
 
     .login-field input:focus,
-    .login-field textarea:focus {
+    .login-field textarea:focus,
+    .login-field select:focus {
       outline: none;
       border-color: var(--cyan);
       box-shadow: 0 0 0 3px rgba(34, 211, 238, .14)
@@ -2141,6 +2143,29 @@
       color: #86efac
     }
 
+    .btn-indicado {
+      background: none;
+      border: none;
+      color: var(--ink);
+      font: inherit;
+      font-size: inherit;
+      text-align: left;
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: background var(--t-fast)
+    }
+
+    .btn-indicado:hover {
+      background: var(--glass-hi);
+      color: var(--cyan)
+    }
+
+    .btn-indicado-lapis {
+      font-size: 11px;
+      opacity: .55
+    }
+
     .btn-del-lead,
     .btn-del-lid,
     .btn-del-apo,
@@ -3280,6 +3305,24 @@
     </div>
   </div>
 
+  <!-- POPUP TROCAR LIDERANÇA (clique em "Indicado por" na aba Apoiadores) -->
+  <div class="cal-overlay" id="editIndicadoOverlay" onclick="if(event.target===this)fecharEditarIndicado()">
+    <div class="cal-panel">
+      <div class="cal-head">
+        <div class="cal-mes">Trocar liderança</div>
+        <button type="button" onclick="fecharEditarIndicado()">✕</button>
+      </div>
+      <div class="login-field">
+        <label>Indicado por</label>
+        <select id="editIndicadoSelect"></select>
+      </div>
+      <div class="cal-actions">
+        <button type="button" class="cal-limpar" onclick="fecharEditarIndicado()">Cancelar</button>
+        <button type="button" class="cal-aplicar" id="editIndicadoSalvar" onclick="salvarIndicado()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- POPUP FINAL DA DEMONSTRAÇÃO (só existe em painel.html?demo) -->
   <div class="cal-overlay" id="demoFinalOverlay" onclick="if(event.target===this)fecharResumoFinalDemo()">
     <div class="demo-final-panel">
@@ -3514,6 +3557,10 @@
         return { total: itens.length, itens: demoPaginar(itens, query.page) };
       }
 
+      if (rota === '/api/lideranca') {
+        return { liderancas: demoDB.liderancas.map(l => ({ id: l.id, nome: l.nome, bairro: l.bairro })) };
+      }
+
       if (rota === '/api/admin/liderancas') {
         if (method === 'DELETE') { demoDB.liderancas = demoDB.liderancas.filter(l => String(l.id) !== String(query.id)); return { ok: true }; }
         let itens = demoFiltrarData(demoFiltrarBusca(demoDB.liderancas, ['nome', 'numero', 'bairro', 'nome_mae', 'endereco'], query.q), query.from, query.to);
@@ -3523,6 +3570,15 @@
 
       if (rota === '/api/admin/apoiadores') {
         if (method === 'DELETE') { demoDB.apoiadores = demoDB.apoiadores.filter(a => String(a.id) !== String(query.id)); return { ok: true }; }
+        if (method === 'PUT') {
+          const alvo = demoDB.apoiadores.find(a => String(a.id) === String(query.id));
+          if (!alvo) return { error: 'apoiador não encontrado' };
+          const indicadoPorId = body.indicadoPorId ? Number(body.indicadoPorId) : null;
+          const lider = indicadoPorId ? demoDB.liderancas.find(l => Number(l.id) === indicadoPorId) : null;
+          alvo.indicado_por_id = indicadoPorId;
+          alvo.indicado_por = lider ? lider.nome : null;
+          return { ok: true, indicadoPor: alvo.indicado_por };
+        }
         let itens = demoDB.apoiadores;
         if (query.indicadoPorId) itens = itens.filter(a => String(a.indicado_por_id) === String(query.indicadoPorId));
         itens = demoFiltrarData(demoFiltrarBusca(itens, ['nome', 'numero', 'bairro', 'nome_mae', 'endereco'], query.q), query.from, query.to);
@@ -4671,7 +4727,8 @@
             '<td>' + esc(l.nome_mae || '—') + '</td>' +
             '<td>' + nasc + '</td>' +
             '<td>' + esc(l.endereco || '—') + '</td>' +
-            '<td>' + esc(l.indicado_por || '—') + '</td>' +
+            '<td><button type="button" class="btn-indicado" data-id="' + l.id + '" data-indicado-id="' + (l.indicado_por_id || '') + '" title="Trocar liderança">' +
+              esc(l.indicado_por || 'Nenhuma') + ' <span class="btn-indicado-lapis">✏️</span></button></td>' +
             '<td>' + dt + '</td>' +
             '<td><button type="button" class="btn-del-apo" data-id="' + l.id + '" title="Excluir">🗑</button></td>';
           body.appendChild(tr);
@@ -4691,6 +4748,9 @@
     }
 
     document.getElementById('apoiadoresBody').addEventListener('click', async e => {
+      const btnIndicado = e.target.closest('.btn-indicado');
+      if (btnIndicado) return abrirEditarIndicado(btnIndicado.dataset.id, btnIndicado.dataset.indicadoId);
+
       const b = e.target.closest('.btn-del-apo'); if (!b) return;
       if (!confirm('Excluir esse apoiador? Não dá pra desfazer.')) return;
       b.disabled = true;
@@ -4703,6 +4763,55 @@
         b.disabled = false;
       }
     });
+
+    /* ══════════ trocar manualmente qual liderança "trouxe" um apoiador ══════════ */
+    let LIDERANCAS_EDICAO = null;
+    let editarIndicadoApoId = null;
+
+    async function carregarLiderancasEdicao() {
+      if (LIDERANCAS_EDICAO) return LIDERANCAS_EDICAO;
+      try {
+        const d = await api('/api/lideranca');
+        LIDERANCAS_EDICAO = d.liderancas || [];
+      } catch (e) {
+        LIDERANCAS_EDICAO = [];
+      }
+      return LIDERANCAS_EDICAO;
+    }
+
+    async function abrirEditarIndicado(apoId, indicadoIdAtual) {
+      editarIndicadoApoId = apoId;
+      const sel = document.getElementById('editIndicadoSelect');
+      sel.innerHTML = '<option value="">Carregando…</option>';
+      document.getElementById('editIndicadoOverlay').classList.add('open');
+      const lideres = await carregarLiderancasEdicao();
+      sel.innerHTML = '<option value="">Nenhuma (apoiador individual)</option>' +
+        lideres.map(l => '<option value="' + l.id + '"' + (String(l.id) === String(indicadoIdAtual) ? ' selected' : '') + '>' + esc(l.nome) + (l.bairro ? ' — ' + esc(l.bairro) : '') + '</option>').join('');
+    }
+
+    function fecharEditarIndicado() {
+      document.getElementById('editIndicadoOverlay').classList.remove('open');
+      editarIndicadoApoId = null;
+    }
+
+    async function salvarIndicado() {
+      const indicadoPorId = document.getElementById('editIndicadoSelect').value;
+      const btn = document.getElementById('editIndicadoSalvar');
+      btn.disabled = true;
+      try {
+        await api('/api/admin/apoiadores?id=' + editarIndicadoApoId, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ indicadoPorId: indicadoPorId || null })
+        });
+        fecharEditarIndicado();
+        carregarApoiadores();
+        carregarResumoVotos();
+      } catch (e) {
+        alert('Não foi possível salvar: ' + e.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
 
     function esc(s) { return (s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 
