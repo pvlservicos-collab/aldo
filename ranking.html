@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Ranking de Lideranças · Aldo Maurício</title>
+  <link rel="icon" type="image/webp" href="img/fotocandidato.webp">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #03070f;
+      --bg2: #060d1c;
+      --ink: #f2f7ff;
+      --muted: #8ca3c7;
+      --dim: #5f7396;
+      --line: rgba(150, 190, 255, .14);
+      --line-strong: rgba(150, 190, 255, .26);
+      --glass: rgba(120, 165, 255, .06);
+      --glass2: rgba(120, 165, 255, .025);
+      --glass-hi: rgba(140, 190, 255, .11);
+      --cyan: #22d3ee;
+      --ouro: #f5c518;
+      --ouro-esc: #c8a000;
+      --prata: #c7cedb;
+      --bronze: #cd7f32;
+      --grad-card: linear-gradient(160deg, var(--glass) 0%, var(--glass2) 100%);
+      --shadow-card: 0 10px 34px rgba(1, 4, 14, .55);
+      --r-lg: 16px;
+      --r-md: 12px;
+      --t-fast: .18s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html,
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      overflow-x: hidden
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      letter-spacing: -.01em
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(1000px 560px at 10% -10%, rgba(37, 99, 235, .22), transparent 60%),
+        radial-gradient(800px 500px at 98% 0%, rgba(129, 140, 248, .13), transparent 60%),
+        radial-gradient(1100px 760px at 50% 115%, rgba(34, 211, 238, .08), transparent 60%);
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      padding: 48px 18px;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 620px;
+    }
+
+    .topo {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    .topo img {
+      height: 64px;
+      margin-bottom: 14px;
+    }
+
+    .topo h1 {
+      font-size: clamp(1.7rem, 5vw, 2.1rem);
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .topo p {
+      font-size: 13.5px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .chart-box {
+      background: var(--grad-card);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      padding: 20px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow-card)
+    }
+
+    .chart-box h2 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .lista {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 65vh;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .rk-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 16px;
+      background: var(--glass2);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      position: relative;
+      overflow: hidden;
+      transition: border-color var(--t-fast), transform var(--t-fast)
+    }
+
+    .rk-item:hover {
+      border-color: var(--line-strong);
+      transform: translateX(2px)
+    }
+
+    .rk-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      bottom: 10px;
+      width: 3px;
+      border-radius: 3px;
+      background: linear-gradient(180deg, var(--cyan), transparent 130%)
+    }
+
+    .rk-item.top1::before {
+      background: linear-gradient(180deg, var(--ouro), transparent 130%)
+    }
+
+    .rk-item.top2::before {
+      background: linear-gradient(180deg, var(--prata), transparent 130%)
+    }
+
+    .rk-item.top3::before {
+      background: linear-gradient(180deg, var(--bronze), transparent 130%)
+    }
+
+    .rk-item.top1 {
+      background: linear-gradient(135deg, rgba(245, 197, 24, .12), var(--glass2));
+      border-color: rgba(245, 197, 24, .3)
+    }
+
+    .rk-item.top2 {
+      background: linear-gradient(135deg, rgba(199, 206, 219, .1), var(--glass2));
+      border-color: rgba(199, 206, 219, .28)
+    }
+
+    .rk-item.top3 {
+      background: linear-gradient(135deg, rgba(205, 127, 50, .12), var(--glass2));
+      border-color: rgba(205, 127, 50, .28)
+    }
+
+    .rk-pos {
+      flex: 0 0 auto;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--glass-hi);
+      border: 1px solid var(--line-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--ink)
+    }
+
+    .rk-item.top1 .rk-pos {
+      background: linear-gradient(135deg, var(--ouro), var(--ouro-esc));
+      color: #1f1503;
+      font-size: 1.25rem;
+      border: none
+    }
+
+    .rk-item.top2 .rk-pos {
+      background: linear-gradient(135deg, #e4e9f2, var(--prata));
+      color: #1a2130;
+      font-size: 1.2rem;
+      border: none
+    }
+
+    .rk-item.top3 .rk-pos {
+      background: linear-gradient(135deg, #e3a361, var(--bronze));
+      color: #fff;
+      font-size: 1.2rem;
+      border: none
+    }
+
+    .rk-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .rk-nome {
+      font-weight: 600;
+      font-size: .96rem;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rk-bairro {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .rk-num {
+      flex: 0 0 auto;
+      text-align: center;
+      padding-left: 8px;
+    }
+
+    .rk-num .n {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 1.7rem;
+      color: var(--cyan);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rk-item.top1 .rk-num .n {
+      color: var(--ouro)
+    }
+
+    .rk-num .l {
+      font-size: .58rem;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-top: 3px;
+    }
+
+    .vazio,
+    .erro {
+      text-align: center;
+      padding: 30px 10px;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topo">
+      <img src="img/fotocandidato.webp" alt="Aldo Maurício">
+      <h1>Ranking de Lideranças</h1>
+      <p>Quem mais está trazendo apoiadores pra campanha de Aldo Maurício.</p>
+    </div>
+
+    <div class="chart-box">
+      <h2>🏆 Ranking geral</h2>
+      <div class="lista" id="lista">
+        <div class="vazio">Carregando ranking…</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function esc(s) {
+      return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    fetch('/api/ranking').then(r => r.json()).then(d => {
+      const ranking = d.ranking || [];
+      const lista = document.getElementById('lista');
+      if (!ranking.length) {
+        lista.innerHTML = '<div class="vazio">Ainda não há apoiadores cadastrados por nenhuma liderança. Volte em breve!</div>';
+        return;
+      }
+      lista.innerHTML = ranking.map((l, i) => {
+        const pos = i + 1;
+        const medalha = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : pos;
+        const classeTop = pos <= 3 ? ' top' + pos : '';
+        return '<div class="rk-item' + classeTop + '">' +
+          '<div class="rk-pos">' + medalha + '</div>' +
+          '<div class="rk-info">' +
+          '<div class="rk-nome">' + esc(l.nome) + '</div>' +
+          (l.bairro ? '<div class="rk-bairro">' + esc(l.bairro) + '</div>' : '') +
+          '</div>' +
+          '<div class="rk-num"><div class="n">' + l.apoiadores + '</div><div class="l">apoiador' + (l.apoiadores === 1 ? '' : 'es') + '</div></div>' +
+          '</div>';
+      }).join('');
+    }).catch(() => {
+      document.getElementById('lista').innerHTML = '<div class="erro">Não foi possível carregar o ranking agora. Tente novamente mais tarde.</div>';
+    });
+  </script>
+</body>
+
+</html>
