@@ -108,6 +108,19 @@ const BAIRROS_GEO = {"type": "FeatureCollection", "features": [{"type": "Feature
 let LIDERANCAS_GEO = [];
 const norm = s => (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g," ").trim();
 
+/* Modo demonstra\u00e7\u00e3o: este mapa \u00e9 carregado num iframe dentro do painel, e o
+   painel pode estar em modo demo (link p\u00fablico, sem login \u2014 ver painel.html).
+   Nesse caso NUNCA pode chamar o endpoint autenticado /api/admin/liderancas-geo,
+   mesmo que o navegador tenha, por acaso, um cookie de sess\u00e3o real v\u00e1lido
+   (ex: o pr\u00f3prio operador logado testando o link de demonstra\u00e7\u00e3o na mesma
+   aba). Usa s\u00f3 dados fict\u00edcios, iguais em esp\u00edrito aos do painel.html. */
+const MODO_DEMO = new URLSearchParams(location.search).has('demo');
+const LIDERANCAS_DEMO = [
+  { id: 1, nome: "Carlos Ferreira (demonstra\u00e7\u00e3o)", numero: "(96) 99111-2233", bairro: "Buritizal", endereco: "Rua das Flores, 120", lat: 0.0312, lng: -51.0733 },
+  { id: 2, nome: "Fernanda Alves (demonstra\u00e7\u00e3o)", numero: "(96) 98222-3344", bairro: "Central", endereco: "Av. Amazonas, 55", lat: 0.0356, lng: -51.0602 },
+  { id: 3, nome: "Jos\u00e9 Ribamar (demonstra\u00e7\u00e3o)", numero: "(96) 99777-8899", bairro: "Trem", endereco: "Rua Curia\u00fa, 45", lat: 0.0241, lng: -51.0602 },
+];
+
 const map = L.map("map",{zoomControl:true,zoomSnap:0.25}).setView([0.032,-51.07],13);
 
 /* Fundo escuro (estilo Google Maps dark): ruas embaixo, nomes por cima dos bairros */
@@ -315,9 +328,12 @@ fetch('locais-geo.json')
    ser sempre exata — só desenha quadrado em quem tem lat/lng. */
 const marcadoresLid = {};
 function carregarLiderancas(){
-  return fetch('/api/admin/liderancas-geo', { credentials: 'same-origin' })
-    .then(r => r.ok ? r.json() : [])
-    .catch(() => [])
+  const buscaLids = MODO_DEMO
+    ? Promise.resolve(LIDERANCAS_DEMO)
+    : fetch('/api/admin/liderancas-geo', { credentials: 'same-origin' })
+        .then(r => r.ok ? r.json() : [])
+        .catch(() => []);
+  return buscaLids
     .then(lids => {
       LIDERANCAS_GEO = lids;
       lids.forEach(l => {
