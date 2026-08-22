@@ -1911,6 +1911,25 @@
       z-index: 1
     }
 
+    .ft-legal {
+      max-width: 780px;
+      margin: 14px auto 0;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, .12);
+      text-align: center;
+      font-size: .68rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, .48);
+      position: relative;
+      z-index: 1
+    }
+
+    .ft-legal + .ft-legal {
+      margin-top: 10px;
+      padding-top: 0;
+      border-top: none;
+    }
+
     /* ── RESPONSIVO ── */
     @media(max-width:920px) {
 
@@ -2679,9 +2698,12 @@
           </div>
           <div class="fg"><label for="c-msg">Mensagem</label><textarea id="c-msg"
               placeholder="Escreva sua mensagem..."></textarea></div>
+          <label style="display:flex;align-items:flex-start;gap:8px;font-size:.78rem;color:#949494;line-height:1.5;margin-bottom:14px;cursor:pointer">
+            <input type="checkbox" id="c-consent" checked style="margin-top:3px;flex-shrink:0" />
+            <span>Autorizo o tratamento dos meus dados pessoais (nome, WhatsApp, cidade e mensagem) para fins de comunicação e organização da campanha eleitoral de Aldo Maurício, conforme a <a href="/politicadeprivacidade" style="color:#949494;text-decoration:underline">Política de Privacidade</a>.</span>
+          </label>
           <button class="btn-ouro" onclick="enviar()" style="width:100%;font-size:1.05rem;padding:16px">Enviar
             Mensagem</button>
-          <p style="margin-top:10px;font-size:.72rem;color:#949494;text-align:center;line-height:1.5">Ao enviar, concordo com a <a href="/politicadeprivacidade" style="color:#949494;text-decoration:underline">política de privacidade e dados</a>.</p>
         </div>
       </div>
     </div>
@@ -2694,6 +2716,7 @@
       <div class="ft-brand">
         <img src="img/logo.webp" alt="Aldo Maurício" class="ft-brand-logo" />
         <div class="fc">Pré-Candidato a Deputado Estadual</div>
+        <div class="fc" style="font-size:.7rem;opacity:.7;margin-top:2px">Site oficial da campanha</div>
       </div>
       <div class="ft-stars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <div class="ft-val">Fé • Verdade • Coragem • Coerência</div>
@@ -2701,6 +2724,15 @@
     <div class="ft-copy">
       © 2026 Aldo Maurício. Todos os direitos reservados.<br>
       Sistema de acordo com todas as normas da LGPD · <a href="/politicadeprivacidade" style="color:inherit;text-decoration:underline">Política de privacidade</a> · <a href="/exclusao-dados" style="color:inherit;text-decoration:underline">Exclusão de dados</a>
+    </div>
+    <div class="ft-legal" id="transparencia">
+      <strong style="color:rgba(255,255,255,.7);letter-spacing:.05em">PROPAGANDA ELEITORAL</strong><br>
+      Aldo Maurício Nascimento dos Santos · Pré-Candidato a Deputado Estadual/AP · Partido Liberal (PL)<br>
+      CNPJ da campanha: 68.411.377/0001-77 — Eleição 2026 Aldo Maurício Nascimento dos Santos Deputado Estadual<br>
+      Rua Fernando Alves de Oliveira, 3152, Novo Horizonte, Macapá/AP, CEP 68909-806
+    </div>
+    <div class="ft-legal">
+      Anúncios e conteúdos impulsionados desta campanha em redes sociais são pagos por Eleição 2026 Aldo Maurício Nascimento dos Santos Deputado Estadual, CNPJ 68.411.377/0001-77, com identificação própria de "Propaganda Eleitoral" exigida pela Lei nº 9.504/1997 e pela Resolução TSE nº 23.610/2019 em cada anúncio, conforme as políticas de anúncios eleitorais da Meta.
     </div>
   </footer>
 
@@ -2890,6 +2922,7 @@
       const c = document.getElementById('c-cid').value.trim();
       const m = document.getElementById('c-msg').value.trim();
       if (!n || !m) { alert('Por favor, informe seu nome e mensagem.'); return; }
+      if (!document.getElementById('c-consent').checked) { alert('Para enviar, marque a autorização de uso dos seus dados.'); return; }
 
       fetch('/api/lead', {
         method: 'POST',
