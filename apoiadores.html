@@ -562,19 +562,28 @@
     bairroInput.addEventListener('input', () => renderBairros(bairroInput.value));
     bairroInput.addEventListener('focus', () => renderBairros(bairroInput.value));
 
+    // veio do popup "Cadastrar Apoio" do site (aldomauricio.com.br?/apoiador?origem=site) —
+    // a origem do cadastro é o próprio site, não uma indicação de liderança
+    const ORIGEM_SITE = new URLSearchParams(location.search).get('origem') === 'site';
+    if (ORIGEM_SITE) {
+      document.getElementById('indicado-wrap').style.display = 'none';
+    }
+
     let LIDERANCAS = [];
-    fetch('/api/lideranca').then(r => r.json()).then(d => {
-      LIDERANCAS = d.liderancas || [];
-      // veio de um link exclusivo de liderança (?lid=005) — preenche sozinho
-      const lid = Number(new URLSearchParams(location.search).get('lid'));
-      if (lid) {
-        const alvo = LIDERANCAS.find(l => Number(l.id) === lid);
-        if (alvo) {
-          document.getElementById('l-indicado').value = alvo.nome;
-          document.getElementById('l-indicado-id').value = alvo.id;
+    if (!ORIGEM_SITE) {
+      fetch('/api/lideranca').then(r => r.json()).then(d => {
+        LIDERANCAS = d.liderancas || [];
+        // veio de um link exclusivo de liderança (?lid=005) — preenche sozinho
+        const lid = Number(new URLSearchParams(location.search).get('lid'));
+        if (lid) {
+          const alvo = LIDERANCAS.find(l => Number(l.id) === lid);
+          if (alvo) {
+            document.getElementById('l-indicado').value = alvo.nome;
+            document.getElementById('l-indicado-id').value = alvo.id;
+          }
         }
-      }
-    }).catch(() => {});
+      }).catch(() => {});
+    }
 
     const indicadoInput = document.getElementById('l-indicado');
     const indicadoIdInput = document.getElementById('l-indicado-id');
@@ -717,7 +726,9 @@
       try {
         const payload = modoEdicao
           ? { id: duplicataChave.id, chaveNumero: duplicataChave.numero, chaveNome: duplicataChave.nome, nome, numero, bairro, mae, nascimento, endereco }
-          : { nome, numero, bairro, mae, nascimento, endereco, indicadoPor, indicadoPorId: indicadoPorId || null };
+          : ORIGEM_SITE
+            ? { nome, numero, bairro, mae, nascimento, endereco, indicadoPor: 'Site bio', indicadoPorId: null }
+            : { nome, numero, bairro, mae, nascimento, endereco, indicadoPor, indicadoPorId: indicadoPorId || null };
         const res = await fetch('/api/apoiadores', {
           method: modoEdicao ? 'PUT' : 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -735,6 +746,9 @@
         document.getElementById('sucesso-texto').textContent = modoEdicao ? 'Suas informações foram atualizadas com sucesso.' : 'Obrigado por se juntar ao movimento.';
         form.style.display = 'none';
         document.getElementById('sucesso').style.display = 'block';
+        if (window.self !== window.top) {
+          try { window.parent.postMessage({ apoiadorCadastrado: true }, '*'); } catch (e) {}
+        }
       } catch (err) {
         msgErro.textContent = err.message;
         msgErro.style.display = 'block';

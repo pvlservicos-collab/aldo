@@ -187,84 +187,16 @@
       color: var(--ouro)
     }
 
-    .nav-chevron {
-      display: inline-block;
-      width: 0;
-      height: 0;
-      border-left: 4px solid transparent;
-      border-right: 4px solid transparent;
-      border-top: 5px solid currentColor;
-      transition: transform .25s;
-      margin-top: 1px;
+    .nav-links>li>button.nav-cta {
+      background: linear-gradient(135deg, #2dc840 0%, #1a8c2a 55%, #0e5018 100%);
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(26, 140, 42, .4);
     }
 
-    /* DROPDOWN */
-    .nav-dropdown {
-      position: absolute;
-      top: calc(100% + 6px);
-      left: 50%;
-      transform: translateX(-50%) translateY(-8px);
-      background: rgba(6, 22, 90, .98);
-      border: 1px solid rgba(255, 255, 255, .12);
-      border-top: 2px solid var(--ouro);
-      border-radius: 8px;
-      min-width: 220px;
-      padding: 8px 0;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .22s ease, transform .22s ease;
-      box-shadow: 0 16px 48px rgba(0, 0, 0, .45);
-      z-index: 300;
-    }
-
-    .nav-links>li:hover .nav-dropdown,
-    .nav-links>li.dd-open .nav-dropdown {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .nav-links>li:hover .nav-chevron,
-    .nav-links>li.dd-open .nav-chevron {
-      transform: rotate(180deg)
-    }
-
-    .nav-dropdown a {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 18px;
-      color: #fff;
-      text-decoration: none;
-      font-size: .82rem;
-      font-weight: 600;
-      letter-spacing: .12em;
-      transition: background .15s, color .15s;
-      white-space: nowrap;
-    }
-
-    .nav-dropdown a:hover {
-      background: rgba(255, 255, 255, .08);
-      color: var(--ouro)
-    }
-
-    .nav-dropdown .dd-label {
-      padding: 8px 18px 4px;
-      font-size: .68rem;
-      font-weight: 800;
-      letter-spacing: .18em;
-      color: rgba(255, 255, 255, .4);
-      text-transform: uppercase;
-    }
-
-    .nav-dropdown .dd-sep {
-      height: 1px;
-      background: rgba(255, 255, 255, .08);
-      margin: 6px 0
-    }
-
-    .dd-ico {
-      font-size: .95rem
+    .nav-links>li>button.nav-cta:hover {
+      color: #ffffff;
+      filter: brightness(1.08);
     }
 
     .nav-toggle {
@@ -602,6 +534,14 @@
     .btn-ouro:hover {
       transform: translateY(-3px);
       box-shadow: 0 12px 30px rgba(26, 140, 42, .6)
+    }
+
+    .sec-cta-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 52px;
+      position: relative;
+      z-index: 1;
     }
 
     .btn-borda {
@@ -2215,13 +2155,13 @@
     }
 
     @media(max-width:960px) {
-      .nav-links>li:not(#dd-li) {
+      .nav-links>li:not(#cad-li) {
         display: none
       }
 
-      #dd-btn {
+      #cad-btn {
         font-size: .68rem;
-        padding: 6px 10px;
+        padding: 7px 12px;
         letter-spacing: .08em;
       }
     }
@@ -2239,28 +2179,6 @@
 
       .nav-toggle {
         display: none
-      }
-
-      .nav-dropdown {
-        position: absolute;
-        top: calc(100% + 6px);
-        left: 50%;
-        transform: translateX(-50%) translateY(0) !important;
-        opacity: 1;
-        pointer-events: none;
-        background: rgba(6, 22, 90, .98);
-        border: 1px solid rgba(255, 255, 255, .12);
-        border-top: 2px solid var(--ouro);
-        border-radius: 8px;
-        min-width: 220px;
-        padding: 8px 0;
-        box-shadow: 0 16px 48px rgba(0, 0, 0, .45);
-        display: none;
-      }
-
-      .nav-links>li.dd-open .nav-dropdown {
-        display: block;
-        pointer-events: auto;
       }
 
       section {
@@ -2303,26 +2221,11 @@
 
       <li><a href="#quem">Quem eu sou</a></li>
 
-      <!-- DROPDOWN -->
-      <li id="dd-li">
-        <button id="dd-btn" aria-haspopup="true" aria-expanded="false">
-          Como vou te ajudar? <span class="nav-chevron"></span>
-        </button>
-        <div class="nav-dropdown" id="dd-menu" role="menu">
-          <div class="dd-label">Você é?</div>
-          <a href="https://wa.me/559681419718?text=Ol%C3%A1%2C%20Aldo%20Maur%C3%ADcio!%0A%0ASou%20crist%C3%A3o%2Fevang%C3%A9lico.%20Como%20voc%C3%AA%20vai%20me%20ajudar%3F" target="_blank" role="menuitem"><span class="dd-ico">✝️</span>Cristão / Evangélico</a>
-          <a href="https://wa.me/559681419718?text=Ol%C3%A1%2C%20Aldo%20Maur%C3%ADcio!%0A%0ASou%20concurseiro.%20Como%20voc%C3%AA%20vai%20me%20ajudar%3F" target="_blank" role="menuitem"><span class="dd-ico">🎓</span>Concurseiro</a>
-          <a href="https://wa.me/559681419718?text=Ol%C3%A1%2C%20Aldo%20Maur%C3%ADcio!%0A%0ASou%20profissional%20de%20sa%C3%BAde.%20Como%20voc%C3%AA%20vai%20me%20ajudar%3F" target="_blank" role="menuitem"><span class="dd-ico">🩺</span>Profissional de Saúde</a>
-          <a href="https://wa.me/559681419718?text=Ol%C3%A1%2C%20Aldo%20Maur%C3%ADcio!%0A%0ASou%20estudante.%20Como%20voc%C3%AA%20vai%20me%20ajudar%3F" target="_blank" role="menuitem"><span class="dd-ico">📚</span>Estudante</a>
-          <a href="https://wa.me/559681419718?text=Ol%C3%A1%2C%20Aldo%20Maur%C3%ADcio!%0A%0ASou%20jovem.%20Como%20voc%C3%AA%20vai%20me%20ajudar%3F" target="_blank" role="menuitem"><span class="dd-ico">🌟</span>Jovem</a>
-          <a href="https://wa.me/559681419718?text=Ol%C3%A1%2C%20Aldo%20Maur%C3%ADcio!%0A%0AFalo%20em%20nome%20da%20minha%20fam%C3%ADlia.%20Como%20voc%C3%AA%20vai%20me%20ajudar%3F" target="_blank" role="menuitem"><span class="dd-ico">👨‍👩‍👧</span>Família</a>
-          <a href="https://wa.me/559681419718?text=Ol%C3%A1%2C%20Aldo%20Maur%C3%ADcio!%0A%0ASou%20trabalhador.%20Como%20voc%C3%AA%20vai%20me%20ajudar%3F" target="_blank" role="menuitem"><span class="dd-ico">💼</span>Trabalhador</a>
-          <div class="dd-sep"></div>
-          <a href="https://wa.me/559681419718?text=Ol%C3%A1%2C%20Aldo%20Maur%C3%ADcio!%0A%0ASou%20ativista%20social.%20Como%20voc%C3%AA%20vai%20me%20ajudar%3F" target="_blank" role="menuitem"><span class="dd-ico">🤝</span>Ativista Social</a>
-        </div>
-      </li>
-
       <li><a href="#contato">Contato</a></li>
+
+      <li id="cad-li">
+        <button id="cad-btn" class="nav-cta" onclick="abrirCadastroApoio()">Cadastrar Apoio</button>
+      </li>
 
     </ul>
     <div class="nav-toggle" id="nt"><span></span><span></span><span></span></div>
@@ -2369,6 +2272,7 @@
       <div class="h-btns">
         <a href="#quem" class="btn-ouro">Conheça Minha História</a>
         <a href="#contato" class="btn-borda">Apoie a campanha</a>
+        <button type="button" class="btn-ouro" onclick="abrirCadastroApoio()">Cadastrar Apoio</button>
       </div>
     </div>
 
@@ -2443,6 +2347,7 @@
         </div>
       </div><!-- /defende-conteudo -->
     </div><!-- /defende-layout -->
+    <div class="sec-cta-wrap"><button type="button" class="btn-ouro" onclick="abrirCadastroApoio()">Cadastrar Apoio</button></div>
   </section>
 
   <!-- QUEM É -->
@@ -2480,6 +2385,7 @@
         </div>
       </div>
     </div>
+    <div class="sec-cta-wrap"><button type="button" class="btn-ouro" onclick="abrirCadastroApoio()">Cadastrar Apoio</button></div>
   </section>
 
   <!-- TRAJETÓRIA -->
@@ -2614,6 +2520,7 @@
           </div>
         </div>
       </div>
+    <div class="sec-cta-wrap"><button type="button" class="btn-ouro" onclick="abrirCadastroApoio()">Cadastrar Apoio</button></div>
   </section>
 
   <!-- MENSAGEM PRINCIPAL -->
@@ -2626,6 +2533,7 @@
         <p class="msg-p">Sua missão é lutar por saúde digna, educação de qualidade, valorização das famílias e respeito
           à fé e aos valores da sociedade.</p>
       </div>
+      <div class="sec-cta-wrap"><button type="button" class="btn-ouro" onclick="abrirCadastroApoio()">Cadastrar Apoio</button></div>
     </div>
   </section>
 
@@ -2656,6 +2564,7 @@
           <p>"Valores não se negociam."</p>
         </div>
       </div>
+      <div class="sec-cta-wrap"><button type="button" class="btn-ouro" onclick="abrirCadastroApoio()">Cadastrar Apoio</button></div>
     </div>
   </section>
 
@@ -2727,6 +2636,7 @@
           </button>
         </div>
       </div>
+      <div class="sec-cta-wrap"><button type="button" class="btn-ouro" onclick="abrirCadastroApoio()">Cadastrar Apoio</button></div>
     </div>
   </section>
 
@@ -2745,16 +2655,6 @@
             <span class="chip">Coragem</span>
             <span class="chip">Coerência</span>
             <span class="chip g">★ PL</span>
-          </div>
-
-          <div style="margin-top:24px;padding:16px 18px;border:1px solid rgba(14,46,168,.15);border-radius:12px;background:#f4f6fc;font-size:.78rem;line-height:1.7;color:#3a4a78">
-            <strong style="display:block;margin-bottom:10px;color:#0e2eaa;letter-spacing:.04em">SUAS INFORMAÇÕES DA BIBLIOTECA DE ANÚNCIOS E RÓTULO</strong>
-            <div style="margin-bottom:9px"><span style="opacity:.6">Seu rótulo</span><br>Propaganda eleitoral ⋅ Eleicao 2026 Aldo Mauricio Nascimento dos Santos Deputado Estadual</div>
-            <div style="margin-bottom:9px"><span style="opacity:.6">Endereço</span><br>Macapá, Amapá</div>
-            <div style="margin-bottom:9px"><span style="opacity:.6">Telefone</span><br><a href="tel:+559681419718" style="color:inherit">+559681419718</a></div>
-            <div style="margin-bottom:9px"><span style="opacity:.6">Email</span><br><a href="mailto:contato@aldomauricio.com.br" style="color:inherit">contato@aldomauricio.com.br</a></div>
-            <div style="margin-bottom:9px"><span style="opacity:.6">Site</span><br><a href="https://aldomauricio.com.br/" style="color:inherit">https://aldomauricio.com.br/</a></div>
-            <div><span style="opacity:.6">Informações adicionais</span><br>Número do CPF ou CNPJ<br>68.411.377/0001-77</div>
           </div>
         </div>
         <div class="form-box rv2">
@@ -2776,6 +2676,7 @@
             Mensagem</button>
         </div>
       </div>
+      <div class="sec-cta-wrap"><button type="button" class="btn-ouro" onclick="abrirCadastroApoio()">Cadastrar Apoio</button></div>
     </div>
   </section>
 
@@ -2795,19 +2696,85 @@
       © 2026 Aldo Maurício. Todos os direitos reservados.<br>
       Sistema de acordo com todas as normas da LGPD · <a href="/politicadeprivacidade" style="color:inherit;text-decoration:underline">Política de privacidade</a> · <a href="/exclusao-dados" style="color:inherit;text-decoration:underline">Exclusão de dados</a>
     </div>
-    <div class="ft-legal" id="transparencia" style="text-align:left;max-width:380px">
-      <div style="text-align:center;margin-bottom:10px"><strong style="color:rgba(255,255,255,.7);letter-spacing:.05em">SUAS INFORMAÇÕES DA BIBLIOTECA DE ANÚNCIOS E RÓTULO</strong></div>
-      <div style="margin-bottom:9px"><span style="opacity:.55">Seu rótulo</span><br>Propaganda eleitoral ⋅ Eleicao 2026 Aldo Mauricio Nascimento dos Santos Deputado Estadual</div>
-      <div style="margin-bottom:9px"><span style="opacity:.55">Endereço</span><br>Macapá, Amapá</div>
-      <div style="margin-bottom:9px"><span style="opacity:.55">Telefone</span><br><a href="tel:+559681419718" style="color:inherit;text-decoration:underline">+559681419718</a></div>
-      <div style="margin-bottom:9px"><span style="opacity:.55">Email</span><br><a href="mailto:contato@aldomauricio.com.br" style="color:inherit;text-decoration:underline">contato@aldomauricio.com.br</a></div>
-      <div style="margin-bottom:9px"><span style="opacity:.55">Site</span><br><a href="https://aldomauricio.com.br/" style="color:inherit;text-decoration:underline">https://aldomauricio.com.br/</a></div>
+    <div class="ft-legal" id="transparencia" style="text-align:center;max-width:340px;font-size:.62rem;line-height:1.5">
+      <div style="margin-bottom:8px"><strong style="color:rgba(255,255,255,.7);letter-spacing:.05em">SUAS INFORMAÇÕES DA BIBLIOTECA DE ANÚNCIOS E RÓTULO</strong></div>
+      <div style="margin-bottom:7px"><span style="opacity:.55">Seu rótulo</span><br>Propaganda eleitoral ⋅ Eleicao 2026 Aldo Mauricio Nascimento dos Santos Deputado Estadual</div>
+      <div style="margin-bottom:7px"><span style="opacity:.55">Endereço</span><br>Macapá, Amapá</div>
+      <div style="margin-bottom:7px"><span style="opacity:.55">Telefone</span><br><a href="tel:+559681419718" style="color:inherit;text-decoration:underline">+559681419718</a></div>
+      <div style="margin-bottom:7px"><span style="opacity:.55">Email</span><br><a href="mailto:contato@aldomauricio.com.br" style="color:inherit;text-decoration:underline">contato@aldomauricio.com.br</a></div>
+      <div style="margin-bottom:7px"><span style="opacity:.55">Site</span><br><a href="https://aldomauricio.com.br/" style="color:inherit;text-decoration:underline">https://aldomauricio.com.br/</a></div>
       <div><span style="opacity:.55">Informações adicionais</span><br>Número do CPF ou CNPJ<br>68.411.377/0001-77</div>
     </div>
     <div class="ft-legal">
       Anúncios e conteúdos impulsionados desta campanha em redes sociais são pagos por Eleição 2026 Aldo Mauricio Nascimento dos Santos Deputado Estadual, CNPJ 68.411.377/0001-77, com identificação própria de "Propaganda Eleitoral" exigida pela Lei nº 9.504/1997 e pela Resolução TSE nº 23.610/2019 em cada anúncio, conforme as políticas de anúncios eleitorais da Meta.
     </div>
   </footer>
+
+  <!-- POPUP CADASTRAR APOIO -->
+  <div class="cad-overlay" id="cadOverlay" onclick="if(event.target===this)fecharCadastroApoio()">
+    <div class="cad-panel">
+      <button type="button" class="cad-fechar" onclick="fecharCadastroApoio()" aria-label="Fechar">✕</button>
+      <iframe id="cadFrame" class="cad-iframe" title="Cadastro de Apoiador"></iframe>
+    </div>
+  </div>
+
+  <style>
+    .cad-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 14, 82, .6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .cad-overlay.open {
+      display: flex;
+    }
+
+    .cad-panel {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      height: min(88vh, 780px);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, .5);
+    }
+
+    .cad-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background: var(--azul-esc, #050e52);
+    }
+
+    .cad-fechar {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(5, 14, 82, .55);
+      color: #fff;
+      border: 1.5px solid rgba(255, 255, 255, .35);
+      font-size: 16px;
+      cursor: pointer;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s ease;
+    }
+
+    .cad-fechar:hover {
+      background: rgba(5, 14, 82, .85);
+    }
+  </style>
 
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <script>
@@ -2955,31 +2922,34 @@
     const nl = document.getElementById('nl');
     nt.addEventListener('click', () => nl.classList.toggle('open'));
 
-    /* ── Dropdown desktop (hover já via CSS) + mobile click ── */
-    const ddLi = document.getElementById('dd-li');
-    const ddBtn = document.getElementById('dd-btn');
-
-    ddBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isOpen = ddLi.classList.toggle('dd-open');
-      ddBtn.setAttribute('aria-expanded', isOpen);
-    });
-
-    document.addEventListener('click', () => {
-      ddLi.classList.remove('dd-open');
-      ddBtn.setAttribute('aria-expanded', 'false');
-    });
-
     /* Fechar nav mobile ao clicar em link */
     nl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
       nl.classList.remove('open');
-      ddLi.classList.remove('dd-open');
     }));
 
     /* ── Nav shadow on scroll ── */
     window.addEventListener('scroll', () => {
       document.getElementById('nav').style.boxShadow =
         window.scrollY > 50 ? '0 4px 28px rgba(0,0,0,.4)' : 'none';
+    });
+
+    /* ── Popup "Cadastrar Apoio": abre /apoiador dentro de um iframe, marcando
+       a origem como "Site bio" em vez de indicação de liderança ── */
+    function abrirCadastroApoio() {
+      const overlay = document.getElementById('cadOverlay');
+      const frame = document.getElementById('cadFrame');
+      if (!frame.src) frame.src = '/apoiadores?origem=site';
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function fecharCadastroApoio() {
+      document.getElementById('cadOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.apoiadorCadastrado) {
+        setTimeout(fecharCadastroApoio, 1800);
+      }
     });
 
     /* ── Scroll reveal ── */
