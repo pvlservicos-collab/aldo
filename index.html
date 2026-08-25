@@ -2726,7 +2726,8 @@
   <div class="cad-overlay" id="cadOverlay" onclick="if(event.target===this)fecharCadastroApoio()">
     <div class="cad-panel">
       <button type="button" class="cad-fechar" onclick="fecharCadastroApoio()" aria-label="Fechar">✕</button>
-      <iframe id="cadFrame" class="cad-iframe" title="Cadastro de Apoiador"></iframe>
+      <div class="cad-loading" id="cadLoading"><span class="cad-spin"></span></div>
+      <iframe id="cadFrame" class="cad-iframe" title="Cadastro de Apoiador" onload="document.getElementById('cadLoading').classList.add('sumiu')"></iframe>
     </div>
   </div>
 
@@ -2785,6 +2786,37 @@
 
     .cad-fechar:hover {
       background: rgba(5, 14, 82, .85);
+    }
+
+    .cad-loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--azul-esc, #050e52);
+      transition: opacity .25s ease;
+      z-index: 1;
+    }
+
+    .cad-loading.sumiu {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .cad-spin {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, .25);
+      border-top-color: #fff;
+      animation: cad-girar .7s linear infinite;
+    }
+
+    @keyframes cad-girar {
+      to {
+        transform: rotate(360deg);
+      }
     }
   </style>
 
@@ -2947,10 +2979,18 @@
 
     /* ── Popup "Cadastrar Apoio": abre /apoiador dentro de um iframe, marcando
        a origem como "Site bio" em vez de indicação de liderança ── */
-    function abrirCadastroApoio() {
-      const overlay = document.getElementById('cadOverlay');
+    function carregarFrameApoio() {
       const frame = document.getElementById('cadFrame');
       if (!frame.src) frame.src = '/apoiadores?origem=site';
+    }
+    // carrega o formulário em segundo plano pouco depois da página abrir, assim
+    // quando a pessoa clica em "Cadastrar Apoio" o popup já aparece pronto
+    if (document.readyState === 'complete') setTimeout(carregarFrameApoio, 1200);
+    else window.addEventListener('load', () => setTimeout(carregarFrameApoio, 1200));
+
+    function abrirCadastroApoio() {
+      const overlay = document.getElementById('cadOverlay');
+      carregarFrameApoio();
       overlay.classList.add('open');
       document.body.style.overflow = 'hidden';
     }
