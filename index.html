@@ -187,14 +187,16 @@
       color: var(--ouro)
     }
 
-    .nav-links>li>button.nav-cta {
+    .nav-links>li>button.nav-cta,
+    .nav-links>li>a.nav-cta {
       background: linear-gradient(135deg, #2dc840 0%, #1a8c2a 55%, #0e5018 100%);
       color: #ffffff;
       font-weight: 700;
       box-shadow: 0 4px 14px rgba(26, 140, 42, .4);
     }
 
-    .nav-links>li>button.nav-cta:hover {
+    .nav-links>li>button.nav-cta:hover,
+    .nav-links>li>a.nav-cta:hover {
       color: #ffffff;
       filter: brightness(1.08);
     }
@@ -2220,7 +2222,7 @@
 
       <li><a href="#quem">Quem eu sou</a></li>
 
-      <li><a href="#contato">Contato</a></li>
+      <li><a href="#contato" class="nav-cta">Contato</a></li>
 
       <li id="cad-li">
         <button id="cad-btn" class="nav-cta" onclick="abrirCadastroApoio()">Cadastrar Apoio</button>
