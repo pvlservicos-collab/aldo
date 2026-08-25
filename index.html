@@ -539,7 +539,7 @@
     .sec-cta-wrap {
       display: flex;
       justify-content: center;
-      padding: 48px 5vw 40px;
+      padding: 26px 5vw 28px;
       position: relative;
       z-index: 1;
     }
@@ -844,7 +844,6 @@
     #defende .def-card {
       background: rgba(255, 255, 255, .07);
       box-shadow: none;
-      border: 1px solid rgba(255, 255, 255, .1);
     }
 
     #defende .def-card:hover {
@@ -871,7 +870,7 @@
       overflow: hidden;
     }
 
-    /* borda só no topo — degradê bandeira */
+    /* borda só no topo — degradê verde/amarelo */
     .def-card::before {
       content: '';
       position: absolute;
@@ -879,7 +878,7 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: linear-gradient(to right, #009c3b 0%, #FFDF00 50%, #002776 100%);
+      background: linear-gradient(to right, #009c3b 0%, #FFDF00 100%);
       border-radius: 12px 12px 0 0;
       z-index: 2;
     }
