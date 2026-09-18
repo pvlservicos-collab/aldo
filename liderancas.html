@@ -323,6 +323,54 @@
     .link-row button.copiado {
       background: var(--verde);
     }
+
+    .card-qr {
+      margin-top: 18px;
+      text-align: center;
+    }
+
+    .card-qr h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--azul-esc);
+      margin-bottom: 6px;
+    }
+
+    .card-qr p {
+      color: var(--text-med);
+      font-size: .86rem;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .card-qr canvas {
+      border: 1.5px solid #dfe3f2;
+      border-radius: 12px;
+      padding: 10px;
+      background: #fff;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .qr-btn {
+      width: 100%;
+      margin-top: 14px;
+      padding: 15px;
+      background: var(--azul);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font: inherit;
+      font-weight: 700;
+      font-size: .95rem;
+      cursor: pointer;
+      transition: background .15s ease;
+    }
+
+    .qr-btn:hover {
+      background: var(--azul-med);
+    }
   </style>
 </head>
 
@@ -382,8 +430,16 @@
         </div>
       </div>
     </div>
+
+    <div class="card card-qr">
+      <h2>QR Code de cadastro</h2>
+      <p>Use esse QR Code pra divulgar o cadastro de novas lideranças.</p>
+      <div id="qrGeral"></div>
+      <button type="button" class="qr-btn" id="btnBaixarQrGeral">⬇ Baixar QR Code</button>
+    </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <script>
     (function criarEstrelas() {
       const c = document.getElementById('estrelas');
@@ -546,6 +602,79 @@
         btnCopiar.textContent = textoOriginal;
         btnCopiar.classList.remove('copiado');
       }, 1800);
+    });
+
+    /* ===== QR Code de cadastro geral (o link desta própria página) ===== */
+    const LINK_GERAL_LIDERANCAS = location.origin + '/liderancas';
+    new QRCode(document.getElementById('qrGeral'), {
+      text: LINK_GERAL_LIDERANCAS,
+      width: 200,
+      height: 200,
+      colorDark: '#0a1540',
+      colorLight: '#ffffff'
+    });
+
+    function quebrarLinhas(ctx, texto, larguraMax) {
+      const palavras = texto.split(' ');
+      const linhas = [];
+      let linha = '';
+      palavras.forEach(p => {
+        const teste = linha ? linha + ' ' + p : p;
+        if (ctx.measureText(teste).width > larguraMax && linha) {
+          linhas.push(linha);
+          linha = p;
+        } else {
+          linha = teste;
+        }
+      });
+      if (linha) linhas.push(linha);
+      return linhas;
+    }
+
+    document.getElementById('btnBaixarQrGeral').addEventListener('click', () => {
+      const canvasQr = document.querySelector('#qrGeral canvas');
+      if (!canvasQr) return;
+      const escala = 2;
+      const qrSize = canvasQr.width;
+      const pad = 22 * escala;
+      const linhaAltura = 17 * escala;
+      const titulo = 'Cadastro geral de lideranças';
+
+      const out = document.createElement('canvas');
+      const ctxMed = out.getContext('2d');
+      ctxMed.font = (13 * escala) + 'px Inter, sans-serif';
+      const linhasAbaixo = quebrarLinhas(ctxMed, LINK_GERAL_LIDERANCAS, qrSize);
+
+      const alturaTitulo = 30 * escala;
+      const alturaAbaixo = linhasAbaixo.length * linhaAltura + 10 * escala;
+      out.width = qrSize + pad * 2;
+      out.height = qrSize + pad * 2 + alturaTitulo + alturaAbaixo;
+
+      const ctx = out.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, out.width, out.height);
+
+      ctx.fillStyle = '#0a1540';
+      ctx.font = 'bold ' + (16 * escala) + 'px Barlow Condensed, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(titulo, out.width / 2, pad + (18 * escala));
+
+      let y = pad + alturaTitulo;
+      ctx.drawImage(canvasQr, pad, y, qrSize, qrSize);
+      y += qrSize + (16 * escala);
+
+      ctx.fillStyle = '#3a4a7a';
+      ctx.font = (13 * escala) + 'px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      linhasAbaixo.forEach((l, i) => ctx.fillText(l, out.width / 2, y + i * linhaAltura));
+
+      out.toBlob(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'qrcode-cadastro-liderancas.png';
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
     });
   </script>
 </body>

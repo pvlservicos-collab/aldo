@@ -320,18 +320,6 @@
     .qr-wrap .qr-btn {
       margin-top: 10px;
     }
-
-    .card-geral {
-      margin-top: 18px;
-    }
-
-    .card-geral .topo h1 {
-      font-size: 1.3rem;
-    }
-
-    .card-geral .topo p {
-      font-size: .86rem;
-    }
   </style>
 </head>
 
@@ -359,30 +347,18 @@
         <div class="link-row">
           <input type="text" id="linkUnico" readonly onclick="this.select()">
           <button type="button" id="btnCopiarLink">📋 Copiar link</button>
-          <button type="button" class="qr-btn" id="btnGerarQr">📱 Gerar QR Code</button>
         </div>
         <div class="qr-wrap" id="qrWrap">
-          <canvas id="qrCanvas"></canvas>
+          <div id="qrCanvas"></div>
           <button type="button" class="qr-btn" id="btnBaixarQr">⬇ Baixar QR Code</button>
         </div>
       </div>
 
       <p class="rodape">Ainda não é liderança cadastrada? <a href="/liderancas">Cadastre-se aqui</a>.</p>
     </div>
-
-    <div class="card card-geral">
-      <div class="topo">
-        <h1>QR Code de cadastro geral</h1>
-        <p>Use esse QR Code pra divulgar o cadastro de novas lideranças (aldomauricio.com.br/liderancas).</p>
-      </div>
-      <div class="qr-wrap" id="qrWrapGeral" style="display:block">
-        <canvas id="qrCanvasGeral"></canvas>
-        <button type="button" class="qr-btn" id="btnBaixarQrGeral">⬇ Baixar QR Code</button>
-      </div>
-    </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <script>
     (function criarEstrelas() {
       const c = document.getElementById('estrelas');
@@ -437,7 +413,21 @@
       document.getElementById('resultado-nome').textContent = l.nome;
       document.getElementById('linkUnico').value = link;
       resultado.style.display = 'block';
-      document.getElementById('qrWrap').style.display = 'none';
+      gerarQr(link);
+    }
+
+    /* gera o QR Code automaticamente assim que a liderança é encontrada */
+    function gerarQr(link) {
+      const container = document.getElementById('qrCanvas');
+      container.innerHTML = '';
+      new QRCode(container, {
+        text: link,
+        width: 200,
+        height: 200,
+        colorDark: '#0a1540',
+        colorLight: '#ffffff'
+      });
+      document.getElementById('qrWrap').style.display = 'block';
     }
 
     buscaInput.addEventListener('input', () => {
@@ -538,38 +528,16 @@
       });
     }
 
-    /* QR do link pessoal da liderança — gerado sob demanda */
-    document.getElementById('btnGerarQr').addEventListener('click', () => {
-      const link = document.getElementById('linkUnico').value;
-      const canvas = document.getElementById('qrCanvas');
-      QRCode.toCanvas(canvas, link, { width: 220, margin: 1, color: { dark: '#0a1540', light: '#ffffff' } }, (err) => {
-        if (err) { alert('Não foi possível gerar o QR Code.'); return; }
-        document.getElementById('qrWrap').style.display = 'block';
-      });
-    });
-
     document.getElementById('btnBaixarQr').addEventListener('click', () => {
       const link = document.getElementById('linkUnico').value;
       const nome = document.getElementById('resultado-nome').textContent;
+      const canvas = document.querySelector('#qrCanvas canvas');
+      if (!canvas) return;
       baixarQrComTexto({
-        canvasQr: document.getElementById('qrCanvas'),
+        canvasQr: canvas,
         tituloAcima: null,
         textoAbaixo: link,
         nomeArquivo: 'qrcode-' + slugify(nome) + '.png'
-      });
-    });
-
-    /* QR do link geral de cadastro de lideranças — gerado assim que a página abre */
-    const LINK_GERAL_LIDERANCAS = location.origin + '/liderancas';
-    const canvasGeral = document.getElementById('qrCanvasGeral');
-    QRCode.toCanvas(canvasGeral, LINK_GERAL_LIDERANCAS, { width: 220, margin: 1, color: { dark: '#0a1540', light: '#ffffff' } }, () => {});
-
-    document.getElementById('btnBaixarQrGeral').addEventListener('click', () => {
-      baixarQrComTexto({
-        canvasQr: canvasGeral,
-        tituloAcima: 'Cadastro geral de lideranças',
-        textoAbaixo: LINK_GERAL_LIDERANCAS,
-        nomeArquivo: 'qrcode-cadastro-liderancas.png'
       });
     });
 
