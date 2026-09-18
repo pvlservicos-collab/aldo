@@ -779,6 +779,190 @@
       transform: translateY(0)
     }
 
+    /* ── PROPOSTAS ── */
+    .prop-head {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto 46px;
+    }
+
+    .prop-head .eyebrow {
+      justify-content: center;
+    }
+
+    .prop-head .sec-p {
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 0;
+    }
+
+    .prop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      align-items: start;
+      gap: 20px;
+    }
+
+    .prop-card {
+      background: #ffffff;
+      border: 1px solid rgba(9, 31, 128, .08);
+      border-radius: 16px;
+      padding: 22px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(9, 31, 128, .07);
+      transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prop-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(to right, #009c3b 0%, #FFDF00 100%);
+    }
+
+    .prop-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 36px rgba(9, 31, 128, .14);
+    }
+
+    .prop-card.aberto {
+      border-color: rgba(9, 31, 128, .16);
+      box-shadow: 0 16px 36px rgba(9, 31, 128, .14);
+    }
+
+    .prop-card:focus-visible {
+      outline: 2px solid var(--azul);
+      outline-offset: 3px;
+    }
+
+    .prop-topo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .prop-ico {
+      width: 52px;
+      height: 52px;
+      flex: none;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--azul) 0%, var(--azul-med) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .prop-tit {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .prop-tit h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text-esc);
+      letter-spacing: .01em;
+      line-height: 1.15;
+    }
+
+    .prop-tit p {
+      font-family: 'Inter', sans-serif;
+      font-size: .84rem;
+      color: var(--text-med);
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+
+    .prop-seta {
+      flex: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(9, 31, 128, .18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--azul);
+      font-size: 1rem;
+      transition: transform .3s ease, background .2s ease, color .2s ease;
+    }
+
+    .prop-card.aberto .prop-seta {
+      transform: rotate(90deg);
+      background: var(--azul);
+      color: #fff;
+      border-color: var(--azul);
+    }
+
+    .prop-corpo {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .4s ease;
+    }
+
+    .prop-lista {
+      list-style: none;
+      padding-top: 18px;
+      margin-top: 18px;
+      border-top: 1px solid rgba(9, 31, 128, .08);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .prop-lista li {
+      position: relative;
+      padding-left: 29px;
+      font-family: 'Inter', sans-serif;
+      font-size: .87rem;
+      line-height: 1.5;
+      color: var(--text-med);
+    }
+
+    .prop-lista li::before {
+      content: '✓';
+      position: absolute;
+      top: 1px;
+      left: 0;
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      background: rgba(26, 140, 42, .12);
+      color: var(--verde);
+      font-size: .65rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .prop-lista b {
+      display: block;
+      color: var(--text-esc);
+      font-weight: 700;
+    }
+
+    .prop-lista span {
+      display: block;
+    }
+
+    @media (max-width:768px) {
+      .prop-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .prop-card {
+        padding: 18px;
+      }
+    }
+
     /* ── DEFENDE ── */
     #defende {
       padding: 0;
@@ -2234,6 +2418,8 @@
 
     <ul class="nav-links" id="nl">
 
+      <li><a href="#propostas">Propostas</a></li>
+
       <li><a href="#defende">O que eu defendo</a></li>
 
       <li><a href="#quem">Quem eu sou</a></li>
@@ -2292,6 +2478,178 @@
 
   </section>
 
+
+  <!-- PROPOSTAS -->
+  <section id="propostas" class="sec-light">
+    <div class="container">
+      <div class="prop-head rv">
+        <div class="eyebrow"><span class="dash"></span>Propostas<span class="dash"></span></div>
+        <h2 class="sec-h">Um plano de trabalho para cada causa do Amapá</h2>
+        <p class="sec-p">Conheça, por tema, as propostas de Aldo Maurício para a Assembleia Legislativa. Toque em um
+          card para ver os detalhes.</p>
+      </div>
+
+      <div class="prop-grid">
+
+        <div class="prop-card rv" tabindex="0" role="button" aria-expanded="false" onclick="togglePropostaCard(this)"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePropostaCard(this)}">
+          <div class="prop-topo">
+            <div class="prop-ico">🚀</div>
+            <div class="prop-tit">
+              <h3>Juventude</h3>
+              <p>Investir na juventude é construir o futuro do Amapá.</p>
+            </div>
+            <div class="prop-seta">›</div>
+          </div>
+          <div class="prop-corpo">
+            <ul class="prop-lista">
+              <li><b>Programa Meu Primeiro Emprego</b><span>Mais oportunidades para o jovem entrar no mercado de
+                  trabalho.</span></li>
+              <li><b>Bolsa Estágio Remunerada</b><span>Estímulo à qualificação com dignidade e experiência.</span>
+              </li>
+              <li><b>Jovem Empreendedor</b><span>Apoio, capacitação e crédito para transformar ideias em
+                  negócios.</span></li>
+              <li><b>Bolsa de Iniciação Científica</b><span>Incentivo à pesquisa e à inovação, transformando
+                  conhecimento em desenvolvimento.</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="prop-card rv2" tabindex="0" role="button" aria-expanded="false"
+          onclick="togglePropostaCard(this)"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePropostaCard(this)}">
+          <div class="prop-topo">
+            <div class="prop-ico">🐾</div>
+            <div class="prop-tit">
+              <h3>Proteção Animal</h3>
+              <p>Quem protege os animais, constrói um Amapá mais justo e humano.</p>
+            </div>
+            <div class="prop-seta">›</div>
+          </div>
+          <div class="prop-corpo">
+            <ul class="prop-lista">
+              <li><b>Incentivo fiscal</b><span>Para as empresas que instalarem comedouros e bebedouros para
+                  animais.</span></li>
+              <li><b>Delegacia de crimes contra animais</b><span>Uma unidade especializada pra investigar e coibir
+                  maus-tratos.</span></li>
+              <li><b>Emendas parlamentares</b><span>Destinadas às ONGs de proteção aos animais.</span></li>
+              <li><b>Hospital Veterinário</b><span>Uma unidade pública gratuita na Zona Norte de Macapá.</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="prop-card rv3" tabindex="0" role="button" aria-expanded="false"
+          onclick="togglePropostaCard(this)"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePropostaCard(this)}">
+          <div class="prop-topo">
+            <div class="prop-ico">🧩</div>
+            <div class="prop-tit">
+              <h3>Autismo</h3>
+              <p>Autismo não é limite, é diferença que merece respeito, acolhimento e inclusão.</p>
+            </div>
+            <div class="prop-seta">›</div>
+          </div>
+          <div class="prop-corpo">
+            <ul class="prop-lista">
+              <li><b>Diagnóstico precoce</b><span>Programa estadual para identificação precoce de sinais do TEA e
+                  encaminhamento rápido.</span></li>
+              <li><b>Atendimento e tratamento</b><span>Ampliação do atendimento multiprofissional em todo o Amapá,
+                  com mais terapias e suporte às famílias.</span></li>
+              <li><b>Escola inclusiva</b><span>Capacitação de professores, cuidadores e adaptações para garantir
+                  inclusão real nas escolas estaduais.</span></li>
+              <li><b>Apoio às famílias</b><span>Orientação, apoio psicológico, cursos e grupos de suporte para pais e
+                  cuidadores.</span></li>
+              <li><b>Inclusão e oportunidades</b><span>Programas de empregabilidade e qualificação para jovens e
+                  adultos com TEA.</span></li>
+              <li><b>Centro de Referência em Autismo</b><span>Atendimento multidisciplinar centralizado e apoio às
+                  famílias.</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="prop-card rv" tabindex="0" role="button" aria-expanded="false" onclick="togglePropostaCard(this)"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePropostaCard(this)}">
+          <div class="prop-topo">
+            <div class="prop-ico">📚</div>
+            <div class="prop-tit">
+              <h3>Educação</h3>
+              <p>Propostas para valorizar quem ensina o Amapá.</p>
+            </div>
+            <div class="prop-seta">›</div>
+          </div>
+          <div class="prop-corpo">
+            <ul class="prop-lista">
+              <li><b>Lei do Auxílio Didática</b><span>Valor em dinheiro para recursos didáticos dos professores.</span>
+              </li>
+              <li><b>Lei do rateio da sobra do FUNDEB</b><span>Repasse direto para os profissionais da
+                  educação.</span></li>
+              <li><b>Atualização da data-base</b><span>Reajuste no tempo certo para toda a categoria.</span></li>
+              <li><b>Escolas de tempo integral</b><span>Aumento de 100% da bolsa para quem atua nesse modelo de
+                  ensino.</span></li>
+              <li><b>Plano de saúde</b><span>Para os profissionais da educação.</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="prop-card rv2" tabindex="0" role="button" aria-expanded="false"
+          onclick="togglePropostaCard(this)"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePropostaCard(this)}">
+          <div class="prop-topo">
+            <div class="prop-ico">🩺</div>
+            <div class="prop-tit">
+              <h3>Saúde</h3>
+              <p>Trabalho e compromisso com quem cuida da nossa gente.</p>
+            </div>
+            <div class="prop-seta">›</div>
+          </div>
+          <div class="prop-corpo">
+            <ul class="prop-lista">
+              <li><b>Concurso Público da Saúde</b><span>Mais profissionais efetivos pra fortalecer o
+                  atendimento.</span></li>
+              <li><b>Data-base</b><span>Reajuste salarial garantido no tempo certo.</span></li>
+              <li><b>Fim da terceirização</b><span>Valorização do vínculo efetivo na saúde pública.</span></li>
+              <li><b>Piso salarial</b><span>Da enfermagem e das demais categorias profissionais da saúde.</span></li>
+              <li><b>Auxílio-jaleco</b><span>Extensão do benefício e aumento de 100% do valor.</span></li>
+              <li><b>Isonomia dos plantões</b><span>Mesmas regras e mesma remuneração pra quem faz o mesmo
+                  trabalho.</span></li>
+              <li><b>Combate ao assédio moral</b><span>Canais de denúncia e proteção pra quem trabalha na
+                  saúde.</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="prop-card rv3" tabindex="0" role="button" aria-expanded="false"
+          onclick="togglePropostaCard(this)"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePropostaCard(this)}">
+          <div class="prop-topo">
+            <div class="prop-ico">🛢️</div>
+            <div class="prop-tit">
+              <h3>Petróleo e Gás</h3>
+              <p>Propostas para o Amapá aproveitar o potencial do petróleo e gás.</p>
+            </div>
+            <div class="prop-seta">›</div>
+          </div>
+          <div class="prop-corpo">
+            <ul class="prop-lista">
+              <li><b>Escola Técnica do Petróleo e Gás</b><span>Formação e energias pra qualificar mão de obra
+                  amapaense.</span></li>
+              <li><b>Fundo Soberano</b><span>Pra garantir que a riqueza do petróleo vire investimento de longo prazo
+                  pro estado.</span></li>
+              <li><b>Técnifica Amapá</b><span>Programa de técnificação profissional pro novo ciclo econômico.</span>
+              </li>
+              <li><b>Meu Primeiro Emprego e Bolsa Estágio</b><span>Portas de entrada pra juventude no setor de
+                  petróleo e gás.</span></li>
+              <li><b>Juventude Empreendedora</b><span>Apoio a quem quer empreender na cadeia produtiva do
+                  setor.</span></li>
+              <li><b>"Vem pra cá"</b><span>Projeto de lei pra incentivar a vinda de grandes empresas pro
+                  Amapá.</span></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
 
   <!-- O QUE ELE DEFENDE -->
   <section id="defende">
@@ -2975,6 +3333,26 @@
     window.addEventListener('scroll', () => {
       document.getElementById('nav').style.boxShadow =
         window.scrollY > 50 ? '0 4px 28px rgba(0,0,0,.4)' : 'none';
+    });
+
+    /* ── Propostas: cards que abrem/fecham mostrando a lista completa ── */
+    function togglePropostaCard(card) {
+      const corpo = card.querySelector('.prop-corpo');
+      const aberto = card.classList.contains('aberto');
+      if (aberto) {
+        corpo.style.maxHeight = '0px';
+        card.classList.remove('aberto');
+        card.setAttribute('aria-expanded', 'false');
+      } else {
+        card.classList.add('aberto');
+        card.setAttribute('aria-expanded', 'true');
+        corpo.style.maxHeight = corpo.scrollHeight + 'px';
+      }
+    }
+    window.addEventListener('resize', () => {
+      document.querySelectorAll('.prop-card.aberto .prop-corpo').forEach(c => {
+        c.style.maxHeight = c.scrollHeight + 'px';
+      });
     });
 
     /* ── Popup "Cadastrar Apoio": abre /apoiador dentro de um iframe, marcando
