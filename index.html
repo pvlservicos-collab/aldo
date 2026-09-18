@@ -800,16 +800,17 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       align-items: start;
-      gap: 20px;
+      gap: 22px;
     }
 
     .prop-card {
+      --tema: var(--azul);
       background: #ffffff;
       border: 1px solid rgba(9, 31, 128, .08);
-      border-radius: 16px;
-      padding: 22px;
+      border-radius: 18px;
+      padding: 24px;
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(9, 31, 128, .07);
+      box-shadow: 0 6px 22px rgba(9, 31, 128, .08);
       transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease;
       position: relative;
       overflow: hidden;
@@ -821,22 +822,23 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 4px;
-      background: linear-gradient(to right, #009c3b 0%, #FFDF00 100%);
+      height: 5px;
+      background: linear-gradient(to right, var(--tema) 0%, var(--ouro) 100%);
     }
 
     .prop-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 16px 36px rgba(9, 31, 128, .14);
+      transform: translateY(-5px);
+      box-shadow: 0 18px 40px rgba(9, 31, 128, .16);
+      border-color: color-mix(in srgb, var(--tema) 35%, transparent);
     }
 
     .prop-card.aberto {
-      border-color: rgba(9, 31, 128, .16);
-      box-shadow: 0 16px 36px rgba(9, 31, 128, .14);
+      border-color: color-mix(in srgb, var(--tema) 45%, transparent);
+      box-shadow: 0 18px 40px rgba(9, 31, 128, .16);
     }
 
     .prop-card:focus-visible {
-      outline: 2px solid var(--azul);
+      outline: 2px solid var(--tema);
       outline-offset: 3px;
     }
 
@@ -847,15 +849,16 @@
     }
 
     .prop-ico {
-      width: 52px;
-      height: 52px;
+      width: 56px;
+      height: 56px;
       flex: none;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--azul) 0%, var(--azul-med) 100%);
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--tema) 0%, color-mix(in srgb, var(--tema) 70%, #000) 100%);
+      box-shadow: 0 6px 16px color-mix(in srgb, var(--tema) 45%, transparent);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
+      font-size: 1.65rem;
     }
 
     .prop-tit {
@@ -865,7 +868,7 @@
 
     .prop-tit h3 {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.3rem;
+      font-size: 1.34rem;
       font-weight: 800;
       color: var(--text-esc);
       letter-spacing: .01em;
@@ -880,25 +883,54 @@
       line-height: 1.4;
     }
 
+    /* rodapé "Ver propostas" — sempre visível, deixa claro que o card é clicável */
+    .prop-rodape {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px dashed rgba(9, 31, 128, .14);
+    }
+
+    .prop-cta-txt {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: .82rem;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--tema);
+      transition: color .2s ease;
+    }
+
     .prop-seta {
       flex: none;
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      border: 1.5px solid rgba(9, 31, 128, .18);
+      background: var(--tema);
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--tema) 50%, transparent);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--azul);
-      font-size: 1rem;
-      transition: transform .3s ease, background .2s ease, color .2s ease;
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: 700;
+      line-height: 1;
+      transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .prop-card:hover .prop-seta {
+      transform: scale(1.08);
     }
 
     .prop-card.aberto .prop-seta {
-      transform: rotate(90deg);
-      background: var(--azul);
-      color: #fff;
-      border-color: var(--azul);
+      transform: rotate(45deg);
+    }
+
+    .prop-card.aberto:hover .prop-seta {
+      transform: rotate(45deg) scale(1.08);
     }
 
     .prop-corpo {
@@ -910,8 +942,7 @@
     .prop-lista {
       list-style: none;
       padding-top: 18px;
-      margin-top: 18px;
-      border-top: 1px solid rgba(9, 31, 128, .08);
+      margin-top: 4px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -934,8 +965,8 @@
       width: 19px;
       height: 19px;
       border-radius: 50%;
-      background: rgba(26, 140, 42, .12);
-      color: var(--verde);
+      background: color-mix(in srgb, var(--tema) 16%, transparent);
+      color: var(--tema);
       font-size: .65rem;
       font-weight: 900;
       display: flex;
@@ -2491,7 +2522,8 @@
 
       <div class="prop-grid">
 
-        <div class="prop-card rv" tabindex="0" role="button" aria-expanded="false" onclick="togglePropostaCard(this)"
+        <div class="prop-card rv" style="--tema:#1a8c2a" tabindex="0" role="button" aria-expanded="false"
+          onclick="togglePropostaCard(this)"
           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePropostaCard(this)}">
           <div class="prop-topo">
             <div class="prop-ico">🚀</div>
@@ -2499,7 +2531,10 @@
               <h3>Juventude</h3>
               <p>Investir na juventude é construir o futuro do Amapá.</p>
             </div>
-            <div class="prop-seta">›</div>
+          </div>
+          <div class="prop-rodape">
+            <span class="prop-cta-txt">Ver propostas</span>
+            <span class="prop-seta">+</span>
           </div>
           <div class="prop-corpo">
             <ul class="prop-lista">
@@ -2515,7 +2550,7 @@
           </div>
         </div>
 
-        <div class="prop-card rv2" tabindex="0" role="button" aria-expanded="false"
+        <div class="prop-card rv2" style="--tema:#b5651d" tabindex="0" role="button" aria-expanded="false"
           onclick="togglePropostaCard(this)"
           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePropostaCard(this)}">
           <div class="prop-topo">
@@ -2524,7 +2559,10 @@
               <h3>Proteção Animal</h3>
               <p>Quem protege os animais, constrói um Amapá mais justo e humano.</p>
             </div>
-            <div class="prop-seta">›</div>
+          </div>
+          <div class="prop-rodape">
+            <span class="prop-cta-txt">Ver propostas</span>
+            <span class="prop-seta">+</span>
           </div>
           <div class="prop-corpo">
             <ul class="prop-lista">
@@ -2538,7 +2576,7 @@
           </div>
         </div>
 
-        <div class="prop-card rv3" tabindex="0" role="button" aria-expanded="false"
+        <div class="prop-card rv3" style="--tema:#6d28d9" tabindex="0" role="button" aria-expanded="false"
           onclick="togglePropostaCard(this)"
           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePropostaCard(this)}">
           <div class="prop-topo">
@@ -2547,7 +2585,10 @@
               <h3>Autismo</h3>
               <p>Autismo não é limite, é diferença que merece respeito, acolhimento e inclusão.</p>
             </div>
-            <div class="prop-seta">›</div>
+          </div>
+          <div class="prop-rodape">
+            <span class="prop-cta-txt">Ver propostas</span>
+            <span class="prop-seta">+</span>
           </div>
           <div class="prop-corpo">
             <ul class="prop-lista">
@@ -2567,7 +2608,8 @@
           </div>
         </div>
 
-        <div class="prop-card rv" tabindex="0" role="button" aria-expanded="false" onclick="togglePropostaCard(this)"
+        <div class="prop-card rv" style="--tema:#091f80" tabindex="0" role="button" aria-expanded="false"
+          onclick="togglePropostaCard(this)"
           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePropostaCard(this)}">
           <div class="prop-topo">
             <div class="prop-ico">📚</div>
@@ -2575,7 +2617,10 @@
               <h3>Educação</h3>
               <p>Propostas para valorizar quem ensina o Amapá.</p>
             </div>
-            <div class="prop-seta">›</div>
+          </div>
+          <div class="prop-rodape">
+            <span class="prop-cta-txt">Ver propostas</span>
+            <span class="prop-seta">+</span>
           </div>
           <div class="prop-corpo">
             <ul class="prop-lista">
@@ -2591,7 +2636,7 @@
           </div>
         </div>
 
-        <div class="prop-card rv2" tabindex="0" role="button" aria-expanded="false"
+        <div class="prop-card rv2" style="--tema:#c0392b" tabindex="0" role="button" aria-expanded="false"
           onclick="togglePropostaCard(this)"
           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePropostaCard(this)}">
           <div class="prop-topo">
@@ -2600,7 +2645,10 @@
               <h3>Saúde</h3>
               <p>Trabalho e compromisso com quem cuida da nossa gente.</p>
             </div>
-            <div class="prop-seta">›</div>
+          </div>
+          <div class="prop-rodape">
+            <span class="prop-cta-txt">Ver propostas</span>
+            <span class="prop-seta">+</span>
           </div>
           <div class="prop-corpo">
             <ul class="prop-lista">
@@ -2618,7 +2666,7 @@
           </div>
         </div>
 
-        <div class="prop-card rv3" tabindex="0" role="button" aria-expanded="false"
+        <div class="prop-card rv3" style="--tema:#b8860b" tabindex="0" role="button" aria-expanded="false"
           onclick="togglePropostaCard(this)"
           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePropostaCard(this)}">
           <div class="prop-topo">
@@ -2627,7 +2675,10 @@
               <h3>Petróleo e Gás</h3>
               <p>Propostas para o Amapá aproveitar o potencial do petróleo e gás.</p>
             </div>
-            <div class="prop-seta">›</div>
+          </div>
+          <div class="prop-rodape">
+            <span class="prop-cta-txt">Ver propostas</span>
+            <span class="prop-seta">+</span>
           </div>
           <div class="prop-corpo">
             <ul class="prop-lista">
@@ -3338,15 +3389,18 @@
     /* ── Propostas: cards que abrem/fecham mostrando a lista completa ── */
     function togglePropostaCard(card) {
       const corpo = card.querySelector('.prop-corpo');
+      const rotulo = card.querySelector('.prop-cta-txt');
       const aberto = card.classList.contains('aberto');
       if (aberto) {
         corpo.style.maxHeight = '0px';
         card.classList.remove('aberto');
         card.setAttribute('aria-expanded', 'false');
+        if (rotulo) rotulo.textContent = 'Ver propostas';
       } else {
         card.classList.add('aberto');
         card.setAttribute('aria-expanded', 'true');
         corpo.style.maxHeight = corpo.scrollHeight + 'px';
+        if (rotulo) rotulo.textContent = 'Fechar';
       }
     }
     window.addEventListener('resize', () => {
