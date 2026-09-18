@@ -782,18 +782,54 @@
     /* ── PROPOSTAS ── */
     .prop-head {
       text-align: center;
-      max-width: 680px;
-      margin: 0 auto 46px;
+      max-width: 720px;
+      margin: 0 auto 50px;
     }
 
     .prop-head .eyebrow {
       justify-content: center;
+      background: linear-gradient(135deg, var(--azul) 0%, var(--azul-med) 100%);
+      color: #fff;
+      padding: 9px 22px;
+      border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(9, 31, 128, .28);
+      font-size: .78rem;
+      letter-spacing: .24em;
+    }
+
+    .prop-head .eyebrow .dash {
+      display: none;
+    }
+
+    .prop-head .eyebrow::before {
+      content: '★';
+      color: var(--ouro);
+      font-size: .8rem;
+    }
+
+    .prop-head .sec-h {
+      position: relative;
+      display: inline-block;
+      padding-bottom: 18px;
+    }
+
+    .prop-head .sec-h::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 84px;
+      height: 5px;
+      border-radius: 99px;
+      background: linear-gradient(to right, var(--verde), var(--ouro));
     }
 
     .prop-head .sec-p {
       margin-left: auto;
       margin-right: auto;
       margin-bottom: 0;
+      margin-top: 6px;
     }
 
     .prop-grid {
@@ -854,7 +890,6 @@
       flex: none;
       border-radius: 16px;
       background: linear-gradient(135deg, var(--tema) 0%, color-mix(in srgb, var(--tema) 70%, #000) 100%);
-      box-shadow: 0 6px 16px color-mix(in srgb, var(--tema) 45%, transparent);
       display: flex;
       align-items: center;
       justify-content: center;
