@@ -344,6 +344,11 @@
       line-height: 1.5;
     }
 
+    #qrGeral {
+      display: flex;
+      justify-content: center;
+    }
+
     .card-qr canvas {
       border: 1.5px solid #dfe3f2;
       border-radius: 12px;
@@ -614,45 +619,17 @@
       colorLight: '#ffffff'
     });
 
-    /* quebra em várias linhas pra caber em larguraMax — e quando um "token" sozinho
-       (ex: um link, que não tem espaço nenhum) já é mais largo que o limite,
-       quebra ele também por caractere, senão ele nunca quebraria */
-    function quebrarLinhas(ctx, texto, larguraMax) {
-      function quebrarToken(token) {
-        const partes = [];
-        let atual = '';
-        for (const ch of token) {
-          const teste = atual + ch;
-          if (ctx.measureText(teste).width > larguraMax && atual) {
-            partes.push(atual);
-            atual = ch;
-          } else {
-            atual = teste;
-          }
-        }
-        if (atual) partes.push(atual);
-        return partes;
+    /* acha o maior tamanho de fonte (até um mínimo) que deixa o texto numa
+       linha só dentro de larguraMax — em vez de quebrar linha, encolhe */
+    function tamanhoQueCabe(ctx, texto, larguraMax, tamanhoInicial, tamanhoMinimo, familia, negrito) {
+      const prefixo = negrito ? 'bold ' : '';
+      let tamanho = tamanhoInicial;
+      while (tamanho > tamanhoMinimo) {
+        ctx.font = prefixo + tamanho + 'px ' + familia;
+        if (ctx.measureText(texto).width <= larguraMax) break;
+        tamanho--;
       }
-      const palavras = texto.split(' ');
-      const linhas = [];
-      let linha = '';
-      palavras.forEach(p => {
-        const teste = linha ? linha + ' ' + p : p;
-        if (ctx.measureText(teste).width <= larguraMax) {
-          linha = teste;
-          return;
-        }
-        if (linha) { linhas.push(linha); linha = ''; }
-        if (ctx.measureText(p).width <= larguraMax) {
-          linha = p;
-        } else {
-          const partes = quebrarToken(p);
-          linhas.push(...partes.slice(0, -1));
-          linha = partes[partes.length - 1] || '';
-        }
-      });
-      if (linha) linhas.push(linha);
-      return linhas;
+      return tamanho;
     }
 
     document.getElementById('btnBaixarQrGeral').addEventListener('click', () => {
@@ -660,22 +637,18 @@
       if (!canvasQr) return;
       const escala = 2;
       const qrSize = canvasQr.width;
-      const largura = Math.max(qrSize + 40, 320);
-      const pad = (largura - qrSize) / 2;
-      const fonteTitulo = 'bold 18px "Barlow Condensed", sans-serif';
-      const fonteTexto = '13px Inter, sans-serif';
-      const linhaTitulo = 24;
-      const linhaTexto = 19;
+      const largura = qrSize + 40;
+      const pad = 20;
+      const familiaTitulo = '"Barlow Condensed", sans-serif';
+      const familiaTexto = 'Inter, sans-serif';
       const titulo = 'Cadastro geral de lideranças';
 
       const med = document.createElement('canvas').getContext('2d');
-      med.font = fonteTitulo;
-      const linhasTitulo = quebrarLinhas(med, titulo, largura - 32);
-      med.font = fonteTexto;
-      const linhasAbaixo = quebrarLinhas(med, LINK_GERAL_LIDERANCAS, largura - 32);
+      const tamTitulo = tamanhoQueCabe(med, titulo, largura - 24, 17, 8, familiaTitulo, true);
+      const tamTexto = tamanhoQueCabe(med, LINK_GERAL_LIDERANCAS, largura - 24, 12, 6, familiaTexto, false);
 
-      const alturaTitulo = linhasTitulo.length * linhaTitulo + 12;
-      const alturaAbaixo = linhasAbaixo.length * linhaTexto + 12;
+      const alturaTitulo = tamTitulo + 16;
+      const alturaAbaixo = tamTexto + 16;
       const altura = pad + alturaTitulo + qrSize + alturaAbaixo + pad;
 
       const out = document.createElement('canvas');
@@ -689,16 +662,16 @@
       ctx.textBaseline = 'top';
 
       ctx.fillStyle = '#0a1540';
-      ctx.font = fonteTitulo;
-      linhasTitulo.forEach((l, i) => ctx.fillText(l, largura / 2, pad + i * linhaTitulo));
+      ctx.font = 'bold ' + tamTitulo + 'px ' + familiaTitulo;
+      ctx.fillText(titulo, largura / 2, pad);
 
       let y = pad + alturaTitulo;
       ctx.drawImage(canvasQr, (largura - qrSize) / 2, y, qrSize, qrSize);
       y += qrSize + 12;
 
       ctx.fillStyle = '#3a4a7a';
-      ctx.font = fonteTexto;
-      linhasAbaixo.forEach((l, i) => ctx.fillText(l, largura / 2, y + i * linhaTexto));
+      ctx.font = tamTexto + 'px ' + familiaTexto;
+      ctx.fillText(LINK_GERAL_LIDERANCAS, largura / 2, y);
 
       out.toBlob(blob => {
         const a = document.createElement('a');

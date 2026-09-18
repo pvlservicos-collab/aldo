@@ -308,6 +308,11 @@
       margin-top: 14px;
     }
 
+    .qr-wrap #qrCanvas {
+      display: flex;
+      justify-content: center;
+    }
+
     .qr-wrap canvas {
       border: 1.5px solid #dfe3f2;
       border-radius: 12px;
@@ -462,68 +467,35 @@
       return (s || 'lideranca').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     }
 
-    /* quebra em várias linhas pra caber em larguraMax — e quando um "token" sozinho
-       (ex: um link, que não tem espaço nenhum) já é mais largo que o limite,
-       quebra ele também por caractere, senão ele nunca quebraria */
-    function quebrarLinhas(ctx, texto, larguraMax) {
-      function quebrarToken(token) {
-        const partes = [];
-        let atual = '';
-        for (const ch of token) {
-          const teste = atual + ch;
-          if (ctx.measureText(teste).width > larguraMax && atual) {
-            partes.push(atual);
-            atual = ch;
-          } else {
-            atual = teste;
-          }
-        }
-        if (atual) partes.push(atual);
-        return partes;
+    /* acha o maior tamanho de fonte (até um mínimo) que deixa o texto numa
+       linha só dentro de larguraMax — em vez de quebrar linha, encolhe */
+    function tamanhoQueCabe(ctx, texto, larguraMax, tamanhoInicial, tamanhoMinimo, familia, negrito) {
+      const prefixo = negrito ? 'bold ' : '';
+      let tamanho = tamanhoInicial;
+      while (tamanho > tamanhoMinimo) {
+        ctx.font = prefixo + tamanho + 'px ' + familia;
+        if (ctx.measureText(texto).width <= larguraMax) break;
+        tamanho--;
       }
-      const palavras = texto.split(' ');
-      const linhas = [];
-      let linha = '';
-      palavras.forEach(p => {
-        const teste = linha ? linha + ' ' + p : p;
-        if (ctx.measureText(teste).width <= larguraMax) {
-          linha = teste;
-          return;
-        }
-        if (linha) { linhas.push(linha); linha = ''; }
-        if (ctx.measureText(p).width <= larguraMax) {
-          linha = p;
-        } else {
-          const partes = quebrarToken(p);
-          linhas.push(...partes.slice(0, -1));
-          linha = partes[partes.length - 1] || '';
-        }
-      });
-      if (linha) linhas.push(linha);
-      return linhas;
+      return tamanho;
     }
 
     /* monta um PNG novo: título (opcional) em cima, o QR no meio, o link embaixo —
-       tudo desenhado em "pixels de design" (1x) e escalado no fim, pra não ter
-       conta de escala espalhada pelo código */
+       texto sempre numa linha só, encolhendo a fonte até caber */
     function baixarQrComTexto({ canvasQr, tituloAcima, textoAbaixo, nomeArquivo }) {
       const escala = 2;
       const qrSize = canvasQr.width;
-      const largura = Math.max(qrSize + 40, 320);
-      const pad = (largura - qrSize) / 2;
-      const fonteTitulo = 'bold 18px "Barlow Condensed", sans-serif';
-      const fonteTexto = '13px Inter, sans-serif';
-      const linhaTitulo = 24;
-      const linhaTexto = 19;
+      const largura = qrSize + 40;
+      const pad = 20;
+      const familiaTitulo = '"Barlow Condensed", sans-serif';
+      const familiaTexto = 'Inter, sans-serif';
 
       const med = document.createElement('canvas').getContext('2d');
-      med.font = fonteTitulo;
-      const linhasTitulo = tituloAcima ? quebrarLinhas(med, tituloAcima, largura - 32) : [];
-      med.font = fonteTexto;
-      const linhasAbaixo = textoAbaixo ? quebrarLinhas(med, textoAbaixo, largura - 32) : [];
+      const tamTitulo = tituloAcima ? tamanhoQueCabe(med, tituloAcima, largura - 24, 17, 8, familiaTitulo, true) : 0;
+      const tamTexto = textoAbaixo ? tamanhoQueCabe(med, textoAbaixo, largura - 24, 12, 6, familiaTexto, false) : 0;
 
-      const alturaTitulo = linhasTitulo.length ? linhasTitulo.length * linhaTitulo + 12 : 0;
-      const alturaAbaixo = linhasAbaixo.length ? linhasAbaixo.length * linhaTexto + 12 : 0;
+      const alturaTitulo = tituloAcima ? tamTitulo + 16 : 0;
+      const alturaAbaixo = textoAbaixo ? tamTexto + 16 : 0;
       const altura = pad + alturaTitulo + qrSize + alturaAbaixo + pad;
 
       const out = document.createElement('canvas');
@@ -537,20 +509,20 @@
       ctx.textBaseline = 'top';
 
       let y = pad;
-      if (linhasTitulo.length) {
+      if (tituloAcima) {
         ctx.fillStyle = '#0a1540';
-        ctx.font = fonteTitulo;
-        linhasTitulo.forEach((l, i) => ctx.fillText(l, largura / 2, y + i * linhaTitulo));
+        ctx.font = 'bold ' + tamTitulo + 'px ' + familiaTitulo;
+        ctx.fillText(tituloAcima, largura / 2, y);
         y += alturaTitulo;
       }
 
       ctx.drawImage(canvasQr, (largura - qrSize) / 2, y, qrSize, qrSize);
       y += qrSize + 12;
 
-      if (linhasAbaixo.length) {
+      if (textoAbaixo) {
         ctx.fillStyle = '#3a4a7a';
-        ctx.font = fonteTexto;
-        linhasAbaixo.forEach((l, i) => ctx.fillText(l, largura / 2, y + i * linhaTexto));
+        ctx.font = tamTexto + 'px ' + familiaTexto;
+        ctx.fillText(textoAbaixo, largura / 2, y);
       }
 
       out.toBlob(blob => {
