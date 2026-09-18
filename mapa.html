@@ -123,14 +123,21 @@ const LIDERANCAS_DEMO = [
 
 const map = L.map("map",{zoomControl:true,zoomSnap:0.25}).setView([0.032,-51.07],13);
 
+/* Desde ago/2026 a CARTO passa a exigir API key nos tiles gratuitos
+   (basemaps.cartocdn.com) — sem ela, o tile continua carregando (HTTP 200)
+   mas vem com "API KEY REQUIRED" gravado na própria imagem. Chave grátis em
+   https://carto.com/basemaps/apikey (5 milhões de tiles/mês no plano free). */
+const CARTO_KEY = "";
+const CARTO_QS = CARTO_KEY ? ("?key=" + CARTO_KEY) : "";
+
 /* Fundo escuro (estilo Google Maps dark): ruas embaixo, nomes por cima dos bairros */
-L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",{
+L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png" + CARTO_QS,{
   attribution:'&copy; OpenStreetMap &copy; CARTO', subdomains:"abcd", maxZoom:19
 }).addTo(map);
 map.createPane("rotulos");
 map.getPane("rotulos").style.zIndex = 649;          /* acima dos polígonos, mas abaixo dos tooltips (650) */
 map.getPane("rotulos").style.pointerEvents = "none"; /* não atrapalha o mouse */
-L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png",{
+L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png" + CARTO_QS,{
   pane:"rotulos", subdomains:"abcd", maxZoom:19
 }).addTo(map);
 
