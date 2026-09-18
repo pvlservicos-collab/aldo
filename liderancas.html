@@ -614,17 +614,41 @@
       colorLight: '#ffffff'
     });
 
+    /* quebra em várias linhas pra caber em larguraMax — e quando um "token" sozinho
+       (ex: um link, que não tem espaço nenhum) já é mais largo que o limite,
+       quebra ele também por caractere, senão ele nunca quebraria */
     function quebrarLinhas(ctx, texto, larguraMax) {
+      function quebrarToken(token) {
+        const partes = [];
+        let atual = '';
+        for (const ch of token) {
+          const teste = atual + ch;
+          if (ctx.measureText(teste).width > larguraMax && atual) {
+            partes.push(atual);
+            atual = ch;
+          } else {
+            atual = teste;
+          }
+        }
+        if (atual) partes.push(atual);
+        return partes;
+      }
       const palavras = texto.split(' ');
       const linhas = [];
       let linha = '';
       palavras.forEach(p => {
         const teste = linha ? linha + ' ' + p : p;
-        if (ctx.measureText(teste).width > larguraMax && linha) {
-          linhas.push(linha);
+        if (ctx.measureText(teste).width <= larguraMax) {
+          linha = teste;
+          return;
+        }
+        if (linha) { linhas.push(linha); linha = ''; }
+        if (ctx.measureText(p).width <= larguraMax) {
           linha = p;
         } else {
-          linha = teste;
+          const partes = quebrarToken(p);
+          linhas.push(...partes.slice(0, -1));
+          linha = partes[partes.length - 1] || '';
         }
       });
       if (linha) linhas.push(linha);
@@ -636,37 +660,45 @@
       if (!canvasQr) return;
       const escala = 2;
       const qrSize = canvasQr.width;
-      const pad = 22 * escala;
-      const linhaAltura = 17 * escala;
+      const largura = Math.max(qrSize + 40, 320);
+      const pad = (largura - qrSize) / 2;
+      const fonteTitulo = 'bold 18px "Barlow Condensed", sans-serif';
+      const fonteTexto = '13px Inter, sans-serif';
+      const linhaTitulo = 24;
+      const linhaTexto = 19;
       const titulo = 'Cadastro geral de lideranças';
 
+      const med = document.createElement('canvas').getContext('2d');
+      med.font = fonteTitulo;
+      const linhasTitulo = quebrarLinhas(med, titulo, largura - 32);
+      med.font = fonteTexto;
+      const linhasAbaixo = quebrarLinhas(med, LINK_GERAL_LIDERANCAS, largura - 32);
+
+      const alturaTitulo = linhasTitulo.length * linhaTitulo + 12;
+      const alturaAbaixo = linhasAbaixo.length * linhaTexto + 12;
+      const altura = pad + alturaTitulo + qrSize + alturaAbaixo + pad;
+
       const out = document.createElement('canvas');
-      const ctxMed = out.getContext('2d');
-      ctxMed.font = (13 * escala) + 'px Inter, sans-serif';
-      const linhasAbaixo = quebrarLinhas(ctxMed, LINK_GERAL_LIDERANCAS, qrSize);
-
-      const alturaTitulo = 30 * escala;
-      const alturaAbaixo = linhasAbaixo.length * linhaAltura + 10 * escala;
-      out.width = qrSize + pad * 2;
-      out.height = qrSize + pad * 2 + alturaTitulo + alturaAbaixo;
-
+      out.width = largura * escala;
+      out.height = altura * escala;
       const ctx = out.getContext('2d');
+      ctx.scale(escala, escala);
       ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, out.width, out.height);
+      ctx.fillRect(0, 0, largura, altura);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
 
       ctx.fillStyle = '#0a1540';
-      ctx.font = 'bold ' + (16 * escala) + 'px Barlow Condensed, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(titulo, out.width / 2, pad + (18 * escala));
+      ctx.font = fonteTitulo;
+      linhasTitulo.forEach((l, i) => ctx.fillText(l, largura / 2, pad + i * linhaTitulo));
 
       let y = pad + alturaTitulo;
-      ctx.drawImage(canvasQr, pad, y, qrSize, qrSize);
-      y += qrSize + (16 * escala);
+      ctx.drawImage(canvasQr, (largura - qrSize) / 2, y, qrSize, qrSize);
+      y += qrSize + 12;
 
       ctx.fillStyle = '#3a4a7a';
-      ctx.font = (13 * escala) + 'px Inter, sans-serif';
-      ctx.textAlign = 'center';
-      linhasAbaixo.forEach((l, i) => ctx.fillText(l, out.width / 2, y + i * linhaAltura));
+      ctx.font = fonteTexto;
+      linhasAbaixo.forEach((l, i) => ctx.fillText(l, largura / 2, y + i * linhaTexto));
 
       out.toBlob(blob => {
         const a = document.createElement('a');
@@ -674,7 +706,7 @@
         a.download = 'qrcode-cadastro-liderancas.png';
         a.click();
         URL.revokeObjectURL(a.href);
-      });
+      }, 'image/png');
     });
   </script>
 </body>
